@@ -1,0 +1,17 @@
+version: '2.1'
+
+services:
+    groundwater-fie:
+        container_name: groundwater-fie
+        build:
+            context: .
+            dockerfile: Dockerfile.prod
+        image: groundwater-fie:latest
+        environment:
+            NODE_ENV: production
+            PROXY_PORT: 8085
+            HTTP_PORT: 8082
+        ports: #Forwarded from host to docker container
+            - 8082:8082 # main application
+            - 8085:8085 # proxy service
+

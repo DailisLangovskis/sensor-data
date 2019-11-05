@@ -1,0 +1,29 @@
+For development:
+
+```
+export HSLPATH=~/Projects/hslayers-ng
+```
+
+ run
+
+```
+make build-dev
+make start-dev
+```
+
+For production
+
+```
+make build-dev
+make start-dev
+```
+
+Configure nginx proxy_pass to map to correct ports similar to the ones described in nginx.conf file
+
+*Troubleshoot*
+
+ERROR: Couldn’t connect to Docker daemon at http+docker://localhost – is it running?
+
+https://techoverflow.net/2019/03/16/how-to-fix-error-couldnt-connect-to-docker-daemon-at-httpdocker-localhost-is-it-running/
+
+https://wiki.archlinux.org/index.php/Docker

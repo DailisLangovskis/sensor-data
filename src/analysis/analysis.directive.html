@@ -1,0 +1,35 @@
+<div class="card card-default mainpanel">
+    <hs.layout.panel-header panel-name="analysis" panel-title="'Analysis'||translate"></hs.layout.panel-header>
+    <style>
+        .weather-table>tbody>tr>td,
+        .table-condensed>tbody>tr>th,
+        .table-condensed>tfoot>tr>td,
+        .table-condensed>tfoot>tr>th,
+        .table-condensed>thead>tr>td,
+        .table-condensed>thead>tr>th {
+            padding: 2px;
+        }
+    </style>
+    <div class="card-body">
+        <div class="card-body">
+
+            <div class="dropdown">
+                <button class="btn btn-primary btn-block dropdown-toggle" type="button" id="dropdownMenuButton"
+                    data-toggle="dropdown" aria-haspopup="true" ng-aria-expanded="analysisMenuExpanded"
+                    ng-click="analysisMenuExpanded = !analysisMenuExpanded">
+                    <img ng-show="loading" src="./ajax-loader.gif" translate />
+                    <translate>{{currentAnalysisTitle || 'Choose analysis'}}</translate>
+                </button>
+                <div class="dropdown-menu" ng-class="{'show': analysisMenuExpanded}"
+                    aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="#" ng-repeat="item in analysisList"
+                        ng-click="chooseAnalysis(item.name, item.title)">{{item.title}}</a>
+                </div>
+                <div class="alert alert-primary" role="alert" ng-show="currentAnalysisName!=null">
+                    Click a point or feature on the map to run analysis
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

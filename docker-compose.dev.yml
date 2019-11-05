@@ -1,12 +1,12 @@
 version: '2.1'
 
 services:
-    groundwater-fie:
-        container_name: groundwater-fie
+    sensor-data:
+        container_name: sensor-data
         build:
             context: .
             dockerfile: Dockerfile
-        image: groundwater-fie:latest
+        image: sensor-data:latest
         environment:
             NODE_ENV: development
             PROXY_PORT: 8085

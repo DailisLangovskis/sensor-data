@@ -16,6 +16,7 @@ export default [
           url: `https://my.meteoblue.com/visimage/webmap?apikey=8vh83gfhu34g&variable=precipitation3h_cloudcover_pressure&time=${nowString}&level=surface&imgxs=1113&imgys=772&latmin=${weatherMapExtent[3]}&latmax=${weatherMapExtent[1]}&lonmin=${weatherMapExtent[0]}&lonmax=${weatherMapExtent[2]}&countryoverlay=1&colorbar=1`,
           imageExtent: transformExtent(weatherMapExtent, 'EPSG:4326', 'EPSG:3857')
         }),
+        path: 'Meteo',
         visible: false
     }),
     new ImageLayer({
@@ -28,6 +29,7 @@ export default [
           url: `https://my.meteoblue.com/visimage/webmap?apikey=8vh83gfhu34g&variable=temperature&time=${nowString}&level=surface&imgxs=1113&imgys=772&latmin=${weatherMapExtent[3]}&latmax=${weatherMapExtent[1]}&lonmin=${weatherMapExtent[0]}&lonmax=${weatherMapExtent[2]}&countryoverlay=1&colorbar=1`,
           imageExtent: transformExtent(weatherMapExtent, 'EPSG:4326', 'EPSG:3857')
         }),
+        path: 'Meteo',
         visible: false
     }),
     new ImageLayer({
@@ -40,6 +42,7 @@ export default [
           url: `https://my.meteoblue.com/visimage/webmap?apikey=8vh83gfhu34g&variable=wind_streamlines&time=${nowString}&level=surface&imgxs=1113&imgys=772&latmin=${weatherMapExtent[3]}&latmax=${weatherMapExtent[1]}&lonmin=${weatherMapExtent[0]}&lonmax=${weatherMapExtent[2]}&countryoverlay=1&colorbar=1`,
           imageExtent: transformExtent(weatherMapExtent, 'EPSG:4326', 'EPSG:3857')
         }),
+        path: 'Meteo',
         visible: false
     }),
     new ImageLayer({
@@ -52,6 +55,7 @@ export default [
           url: `https://my.meteoblue.com/visimage/webmap?apikey=8vh83gfhu34g&variable=obssat_pressure&time=${nowString}&level=surface&imgxs=1113&imgys=772&latmin=${weatherMapExtent[3]}&latmax=${weatherMapExtent[1]}&lonmin=${weatherMapExtent[0]}&lonmax=${weatherMapExtent[2]}&countryoverlay=1&colorbar=1`,
           imageExtent: transformExtent(weatherMapExtent, 'EPSG:4326', 'EPSG:3857')
         }),
+        path: 'Meteo',
         visible: false
     }),
     new ImageLayer({
@@ -63,6 +67,7 @@ export default [
           url: `https://my.meteoblue.com/visimage/webmap?apikey=8vh83gfhu34g&variable=obstemp&level=surface&imgxs=1113&imgys=772&latmin=${weatherMapExtent[3]}&latmax=${weatherMapExtent[1]}&lonmin=${weatherMapExtent[0]}&lonmax=${weatherMapExtent[2]}&countryoverlay=1&colorbar=1`,
           imageExtent: transformExtent(weatherMapExtent, 'EPSG:4326', 'EPSG:3857')
         }),
+        path: 'Meteo',
         visible: false
     })
 ]

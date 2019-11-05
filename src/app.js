@@ -23,6 +23,8 @@ import { Vector as VectorSource } from 'ol/source';
 import './analysis/analysis.module';
 import meteoLayers from './meteo-layers.js';
 import genLabelStyle from './gen-label-style';
+import vegetationLayers from './vegetation-layers-';
+
 var module = angular.module('hs', [
     'hs.sidebar',
     'hs.draw',
@@ -106,10 +108,12 @@ module.value('config', {
                 tms: false,
                 maxZoom: 14
             }),
+            base: true,
             visible: true,
             opacity: 1
         }),
         new Tile({
+
             title: "Ielu karte / Street map:",
             source: new XYZ({
                 attributions: '&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a> &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -119,6 +123,7 @@ module.value('config', {
                 crossOrigin: true,
 
             }),
+            base: true,
             visible: true,
             opacity: 1
         }),
@@ -135,6 +140,12 @@ module.value('config', {
         }),
         new Tile({
             title: "Zemes vērtējums / Land value:",
+            path: 'Other',
+            visible: false,
+            opacity: 0.7
+        }),
+        new Tile({
+            title: "Land value:",
             source: new XYZ({
                 attributions: '&copy; <a href="https://geolatvija.lv/geo/p/317">Zemkopības ministrija</a>'
                 ,
@@ -164,8 +175,160 @@ module.value('config', {
             visible: true,
             opacity: 0.7
         }),
+        new Tile({
+            title: "Optical satellite basemap (Vilcini, 2019-04-18)",
+            source: new XYZ({
+                attributions: '&copy; <a href="http://www.baltsat.lv/">Baltic Satellite Service</a>, <a href="https://www.esa.int/">European Space Agency - ESA</a>',
+                url: '/proxy/https://api.forestradar.com/tiles-v1/public/optical_20190418_tiles/{z}/{x}/{y}.png',
+                tms: false,
+                crossOrigin: true,
 
+            }),
+            maxZoom: 14,
+            minZoom: 12,
+            base: true,
+            visible: false,
+            opacity: 1
+        }),
+        new Tile({
+            title: "Optical satellite basemap (Vilcini, 2019-05-30)",
+            source: new XYZ({
+                attributions: '&copy; <a href="http://www.baltsat.lv/">Baltic Satellite Service</a>, <a href="https://www.esa.int/">European Space Agency - ESA</a>',
+                url: '/proxy/https://api.forestradar.com/tiles-v1/public/optical_20190530_tiles/{z}/{x}/{y}.png',
+                tms: false,
+                crossOrigin: true,
+
+            }),
+            maxZoom: 14,
+            minZoom: 12,
+            base: true,
+            visible: false,
+            opacity: 1
+        }),
+        new Tile({
+            title: "Optical satellite basemap (Vilcini, 2019-06-04)",
+            source: new XYZ({
+                attributions: '&copy; <a href="http://www.baltsat.lv/">Baltic Satellite Service</a>, <a href="https://www.esa.int/">European Space Agency - ESA</a>',
+                url: '/proxy/https://api.forestradar.com/tiles-v1/public/optical_20190604_tiles/{z}/{x}/{y}.png',
+                tms: false,
+                crossOrigin: true,
+
+            }),
+            maxZoom: 14,
+            minZoom: 12,
+            base: true,
+            visible: false,
+            opacity: 1
+        }),
+        new Tile({
+            title: "Optical satellite basemap (Vilcini, 2019-06-24)",
+            source: new XYZ({
+                attributions: '&copy; <a href="http://www.baltsat.lv/">Baltic Satellite Service</a>, <a href="https://www.esa.int/">European Space Agency - ESA</a>',
+                url: '/proxy/https://api.forestradar.com/tiles-v1/public/optical_20190624_tiles/{z}/{x}/{y}.png',
+                tms: false,
+                crossOrigin: true,
+
+            }),
+            maxZoom: 14,
+            minZoom: 12,
+            base: true,
+            visible: false,
+            opacity: 1
+        }),
+        new Tile({
+            title: "Optical satellite basemap (Vilcini, 2019-07-19)",
+            source: new XYZ({
+                attributions: '&copy; <a href="http://www.baltsat.lv/">Baltic Satellite Service</a>, <a href="https://www.esa.int/">European Space Agency - ESA</a>',
+                url: '/proxy/https://api.forestradar.com/tiles-v1/public/optical_20190719_tiles/{z}/{x}/{y}.png',
+                tms: false,
+                crossOrigin: true,
+
+            }),
+            maxZoom: 14,
+            minZoom: 12,
+            base: true,
+            visible: false,
+            opacity: 1
+        }),
+        new Tile({
+            title: "Optical satellite basemap (Vilcini, 2019-08-23)",
+            source: new XYZ({
+                attributions: '&copy; <a href="http://www.baltsat.lv/">Baltic Satellite Service</a>, <a href="https://www.esa.int/">European Space Agency - ESA</a>',
+                url: '/proxy/https://api.forestradar.com/tiles-v1/public/optical_20190823_tiles/{z}/{x}/{y}.png',
+                tms: false,
+                crossOrigin: true,
+
+            }),
+            maxZoom: 14,
+            minZoom: 12,
+            base: true,
+            visible: false,
+            opacity: 1
+        }),
+        new Tile({
+            title: "Optical satellite basemap (Vilcini, 2019-09-05)",
+            source: new XYZ({
+                attributions: '&copy; <a href="http://www.baltsat.lv/">Baltic Satellite Service</a>, <a href="https://www.esa.int/">European Space Agency - ESA</a>',
+                url: '/proxy/https://api.forestradar.com/tiles-v1/public/optical_20190905_tiles/{z}/{x}/{y}.png',
+                tms: false,
+                crossOrigin: true,
+
+            }),
+            maxZoom: 14,
+            minZoom: 12,
+            base: true,
+            visible: false,
+            opacity: 1
+        }),
+        new Tile({
+            title: "Optical satellite basemap (Vilcini, 2019-09-27)",
+            source: new XYZ({
+                attributions: '&copy; <a href="http://www.baltsat.lv/">Baltic Satellite Service</a>, <a href="https://www.esa.int/">European Space Agency - ESA</a>',
+                url: '/proxy/https://api.forestradar.com/tiles-v1/public/optical_20190927_tiles/{z}/{x}/{y}.png',
+                tms: false,
+                crossOrigin: true,
+
+            }),
+            base: true,
+            visible: false,
+            opacity: 1
+        }),
     ]
+        .concat(vegetationLayers)
+        .concat([
+            new Tile({
+                title: "Water bodies and rivers",
+                source: new XYZ({
+                    attributions: '&copy; <a href="https://opendata.lgia.gov.lv/zf_wp/index.php/2018/08/03/topografiska-karte-meroga-150-000-2-izdevums/">LĢIA</a>'
+                    ,
+                    url: '/proxy/https://api.mapbox.com/styles/v1/recon517/ck0sz2nv11nu91cqp4w4mdxrk/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicmVjb241MTciLCJhIjoiY2l4cXBpbzZtMDAzNDMybDY2YnAzdjlndSJ9.MRq_ohDyD2x5t5DdlAwytA',
+                    tms: false,
+                }),
+                path: 'Other',
+                visible: true,
+                opacity: 1
+            }),
+            new Tile({
+                title: 'ZS "Vilciņi" border',
+                source: new XYZ({
+                    url: '/proxy/https://api.mapbox.com/styles/v1/recon517/ck0udcjhj6zb61cqlcvtdirmq/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicmVjb241MTciLCJhIjoiY2l4cXBpbzZtMDAzNDMybDY2YnAzdjlndSJ9.MRq_ohDyD2x5t5DdlAwytA',
+                    tms: false,
+                }),
+                path: 'Other',
+                visible: true,
+                opacity: 0.7
+            }),
+            new Tile({
+                title: 'Natura-2000 protected areas',
+                source: new XYZ({
+                    url: '/proxy/https://api.mapbox.com/styles/v1/recon517/ck0yrgg0l0o2s1dnwgm3dc3ng/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicmVjb241MTciLCJhIjoiY2l4cXBpbzZtMDAzNDMybDY2YnAzdjlndSJ9.MRq_ohDyD2x5t5DdlAwytA',
+                    tms: false,
+                }),
+                path: 'Other',
+                visible: true,
+                opacity: 0.7
+            })
+        ])
         .concat(meteoLayers)
         .concat([
             new VectorLayer({
@@ -178,6 +341,7 @@ module.value('config', {
                         description: 'none'
                     }
                 },
+                path: 'User generated',
                 source: new VectorSource({}),
                 style: function (feature) {
                     labelStyle.getText().setText(feature.get('name'));
@@ -195,6 +359,7 @@ module.value('config', {
                         description: 'none'
                     }
                 },
+                path: 'User generated',
                 source: new VectorSource({}),
                 style: function (feature) {
                     labelStyle.getText().setText(feature.get('name'));
@@ -239,11 +404,12 @@ module.value('config', {
 module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service',
     function ($scope, Core, $compile, layoutService) {
         $scope.Core = Core;
+        $scope.panelVisible = layoutService.panelVisible;
         layoutService.sidebarRight = false;
         //layoutService.sidebarToggleable = false;
         Core.singleDatasources = true;
         layoutService.sidebarButtons = true;
-        $scope.Core.setDefaultPanel('layermanager');
+        layoutService.setDefaultPanel('layermanager');
         $scope.$on("scope_loaded", function (event, args) {
             if (args == 'Sidebar') {
                 var el = angular.element('<fie.analysis hs.draggable ng-if="Core.exists(\'fie.analysis\')" ng-show="panelVisible(\'analysis\', this)"></fie.analysis>')[0];

@@ -1,7 +1,7 @@
 export default {
     template: require('./analysis.directive.html'),
-    controller: ['$scope', 'hs.map.service', 'Core', 'config', 'fie.analysis.service', '$timeout', '$compile', '$http', 'hs.utils.service',
-        function ($scope, OlMap, Core, config, service, $timeout, $compile, $http, utils) {
+    controller: ['$scope', 'hs.map.service', 'Core', 'config', 'fie.analysis.service', '$timeout', '$compile', '$http', 'hs.utils.service', 'hs.layout.service',
+        function ($scope, OlMap, Core, config, service, $timeout, $compile, $http, utils, layoutService) {
             $scope.loading = false;
 
             angular.extend($scope, {
@@ -24,7 +24,7 @@ export default {
             })
 
             $scope.$on('query.dataUpdated', utils.debounce((event, data) => {
-                if (Core.mainpanel == 'analysis') {
+                if (layoutService.mainpanel == 'analysis') {
                     if (document.querySelector('#info-dialog')) {
                         var parent = document.querySelector('#info-dialog').parentElement;
                         parent.parentElement.removeChild(parent);

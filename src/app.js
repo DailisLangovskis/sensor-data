@@ -9,9 +9,7 @@ import 'permalink.module';
 import 'info.module';
 import 'datasource-selector.module';
 import 'sidebar.module';
-import 'sensors.module';
 import 'draw.module';
-import { ImageWMS, ImageArcGISRest } from 'ol/source';
 import View from 'ol/View';
 import { transform, transformExtent } from 'ol/proj';
 import { Tile, Group, Image as ImageLayer } from 'ol/layer';
@@ -22,9 +20,8 @@ import Feature from 'ol/Feature';
 import VectorLayer from 'ol/layer/Vector';
 import { Vector as VectorSource } from 'ol/source';
 import { Polygon, LineString, GeometryType, Point } from 'ol/geom';
-//import './analysis/analysis.module';
+import './sensorDataCollector/sensorDataCollector.module';
 //import meteoLayers from './meteo-layers.js';
-import genLabelStyle from './unnecessary/gen-label-style';
 //import vegetationLayers from './vegetation-layers-';
 
 var module = angular.module('hs', [
@@ -40,7 +37,7 @@ var module = angular.module('hs', [
     'hs.save-map',
     'hs.measure',
     'hs.addLayers',
-    'hs.sensors',
+    'sens.sensorDataCollector',
 ]);
 
 module.directive('hs', ['config', 'Core', function (config, Core) {
@@ -127,24 +124,24 @@ module.value('config', {
 
 module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service',
     function ($scope, Core, $compile, layoutService) {
-        $scope.Core = Core;
-        $scope.panelVisible = layoutService.panelVisible;
+        // $scope.Core = Core;
+        // $scope.panelVisible = layoutService.panelVisible;
         layoutService.sidebarRight = false;
-        //layoutService.sidebarToggleable = false;
-        Core.singleDatasources = true;
-        layoutService.sidebarButtons = true;
-        layoutService.setDefaultPanel('layermanager');
-        $scope.$on("scope_loaded", function (event, args) {
-            if (args == 'Sidebar') {
-                var el = angular.element('<fie.analysis hs.draggable ng-if="Core.exists(\'fie.analysis\')" ng-show="panelVisible(\'analysis\', this)"></fie.analysis>')[0];
-                document.querySelector('#panelplace').appendChild(el);
-                $compile(el)($scope);
+        // //layoutService.sidebarToggleable = false;
+        // Core.singleDatasources = true;
+        // layoutService.sidebarButtons = true;
+        // layoutService.setDefaultPanel('layermanager');
+        // $scope.$on("scope_loaded", function (event, args) {
+        //     if (args == 'Sidebar') {
+        //         var el = angular.element('<fie.analysis hs.draggable ng-if="Core.exists(\'fie.analysis\')" ng-show="panelVisible(\'analysis\', this)"></fie.analysis>')[0];
+        //         document.querySelector('#panelplace').appendChild(el);
+        //         $compile(el)($scope);
 
-                var toolbar_button = angular.element('<div fie.analysis.sidebar-btn></div>')[0];
-                document.querySelector('.sidebar-list').appendChild(toolbar_button);
-                $compile(toolbar_button)(event.targetScope);
-            }
-        })
+        //         var toolbar_button = angular.element('<div fie.analysis.sidebar-btn></div>')[0];
+        //         document.querySelector('.sidebar-list').appendChild(toolbar_button);
+        //         $compile(toolbar_button)(event.targetScope);
+        //     }
+        // })
     }
 ]);
 

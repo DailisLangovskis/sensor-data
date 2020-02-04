@@ -1,0 +1,38 @@
+<div class="card panel-default hs-main-panel">
+    <hs.layout.panel-header panel-name="sensor-data-collector" panel-title="'Sensor data collector'||translate">
+    </hs.layout.panel-header>
+    <div class="container-fluid">
+        <sens.sensor-row ng-repeat="sensorName in sensorList" sensor="sensorName">
+        </sens.sensor-row>
+        <div class="row" style="padding: 5px;">
+            <div class="col-6 offset-6 mb-2 text-right">
+                <button class="btn btn-success btn-sm" ng-click="addSensor()">ADD SENSOR</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-group m-1" ng-show="addSensorTabVisible">
+                <div class="input-group m-1">
+                    <input class="form-control" placeholder="Sensor name" ng-model="sensorName"></input>
+                </div>
+                <div class="input-group m-1">
+                    <input class="form-control" placeholder="Sensor type" ng-model="sensorType"></input>
+                </div>
+                <div class="input-group m-1">
+                    <input class="form-control" placeholder="Measured phenomenon" ng-model="phenomenon"></input>
+                </div>
+                <div class="input-group m-1">
+                    <input class="form-control" placeholder="Measuring unit" ng-model="phenomenonUnit"></input>
+                </div>
+            </div>
+        </div>
+        <div class="row" ng-show="sensorName && sensorType && phenomenon && phenomenonUnit">
+            <div class="col-6 mb-2 text-left">
+                <div class="btn-group">
+                    <button class="btn btn-primary btn-sm"
+                        ng-click="saveSensor(sensorName, sensorType, phenomenon, phenomenonUnit)"><i
+                            class="icon-save-floppy"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

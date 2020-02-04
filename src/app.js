@@ -40,7 +40,7 @@ var module = angular.module('hs', [
     'sens.sensorDataCollector'
 ]);
 
-module.directive('hs', ['config', 'Core', function (config, Core) {
+module.directive('hs', ['config', 'Core', 'hs.map.service', function (config, Core, hsMap) {
     return {
         template: Core.hslayersNgTemplate,
         link: function (scope, element) {
@@ -55,6 +55,16 @@ function getHostname() {
     var domain = urlArr[2];
     return urlArr[0] + "//" + domain;
 };
+var count = 10;
+var features = new Array(count);
+var e = 4500000;
+for (var i = 0; i < count; ++i) {
+    var coordinates = [2 * e * Math.random() - e, 2 * e * Math.random() - e];
+    features[i] = new Feature({
+        geometry: new Point(coordinates),
+        name: 'random' + [i]
+    });
+}
 
 module.value('config', {
     proxyPrefix: "/proxy/",
@@ -82,12 +92,10 @@ module.value('config', {
                 })
             }),
             source: new VectorSource({
-                features: [new Feature({
-                    geometry: new Point(transform([16.8290202, 49.0751890], 'EPSG:4326', 'EPSG:3857')),
-                    name: 'This is a point!',
-                })]
+                features: features
             }),
-            declutter: true
+             declutter: true,
+            cluster: true
         })
     ],
     project_name: 'erra/map',
@@ -130,15 +138,16 @@ module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service',
         //layoutService.sidebarToggleable = false;
         Core.singleDatasources = true;
         layoutService.sidebarButtons = true;
+       // layoutService.sidebarRight = true;
         layoutService.setDefaultPanel('layermanager');
         $scope.$on("scope_loaded", function (event, args) {
             if (args == 'Sidebar') {
                 var el = angular.element('<sens.sensor-data-collector hs.draggable ng-if="Core.exists(\'sens.sensorDataCollector\')" ng-show="panelVisible(\'sensor-data-collector\', this)"></sens.sensor-data-collector>')[0];
-                document.querySelector('#panelplace').appendChild(el);
+                layoutService.panelListElement.appendChild(el);
                 $compile(el)($scope);
 
                 var toolbar_button = angular.element('<div sens.sensor-data-collector.sidebar-btn></div>')[0];
-                document.querySelector('.sidebar-list').appendChild(toolbar_button);
+                layoutService.sidebarListElement.appendChild(toolbar_button);
                 $compile(toolbar_button)(event.targetScope);
             }
         })

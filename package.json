@@ -6,15 +6,19 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "node node_modules/hslayers-ng/scripts/bootstrap-isolate.js && node node_modules/webpack/bin/webpack.js --config src/webpack.dev.js",
-    "start": "http-server ./static -p 80",
+    "start": "http-server ./static -p 8082",
+    "dev": "node node_modules/webpack/bin/webpack.js --config src/webpack.dev.js --progress --watch",
     "serve": "npm run build && npm run start"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "cors-anywhere": "^0.4.1",
+    "express-promise-router": "^3.0.3",
+    "expressjs": "^1.0.1",
     "hslayers-ng": "^1.7.2",
     "http-server": "^0.11.1",
+    "pg": "^7.13.0",
     "vega": "^5.3.4",
     "vega-embed": "^4.0.0",
     "vega-lite": "^3.1.0"

@@ -9,21 +9,20 @@ import 'permalink.module';
 import 'info.module';
 import 'datasource-selector.module';
 import 'sidebar.module';
-import 'sensors.module';
 import 'draw.module';
-import { ImageWMS, ImageArcGISRest } from 'ol/source';
 import View from 'ol/View';
 import { transform, transformExtent } from 'ol/proj';
 import { Tile, Group, Image as ImageLayer } from 'ol/layer';
 import { TileWMS, WMTS, OSM, XYZ } from 'ol/source';
 import { Style, Icon, Stroke, Fill, Circle, Text } from 'ol/style';
-import datasourceList from './datasource-list';
+import Feature from 'ol/Feature';
+//import datasourceList from './datasource-list';
 import VectorLayer from 'ol/layer/Vector';
 import { Vector as VectorSource } from 'ol/source';
-import './analysis/analysis.module';
-import meteoLayers from './meteo-layers.js';
-import genLabelStyle from './gen-label-style';
-import vegetationLayers from './vegetation-layers-';
+import { Polygon, LineString, GeometryType, Point } from 'ol/geom';
+import './sensor-data-collector/sensor-data-collector.module';
+//import meteoLayers from './meteo-layers.js';
+//import vegetationLayers from './vegetation-layers-';
 
 var module = angular.module('hs', [
     'hs.sidebar',
@@ -38,11 +37,10 @@ var module = angular.module('hs', [
     'hs.save-map',
     'hs.measure',
     'hs.addLayers',
-    'hs.sensors',
-    'fie.analysis'
+    'sens.sensorDataCollector'
 ]);
 
-module.directive('hs', ['config', 'Core', function (config, Core) {
+module.directive('hs', ['config', 'Core', 'hs.map.service', function (config, Core, hsMap) {
     return {
         template: Core.hslayersNgTemplate,
         link: function (scope, element) {
@@ -57,38 +55,16 @@ function getHostname() {
     var domain = urlArr[2];
     return urlArr[0] + "//" + domain;
 };
-
-var labelStyle = genLabelStyle;
-
-var bookmarkStyle = [new Style({
-    fill: new Fill({
-        color: 'rgba(255, 255, 255, 0.2)'
-    }),
-    stroke: new Stroke({
-        color: '#e49905',
-        width: 2
-    }),
-    image: new Icon({
-        src: require('images/mrkr-bookmark.png'),
-        crossOrigin: 'anonymous',
-        anchor: [0.5, 1]
-    })
-}), labelStyle];
-
-var aoiStyle = [new Style({
-    fill: new Fill({
-        color: 'rgba(255, 255, 255, 0.2)'
-    }),
-    stroke: new Stroke({
-        color: '#4e7eda',
-        width: 2
-    }),
-    image: new Icon({
-        src: require('images/mrkr-interest.png'),
-        crossOrigin: 'anonymous',
-        anchor: [0.5, 1]
-    })
-}), labelStyle];
+var count = 10;
+var features = new Array(count);
+var e = 4500000;
+for (var i = 0; i < count; ++i) {
+    var coordinates = [2 * e * Math.random() - e, 2 * e * Math.random() - e];
+    features[i] = new Feature({
+        geometry: new Point(coordinates),
+        name: 'random' + [i]
+    });
+}
 
 module.value('config', {
     proxyPrefix: "/proxy/",
@@ -99,275 +75,29 @@ module.value('config', {
             base: true,
             removable: false
         }),
-        new Tile({
-            title: "Optiskā satelītkarte / Optical satellite basemap",
-            source: new XYZ({
-                attributions: '&copy; <a href="http://www.baltsat.lv/">Baltic Satellite Service</a>, <a href="https://www.esa.int/">European Space Agency - ESA</a>'
-                ,
-                url: '/proxy/https://api.forestradar.com/tiles-v1/zs-MaTDe4YUcXOuuMMgYyUj/optical/{z}/{x}/{y}.png',
-                tms: false,
-                maxZoom: 14
-            }),
-            base: true,
-            visible: true,
-            opacity: 1
-        }),
-        new Tile({
-
-            title: "Ielu karte / Street map:",
-            source: new XYZ({
-                attributions: '&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a> &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                ,
-                url: '/proxy/https://api.mapbox.com/styles/v1/recon517/ck0uew4wrgigc1dl7pkvnfmvi/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicmVjb241MTciLCJhIjoiY2l4cXBpbzZtMDAzNDMybDY2YnAzdjlndSJ9.MRq_ohDyD2x5t5DdlAwytA',
-                tms: false,
-                crossOrigin: true,
-
-            }),
-            base: true,
-            visible: true,
-            opacity: 1
-        }),
-        new Tile({
-            title: "Augsnes apakštips un sastāvs / Soil class:",
-            source: new XYZ({
-                attributions: '&copy; <a href="https://geolatvija.lv/geo/p/317">Zemkopības ministrija</a>'
-                ,
-                url: '/proxy/https://api.mapbox.com/styles/v1/recon517/ck0v9ehr90phy1cqzu3hzkmmc/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicmVjb241MTciLCJhIjoiY2l4cXBpbzZtMDAzNDMybDY2YnAzdjlndSJ9.MRq_ohDyD2x5t5DdlAwytA',
-                tms: false,
-            }),
-            visible: true,
-            opacity: 0.7
-        }),
-        new Tile({
-            title: "Zemes vērtējums / Land value:",
-            path: 'Other',
-            visible: false,
-            opacity: 0.7
-        }),
-        new Tile({
-            title: "Land value:",
-            source: new XYZ({
-                attributions: '&copy; <a href="https://geolatvija.lv/geo/p/317">Zemkopības ministrija</a>'
-                ,
-                url: '/proxy/https://api.mapbox.com/styles/v1/recon517/ck0vs82zx2pw51cmz4yjh73kn/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicmVjb241MTciLCJhIjoiY2l4cXBpbzZtMDAzNDMybDY2YnAzdjlndSJ9.MRq_ohDyD2x5t5DdlAwytA',
-                tms: false,
-            }),
-            visible: true,
-            opacity: 0.7
-        }),
-        new Tile({
-            title: "Ūdenstilpes un ūdensteces / Water bodies and rivers:",
-            source: new XYZ({
-                attributions: '&copy; <a href="https://opendata.lgia.gov.lv/zf_wp/index.php/2018/08/03/topografiska-karte-meroga-150-000-2-izdevums/">LĢIA</a>'
-                ,
-                url: '/proxy/https://api.mapbox.com/styles/v1/recon517/ck0sz2nv11nu91cqp4w4mdxrk/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicmVjb241MTciLCJhIjoiY2l4cXBpbzZtMDAzNDMybDY2YnAzdjlndSJ9.MRq_ohDyD2x5t5DdlAwytA',
-                tms: false,
-            }),
-            visible: true,
-            opacity: 1
-        }),
-        new Tile({
-            title: 'ZS "Vilciņi" robeža / ZS "Vilciņi" border:',
-            source: new XYZ({
-                url: '/proxy/https://api.mapbox.com/styles/v1/recon517/ck0udcjhj6zb61cqlcvtdirmq/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicmVjb241MTciLCJhIjoiY2l4cXBpbzZtMDAzNDMybDY2YnAzdjlndSJ9.MRq_ohDyD2x5t5DdlAwytA',
-                tms: false,
-            }),
-            visible: true,
-            opacity: 0.7
-        }),
-        new Tile({
-            title: "Optical satellite basemap (Vilcini, 2019-04-18)",
-            source: new XYZ({
-                attributions: '&copy; <a href="http://www.baltsat.lv/">Baltic Satellite Service</a>, <a href="https://www.esa.int/">European Space Agency - ESA</a>',
-                url: '/proxy/https://api.forestradar.com/tiles-v1/public/optical_20190418_tiles/{z}/{x}/{y}.png',
-                tms: false,
-                crossOrigin: true,
-
-            }),
-            maxZoom: 14,
-            minZoom: 12,
-            base: true,
-            visible: false,
-            opacity: 1
-        }),
-        new Tile({
-            title: "Optical satellite basemap (Vilcini, 2019-05-30)",
-            source: new XYZ({
-                attributions: '&copy; <a href="http://www.baltsat.lv/">Baltic Satellite Service</a>, <a href="https://www.esa.int/">European Space Agency - ESA</a>',
-                url: '/proxy/https://api.forestradar.com/tiles-v1/public/optical_20190530_tiles/{z}/{x}/{y}.png',
-                tms: false,
-                crossOrigin: true,
-
-            }),
-            maxZoom: 14,
-            minZoom: 12,
-            base: true,
-            visible: false,
-            opacity: 1
-        }),
-        new Tile({
-            title: "Optical satellite basemap (Vilcini, 2019-06-04)",
-            source: new XYZ({
-                attributions: '&copy; <a href="http://www.baltsat.lv/">Baltic Satellite Service</a>, <a href="https://www.esa.int/">European Space Agency - ESA</a>',
-                url: '/proxy/https://api.forestradar.com/tiles-v1/public/optical_20190604_tiles/{z}/{x}/{y}.png',
-                tms: false,
-                crossOrigin: true,
-
-            }),
-            maxZoom: 14,
-            minZoom: 12,
-            base: true,
-            visible: false,
-            opacity: 1
-        }),
-        new Tile({
-            title: "Optical satellite basemap (Vilcini, 2019-06-24)",
-            source: new XYZ({
-                attributions: '&copy; <a href="http://www.baltsat.lv/">Baltic Satellite Service</a>, <a href="https://www.esa.int/">European Space Agency - ESA</a>',
-                url: '/proxy/https://api.forestradar.com/tiles-v1/public/optical_20190624_tiles/{z}/{x}/{y}.png',
-                tms: false,
-                crossOrigin: true,
-
-            }),
-            maxZoom: 14,
-            minZoom: 12,
-            base: true,
-            visible: false,
-            opacity: 1
-        }),
-        new Tile({
-            title: "Optical satellite basemap (Vilcini, 2019-07-19)",
-            source: new XYZ({
-                attributions: '&copy; <a href="http://www.baltsat.lv/">Baltic Satellite Service</a>, <a href="https://www.esa.int/">European Space Agency - ESA</a>',
-                url: '/proxy/https://api.forestradar.com/tiles-v1/public/optical_20190719_tiles/{z}/{x}/{y}.png',
-                tms: false,
-                crossOrigin: true,
-
-            }),
-            maxZoom: 14,
-            minZoom: 12,
-            base: true,
-            visible: false,
-            opacity: 1
-        }),
-        new Tile({
-            title: "Optical satellite basemap (Vilcini, 2019-08-23)",
-            source: new XYZ({
-                attributions: '&copy; <a href="http://www.baltsat.lv/">Baltic Satellite Service</a>, <a href="https://www.esa.int/">European Space Agency - ESA</a>',
-                url: '/proxy/https://api.forestradar.com/tiles-v1/public/optical_20190823_tiles/{z}/{x}/{y}.png',
-                tms: false,
-                crossOrigin: true,
-
-            }),
-            maxZoom: 14,
-            minZoom: 12,
-            base: true,
-            visible: false,
-            opacity: 1
-        }),
-        new Tile({
-            title: "Optical satellite basemap (Vilcini, 2019-09-05)",
-            source: new XYZ({
-                attributions: '&copy; <a href="http://www.baltsat.lv/">Baltic Satellite Service</a>, <a href="https://www.esa.int/">European Space Agency - ESA</a>',
-                url: '/proxy/https://api.forestradar.com/tiles-v1/public/optical_20190905_tiles/{z}/{x}/{y}.png',
-                tms: false,
-                crossOrigin: true,
-
-            }),
-            maxZoom: 14,
-            minZoom: 12,
-            base: true,
-            visible: false,
-            opacity: 1
-        }),
-        new Tile({
-            title: "Optical satellite basemap (Vilcini, 2019-09-27)",
-            source: new XYZ({
-                attributions: '&copy; <a href="http://www.baltsat.lv/">Baltic Satellite Service</a>, <a href="https://www.esa.int/">European Space Agency - ESA</a>',
-                url: '/proxy/https://api.forestradar.com/tiles-v1/public/optical_20190927_tiles/{z}/{x}/{y}.png',
-                tms: false,
-                crossOrigin: true,
-
-            }),
-            base: true,
-            visible: false,
-            opacity: 1
-        }),
-    ]
-        .concat(vegetationLayers)
-        .concat([
-            new Tile({
-                title: "Water bodies and rivers",
-                source: new XYZ({
-                    attributions: '&copy; <a href="https://opendata.lgia.gov.lv/zf_wp/index.php/2018/08/03/topografiska-karte-meroga-150-000-2-izdevums/">LĢIA</a>'
-                    ,
-                    url: '/proxy/https://api.mapbox.com/styles/v1/recon517/ck0sz2nv11nu91cqp4w4mdxrk/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicmVjb241MTciLCJhIjoiY2l4cXBpbzZtMDAzNDMybDY2YnAzdjlndSJ9.MRq_ohDyD2x5t5DdlAwytA',
-                    tms: false,
+        new VectorLayer({
+            title: 'Test',
+            style: new Style({
+                fill: new Fill({
+                    color: 'rgba(255, 128, 123, 0.2)'
                 }),
-                path: 'Other',
-                visible: true,
-                opacity: 1
-            }),
-            new Tile({
-                title: 'ZS "Vilciņi" border',
-                source: new XYZ({
-                    url: '/proxy/https://api.mapbox.com/styles/v1/recon517/ck0udcjhj6zb61cqlcvtdirmq/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicmVjb241MTciLCJhIjoiY2l4cXBpbzZtMDAzNDMybDY2YnAzdjlndSJ9.MRq_ohDyD2x5t5DdlAwytA',
-                    tms: false,
+                stroke: new Stroke({
+                    color: '#e49905',
+                    width: 2
                 }),
-                path: 'Other',
-                visible: true,
-                opacity: 0.7
+                image: new Icon({
+                    src: require('images/mrkr-bookmark.png'),
+                    crossOrigin: 'anonymous',
+                    anchor: [0.5, 1]
+                })
             }),
-            new Tile({
-                title: 'Natura-2000 protected areas',
-                source: new XYZ({
-                    url: '/proxy/https://api.mapbox.com/styles/v1/recon517/ck0yrgg0l0o2s1dnwgm3dc3ng/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicmVjb241MTciLCJhIjoiY2l4cXBpbzZtMDAzNDMybDY2YnAzdjlndSJ9.MRq_ohDyD2x5t5DdlAwytA',
-                    tms: false,
-                }),
-                path: 'Other',
-                visible: true,
-                opacity: 0.7
-            })
-        ])
-        .concat(meteoLayers)
-        .concat([
-            new VectorLayer({
-                title: 'Bookmarks',
-                synchronize: true,
-                editor: {
-                    editable: true,
-                    defaultAttributes: {
-                        name: 'New bookmark',
-                        description: 'none'
-                    }
-                },
-                path: 'User generated',
-                source: new VectorSource({}),
-                style: function (feature) {
-                    labelStyle.getText().setText(feature.get('name'));
-                    return bookmarkStyle;
-                },
-                //declutter: true
+            source: new VectorSource({
+                features: features
             }),
-            new VectorLayer({
-                title: 'Areas of interest',
-                synchronize: true,
-                editor: {
-                    editable: true,
-                    defaultAttributes: {
-                        name: 'New area',
-                        description: 'none'
-                    }
-                },
-                path: 'User generated',
-                source: new VectorSource({}),
-                style: function (feature) {
-                    labelStyle.getText().setText(feature.get('name'));
-                    return aoiStyle;
-                },
-                //declutter: true
-            })
-        ]),
+             declutter: true,
+            cluster: true
+        })
+    ],
     project_name: 'erra/map',
     default_view: new View({
         center: transform([23.3885193, 56.4769034], 'EPSG:4326', 'EPSG:3857'), //Latitude longitude    to Spherical Mercator
@@ -375,7 +105,6 @@ module.value('config', {
         units: "m"
     }),
     advanced_form: true,
-    datasources: datasourceList,
     hostname: {
         "default": {
             "title": "Default",
@@ -398,7 +127,7 @@ module.value('config', {
         group: 'kynsperk', //Needed for MapLogOT
         user: 'kynsperk' //Needed for MapLogOT
     }
-    //,datasource_selector: {allow_add: false}
+
 });
 
 module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service',
@@ -409,15 +138,16 @@ module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service',
         //layoutService.sidebarToggleable = false;
         Core.singleDatasources = true;
         layoutService.sidebarButtons = true;
+       // layoutService.sidebarRight = true;
         layoutService.setDefaultPanel('layermanager');
         $scope.$on("scope_loaded", function (event, args) {
             if (args == 'Sidebar') {
-                var el = angular.element('<fie.analysis hs.draggable ng-if="Core.exists(\'fie.analysis\')" ng-show="panelVisible(\'analysis\', this)"></fie.analysis>')[0];
-                document.querySelector('#panelplace').appendChild(el);
+                var el = angular.element('<sens.sensor-data-collector hs.draggable ng-if="Core.exists(\'sens.sensorDataCollector\')" ng-show="panelVisible(\'sensor-data-collector\', this)"></sens.sensor-data-collector>')[0];
+                layoutService.panelListElement.appendChild(el);
                 $compile(el)($scope);
 
-                var toolbar_button = angular.element('<div fie.analysis.sidebar-btn></div>')[0];
-                document.querySelector('.sidebar-list').appendChild(toolbar_button);
+                var toolbar_button = angular.element('<div sens.sensor-data-collector.sidebar-btn></div>')[0];
+                layoutService.sidebarListElement.appendChild(toolbar_button);
                 $compile(toolbar_button)(event.targetScope);
             }
         })

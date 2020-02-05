@@ -6,8 +6,10 @@ const db = require('../db')
 const router = new Router()
 // export our router to be mounted by the parent application
 module.exports = router
-router.get('/:id', async (req, res) => {
-  const { id } = req.params
-  const { rows } = await db.query('SELECT * FROM units')
-  res.send(rows[0])
-})
+router.get('/', async (req, res) => {
+  // const params = req.body;
+  // const q = 'INSERT INTO sensors(name, type) values($1, $2)'
+  // const data = [params.name, params.type]
+  // const { rows } = await db.query(q, data);
+  res.send('Hello world!');
+});

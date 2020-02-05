@@ -10,6 +10,9 @@ export default {
             measuredValue: '',
             dataTabExpanded: false,
             dataRequest() {
+               
+            },
+            addData(){
                 $scope.dataTabExpanded = !$scope.dataTabExpanded;
             },
             saveData(measurement, measuredValue){

@@ -17,6 +17,12 @@ export default {
                         alert("Sensor names cannot be the same")
                         return;
                     } else {
+                        var data = [sensorName, sensorType, phenomenon, phenomenonUnit];
+                        $http.post('/api/sensor', data).then(function success(){
+                            console.log("Success!");
+                        }), function error(){
+                            console.log("Error!");
+                        };
                         $scope.sensorList.push(sensorName);
                         console.log(sensorName, sensorType, phenomenon, phenomenonUnit);
                         console.log($scope.sensorList)
@@ -29,13 +35,6 @@ export default {
 
                 }
             })
-            // $scope.retreiveData = function () {
-            //     $http.post("/api", { test: new Date(), value: 123 }, {
-
-            //     }).then(function (response) {
-            //         debugger;
-            //     });
-            // }
         }
     ]
 }

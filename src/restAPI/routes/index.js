@@ -1,8 +1,13 @@
 // ./routes/index.js
-const users = require('./user')
+const api = require('./api.v0')
 
 module.exports = app => {
-  app.use('/users', users)
+  app.use('/api', api)
 
+  app.use((req, res) => {
+    res.status(404)
+      .send('Unknown Request')
+  })
   // etc..
 }
+

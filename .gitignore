@@ -5,3 +5,4 @@ layman_data
 tmp
 static.zip
 launch.json
+.env

@@ -65,6 +65,11 @@ for (var i = 0; i < count; ++i) {
         name: 'random' + [i]
     });
 }
+var bookmarkSource = new VectorSource({
+    features: features
+});
+
+import bookMarkIcon from 'images/mrkr-bookmark.png';
 
 module.value('config', {
     proxyPrefix: "/proxy/",
@@ -86,14 +91,12 @@ module.value('config', {
                     width: 2
                 }),
                 image: new Icon({
-                    src: require('images/mrkr-bookmark.png'),
+                    src: bookMarkIcon,
                     crossOrigin: 'anonymous',
                     anchor: [0.5, 1]
                 })
             }),
-            source: new VectorSource({
-                features: features
-            }),
+            source: bookmarkSource,
              declutter: true,
             cluster: true
         })
@@ -146,7 +149,7 @@ module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service',
                 layoutService.panelListElement.appendChild(el);
                 $compile(el)($scope);
 
-                var toolbar_button = angular.element('<div sens.sensor-data-collector.sidebar-btn></div>')[0];
+                var toolbar_button = angular.element('<sens.sensor-data-collector.sidebar-btn>')[0];
                 layoutService.sidebarListElement.appendChild(toolbar_button);
                 $compile(toolbar_button)(event.targetScope);
             }

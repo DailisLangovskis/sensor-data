@@ -10,12 +10,12 @@ export default {
             measuredValue: '',
             dataTabExpanded: false,
             dataRequest() {
-               
+
             },
-            addData(){
+            addData() {
                 $scope.dataTabExpanded = !$scope.dataTabExpanded;
             },
-            saveData(measurement, measuredValue){
+            saveData(measurement, measuredValue) {
                 console.log(measurement, measuredValue);
                 $scope.dataTabExpanded = !$scope.dataTabExpanded;
                 $scope.measurement = '';

@@ -1,6 +1,6 @@
-<a href="#" class="hs-sidebar-item list-group-item" ng-if="Core.exists('sens.sensorDataCollector')"
+<a href="#" class="hs-sidebar-item list-group-item flex-fill" ng-if="Core.exists('sens.sensorDataCollector')"
     ng-click="setMainPanel('sensor-data-collector')" title="{{'Collect sensor data'|translate}}"
-    ng-class="{active: Core.mainpanel == 'sensor-data-collector'}">
+    ng-class="{active: layoutService.mainpanel == 'sensor-data-collector', 'hs-panel-hidden': fitsSidebar(sensor-data-collector)}">
     <span class="menu-icon icon-signal"></span>
     <span class="hs-sidebar-item-title" translate>Sensor data collector</span>
 </a>

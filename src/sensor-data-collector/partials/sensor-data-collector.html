@@ -2,11 +2,26 @@
     <hs.layout.panel-header panel-name="sensor-data-collector" panel-title="'Sensor data collector'||translate">
     </hs.layout.panel-header>
     <div class="container-fluid">
-        <sens.sensor-row ng-repeat="sensorName in sensorList" sensor="sensorName">
-        </sens.sensor-row>
-        <div class="row" style="padding: 5px;">
-            <div class="col-6 offset-6 mb-2 text-right">
+        <div ng-show="sensorsTabVisible">
+            <div class="row">
+                <div class="col">
+                    <button type="button" class="m-1 btn btn-secondary btn-sm" ng-click="selectDeselectAllSensors()"
+                        translate>Toggle all</button>
+                </div>
+            </div>
+            <sens.sensor-row ng-repeat="sensor in sensorService.sensorNames" sensor="sensor">
+            </sens.sensor-row>
+            <div class="col-12 m-1 text-right">
+                <div class="btn-group">
+                    <button class="btn btn-danger btn-sm" ng-click="deleteSelectedSensors()"><i
+                            class="icon-trash"></i></button>
+                </div>
+            </div>
+        </div>
+        <div style="padding: 5px;" class="col-3 offset-3 text-right">
+            <div class="btn-group">
                 <button class="btn btn-success btn-sm" ng-click="addSensor()">ADD SENSOR</button>
+                <button class="btn btn-secondary btn-sm" ng-click="showSensors()">SHOW EXISTING</button>
             </div>
         </div>
         <div class="row">
@@ -18,18 +33,17 @@
                     <input class="form-control" placeholder="Sensor type" ng-model="sensorType"></input>
                 </div>
                 <div class="input-group m-1">
-                    <input class="form-control" placeholder="Measured phenomenon" ng-model="phenomenon"></input>
-                </div>
-                <div class="input-group m-1">
-                    <input class="form-control" placeholder="Measuring unit" ng-model="phenomenonUnit"></input>
+                    <select class="form-control" placeholder="phenomena" ng-model="phenomena">
+                        <option ng-repeat="phenomena in sensorService.phenomenas">{{phenomena.phenomenon_name}}
+                        </option>
+                    </select>
                 </div>
             </div>
         </div>
-        <div class="row" ng-show="sensorName && sensorType && phenomenon && phenomenonUnit">
+        <div class="row" ng-show="sensorName && sensorType && phenomena">
             <div class="col-6 mb-2 text-left">
                 <div class="btn-group">
-                    <button class="btn btn-primary btn-sm"
-                        ng-click="saveSensor(sensorName, sensorType, phenomenon, phenomenonUnit)"><i
+                    <button class="btn btn-primary btn-sm" ng-click="saveSensor(sensorName, sensorType, phenomena)"><i
                             class="icon-save-floppy"></i></button>
                 </div>
             </div>

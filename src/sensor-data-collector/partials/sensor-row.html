@@ -1,34 +1,36 @@
 <div class="row">
-    <div class="input-group m-1">
-        <div class="input-group-prepend">
-            <span class="input-group-text">Name: {{$ctrl.sensor}}</span>
+    <div class="col m-1">
+        <div class="input-group m-2 p-1">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" ng-model="$ctrl.sensor.checked" />
+                <label class="form-check-label">{{$ctrl.sensor.sensor_name}}</label>
+            </div>
         </div>
     </div>
-</div>
-<div class="row" style="padding-left: 10px">
-    <div class="col-6 offset-6 mb-2 text-right">
+    <div class="col-6 m-1 pt-2 text-right">
         <div class="btn-group">
-            <button class="btn btn-secondary btn-sm" ng-click="addData()"><i
+            <button class="btn btn-secondary btn-sm" title="Add new measurement" ng-click="addData($ctrl.sensor)"><i
                     class="icon-calcplus"></i></button>
-            <button class="btn btn-primary btn-sm" ng-click="dataRequest()"><i class="icon-search"></i></button>
+            <button class="btn btn-primary btn-sm" title="Search for measurement data"
+                ng-click="dataRequest($ctrl.sensor)"><i class="icon-search"></i></button>
         </div>
     </div>
 </div>
+
 <div ng-show="dataTabExpanded">
     <div class="row">
-        <div class="input-group m-1">
+        <div class="input-group m-1 p-1">
             <input class="form-control" placeholder="Measurement" ng-model="measurement"></input>
         </div>
-        <div class="input-group m-1">
+        <div class="input-group m-1 p-1">
             <input class="form-control" placeholder="measured value" ng-model="measuredValue"></input>
         </div>
     </div>
     <div class="row" ng-show="measurement && measuredValue">
         <div class="col-6 mb-2 text-left">
             <div class="btn-group">
-                <button class="btn btn-primary btn-sm"
-                    ng-click="saveData(measurement, measuredValue)"><i
-                        class="icon-save-floppy"></i></button>
+                <button class="btn btn-primary btn-sm" title="Delete all selected sensors!"
+                    ng-click="saveData(measurement, measuredValue)"><i class="icon-save-floppy"></i></button>
             </div>
         </div>
     </div>

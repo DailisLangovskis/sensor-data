@@ -12,7 +12,8 @@ export default {
             dataRequest() {
 
             },
-            addData() {
+            addData(sensorName) {
+                console.log(sensorName)
                 $scope.dataTabExpanded = !$scope.dataTabExpanded;
             },
             saveData(measurement, measuredValue) {

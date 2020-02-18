@@ -10,19 +10,19 @@ export default {
                 sensorsTabVisible: false,
                 sensorName: '',
                 sensorType: '',
-                phenomena: '',
+                phenomenaId: '',
                 addSensor() {
                     $scope.addSensorTabVisible = !$scope.addSensorTabVisible
                 },
                 showSensors() {
                     $scope.sensorsTabVisible = !$scope.sensorsTabVisible
                 },
-                saveSensor(sensorName, sensorType, phenomena) {
-                    sensorService.saveSensors(sensorName, sensorType, phenomena);
+                saveSensor(sensorName, sensorType, phenomenaId) {
+                    sensorService.saveSensors(sensorName, sensorType, phenomenaId);
                     $scope.addSensorTabVisible = !$scope.addSensorTabVisible;
                     $scope.sensorName = '';
                     $scope.sensorType = '';
-                    $scope.phenomena = '';
+                    $scope.phenomenaId = '';
                 }
             })
         }

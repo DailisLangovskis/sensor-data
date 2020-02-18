@@ -4,22 +4,29 @@ export default {
         sensor: '=',
 
     },
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', 'sens.sensorDataCollector.service', function ($scope, sensorService) {
         angular.extend($scope, {
-            measurement: '',
+            phenomena: '',
+            sensorType: '',
             measuredValue: '',
+            measurementTime: '',
             dataTabExpanded: false,
-            dataRequest() {
-
+            dataRequest(sensorClicked) {
+                console.log($scope.time);
             },
-            addData(sensorName) {
-                console.log(sensorName)
+            addData(sensorClicked) {
+                sensorService.getSelectedPhenomena(sensorClicked)
+                    .then(_ => {
+                        $scope.phenomena = sensorService.phenomena;
+                    })
+                    .catch(function (error) {
+                        console.error("Error!", error);
+                    })
+                $scope.sensorType = sensorClicked.sensor_type;
                 $scope.dataTabExpanded = !$scope.dataTabExpanded;
             },
-            saveData(measurement, measuredValue) {
-                console.log(measurement, measuredValue);
+            saveData(measuredValue) {
                 $scope.dataTabExpanded = !$scope.dataTabExpanded;
-                $scope.measurement = '';
                 $scope.measuredValue = '';
             }
         });

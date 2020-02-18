@@ -28,6 +28,7 @@
     "helmet": "^3.21.2",
     "hslayers-ng": "^1.11.0",
     "http-server": "^0.12.1",
+    "moment": "^2.24.0",
     "momentum": "^4.0.0",
     "nodemon": "^2.0.2",
     "pg": "^7.18.1",

@@ -9,7 +9,7 @@
                         translate>Toggle all</button>
                 </div>
             </div>
-            <sens.sensor-row ng-repeat="sensor in sensorService.sensorNames" sensor="sensor">
+            <sens.sensor-row ng-repeat="sensor in sensorService.sensors" sensor="sensor">
             </sens.sensor-row>
             <div class="col-12 m-1 text-right">
                 <div class="btn-group">
@@ -33,17 +33,16 @@
                     <input class="form-control" placeholder="Sensor type" ng-model="sensorType"></input>
                 </div>
                 <div class="input-group m-1">
-                    <select class="form-control" placeholder="phenomena" ng-model="phenomena">
-                        <option ng-repeat="phenomena in sensorService.phenomenas">{{phenomena.phenomenon_name}}
-                        </option>
+                    <select class="form-control" ng-model="phenomenaId"
+                        ng-options="ph.id as ph.phenomenon_name for ph in sensorService.phenomenas">
                     </select>
                 </div>
             </div>
         </div>
-        <div class="row" ng-show="sensorName && sensorType && phenomena">
+        <div class="row" ng-show="sensorName && sensorType && phenomenaId">
             <div class="col-6 mb-2 text-left">
                 <div class="btn-group">
-                    <button class="btn btn-primary btn-sm" ng-click="saveSensor(sensorName, sensorType, phenomena)"><i
+                    <button class="btn btn-primary btn-sm" ng-click="saveSensor(sensorName, sensorType, phenomenaId)"><i
                             class="icon-save-floppy"></i></button>
                 </div>
             </div>

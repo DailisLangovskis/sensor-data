@@ -14,6 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@bevacqua/rome": "^3.0.3",
     "async": "^3.1.1",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
@@ -27,6 +28,7 @@
     "helmet": "^3.21.2",
     "hslayers-ng": "^1.11.0",
     "http-server": "^0.12.1",
+    "momentum": "^4.0.0",
     "nodemon": "^2.0.2",
     "pg": "^7.18.1",
     "vega": "^5.9.1",

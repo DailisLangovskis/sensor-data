@@ -10,20 +10,21 @@ const router = new Router();
 module.exports = router
 router.use(bodyparser());
 router.post('/data', addSensorDataHandler)
-router.delete('/delete', deleteSensorsHandler)
+router.get('/phenomena/:id', getPhenomenaDataHandler)
+router.post('/delete', deleteSensorsHandler)
 router.get('/data', async (req, res) => {
     try {
         console.log('Get list');
-        const { rows } = await db.query('SELECT sensor_name,sensor_id FROM sensors')
+        const { rows } = await db.query('SELECT sensor_name,sensor_id,sensor_type FROM sensors')
         res.send(rows)
     } catch (e) {
         console.log(e.stack)
     }
 })
 function addSensorDataHandler(req, res) {
-    var insertSensor = 'INSERT INTO sensors(sensor_name, sensor_type) VALUES ($1,$2)';
+    var insertSensor = 'INSERT INTO sensors(sensor_name, sensor_type,phenomena_id) VALUES ($1,$2,$3)';
     try {
-        db.query(insertSensor, [req.body.name, req.body.type])
+        db.query(insertSensor, [req.body.name, req.body.type, req.body.phenomenaId])
             .then(_ => {
                 res.send('Insert completed!');
             })
@@ -33,15 +34,27 @@ function addSensorDataHandler(req, res) {
     }
 }
 function deleteSensorsHandler(req, res) {
-    console.log(req.body);
-    // var deleteSensor = 'DELETE FROM sensors WHERE sensor_id IN (SELECT sensor_id FROM )';
-    // try {
-    //     db.query(deleteSensor, [req.body])
-    //         .then(_ => {
-    //             res.send('Delete completed!');
-    //         })
-    //         .catch(e => console.log(e.stack))
-    // } catch (e) {
-    //     console.log(e.stack);
-    // }
+    var id = req.body.params.join(',');
+    var deleteSensor = 'DELETE FROM sensors WHERE sensor_id IN ('+id+')';
+    try {
+        db.query(deleteSensor)
+            .then(_ => {
+                res.send('Delete completed!');
+            })
+            .catch(e => console.log(e.stack))
+    } catch (e) {
+        console.log(e.stack);
+    }
+}
+ async function getPhenomenaDataHandler(req, res) {
+    var id = req.params.id;
+    console.log(id);
+    var selectPhenomena = 'Select phenomenons.phenomenon_name FROM sensors INNER JOIN phenomenons ON sensors.phenomena_id = phenomenons.id WHERE sensor_id = ('+id+') ';
+    try {
+        const { rows } = await db.query(selectPhenomena)
+        console.log(rows);
+        res.send(rows);
+    } catch (e) {
+        console.log(e.stack);
+    }
 }

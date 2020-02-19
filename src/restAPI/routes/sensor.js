@@ -48,11 +48,9 @@ function deleteSensorsHandler(req, res) {
 }
  async function getPhenomenaDataHandler(req, res) {
     var id = req.params.id;
-    console.log(id);
-    var selectPhenomena = 'Select phenomenons.phenomenon_name FROM sensors INNER JOIN phenomenons ON sensors.phenomena_id = phenomenons.id WHERE sensor_id = ('+id+') ';
+    var selectPhenomena = 'Select phenomenons.phenomenon_name, phenomenons.unit FROM sensors INNER JOIN phenomenons ON sensors.phenomena_id = phenomenons.id WHERE sensor_id = ('+id+') ';
     try {
         const { rows } = await db.query(selectPhenomena)
-        console.log(rows);
         res.send(rows);
     } catch (e) {
         console.log(e.stack);

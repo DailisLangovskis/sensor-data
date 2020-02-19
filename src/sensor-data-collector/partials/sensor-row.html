@@ -23,20 +23,42 @@
             <input class="form-control" placeholder="sensor type" ng-model="sensorType" readonly></input>
         </div>
         <div class="input-group m-1 p-1">
-            <input class="form-control" placeholder="Phenomena" ng-model="phenomena" readonly></input>
+            <input class="form-control" placeholder="Phenomena" ng-model="phenomena[0].phenomenon_name"
+                readonly></input>
         </div>
-        <div class="input-group m-1 p-1">
+
+        <div class="input-group m-1">
+            <select class="form-control"
+                ng-options="sr.srid as sr.auth_srid for sr in  sensorService.refSys | filter:search" ng-model="refSys">
+                <input class="p-1" style="width: 50%;" type="text" placeholder="filter" ng-model="search">
+            </select>
+            <div class="input-group-append">
+                <span class="input-group-text">EPSG</span>
+            </div>
+        </div>
+        <div class="input-group m-1 p-1" ng-hide="phenomena[0].phenomenon_name == 'Location'">
             <input class="form-control" placeholder="measured value" ng-model="measuredValue"></input>
+            <div class="input-group-append">
+                <span class="input-group-text">{{phenomena[0].unit}}</span>
+            </div>
+        </div>
+        <div class="input-group m-1 p-1" ng-show="phenomena[0].phenomenon_name == 'Location'">
+            <div class="input-group-prepend m-1">
+                <button class="btn btn-primary btn-sm" title="Get Location" ng-click=""><i
+                        class="icon-map"></i></button>
+            </div>
+            <input class="form-control" placeholder="measured value" ng-model="measuredValue" readonly></input>
         </div>
         <div class="input-group m-1 p-1">
             <input class="form-control" type="datetime-local" ng-model="measurementTime"></input>
         </div>
     </div>
-    <div class="row" ng-show="phenomena && measuredValue">
+    <div class="row" ng-show="phenomena && measuredValue && measurementTime && refSys">
         <div class="col-6 mb-2 text-left">
             <div class="btn-group">
                 <button class="btn btn-primary btn-sm" title="Delete all selected sensors!"
-                    ng-click="saveData(measuredValue)"><i class="icon-save-floppy"></i></button>
+                    ng-click="saveData(measuredValue, measurementTime, refSys)"><i
+                        class="icon-save-floppy"></i></button>
             </div>
         </div>
     </div>

@@ -1,6 +1,7 @@
 const Router = require('express-promise-router')
 const sensor = require('./sensor')
 const phenomena = require('./phenomena')
+const refSys = require('./ref-sys')
 const rateLimit = require('express-rate-limit');
 // create a new express-promise-router
 // this has the same API as the normal express router except
@@ -17,3 +18,4 @@ router.get('/', (req, res) => {
 });
 router.use('/sensor', postLimiter, sensor);
 router.use('/phenomena', postLimiter, phenomena);
+router.use('/ref-sys', postLimiter, refSys);

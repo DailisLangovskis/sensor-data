@@ -9,6 +9,7 @@ export default ['$http',
             sensors: [],
             phenomenas: [],
             phenomena: '',
+            refSys: [],
             selectDeselectAllSensors() {
                 me.btnSelectDeseletClicked = !me.btnSelectDeseletClicked;
                 me.sensors.forEach(sensor => sensor.checked = me.btnSelectDeseletClicked);
@@ -31,12 +32,23 @@ export default ['$http',
                         console.error("Error!", error);
                     });
             },
+            getReferencingSystems: function () {
+                $http.get('http://localhost:8099/api/ref-sys/data')
+                    .then(function success(response) {
+                        return response.data
+                    }). then (function(response){
+                        me.refSys = response;
+                    })
+                    .catch(function (error) {
+                        console.error("Error!", error);
+                    });
+            },
             getSelectedPhenomena: function (sensorSelected) {
                 return $http.get('http://localhost:8099/api/sensor/phenomena/' + sensorSelected.sensor_id)
                     .then(function success(response) {
                         return response.data;
                     }).then(function (response) {
-                        me.phenomena = response.map(name => name.phenomenon_name);
+                        me.phenomena = response;
                     })
                     .catch(function (error) {
                         console.error("Error!", error);
@@ -74,6 +86,7 @@ export default ['$http',
                 }
             },
         })
+        me.getReferencingSystems();
         me.getSensors();
         me.getPhenomenas();
     }

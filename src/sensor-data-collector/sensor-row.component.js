@@ -1,3 +1,4 @@
+import moment, { now } from 'moment';
 export default {
     template: require('./partials/sensor-row.html'),
     bindings: {
@@ -6,11 +7,14 @@ export default {
     },
     controller: ['$scope', 'sens.sensorDataCollector.service', function ($scope, sensorService) {
         angular.extend($scope, {
+            sensorService,
             phenomena: '',
             sensorType: '',
             measuredValue: '',
-            measurementTime: '',
+            measurementTime: new Date(),
             dataTabExpanded: false,
+            search: '',
+            refSys: '',
             dataRequest(sensorClicked) {
                 console.log($scope.time);
             },
@@ -25,9 +29,13 @@ export default {
                 $scope.sensorType = sensorClicked.sensor_type;
                 $scope.dataTabExpanded = !$scope.dataTabExpanded;
             },
-            saveData(measuredValue) {
+            saveData(measuredValue, time,referencingSystem) {
+                time = moment.moment(time).format("YYYY-MM-DD HH:mm:ssZ");
+                console.log(time);
                 $scope.dataTabExpanded = !$scope.dataTabExpanded;
                 $scope.measuredValue = '';
+                $scope.refSys = '';
+                $scope.search = '';
             }
         });
     }]

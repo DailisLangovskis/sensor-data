@@ -18,11 +18,14 @@ export default {
                     $scope.sensorsTabVisible = !$scope.sensorsTabVisible
                 },
                 saveSensor(sensorName, sensorType, phenomenaId) {
-                    sensorService.saveSensors(sensorName, sensorType, phenomenaId);
-                    $scope.addSensorTabVisible = !$scope.addSensorTabVisible;
-                    $scope.sensorName = '';
-                    $scope.sensorType = '';
-                    $scope.phenomenaId = '';
+                    sensorService.saveSensors(sensorName, sensorType, phenomenaId).then(function (response) {
+                        if (response == false) {
+                            $scope.addSensorTabVisible = !$scope.addSensorTabVisible;
+                            $scope.sensorName = '';
+                            $scope.sensorType = '';
+                            $scope.phenomenaId = '';
+                        }
+                    })
                 }
             })
         }

@@ -10,8 +10,7 @@ const router = new Router();
 module.exports = router
 router.use(bodyparser());
 router.get('/data', async (req, res) => {
-    try {
-        console.log('Get list');           
+    try {           
         const { rows } = await db.query('SELECT phenomenon_name,unit,id FROM phenomenons')
         res.send(rows)
     } catch (e) {

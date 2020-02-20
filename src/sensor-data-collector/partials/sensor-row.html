@@ -27,7 +27,7 @@
                 readonly></input>
         </div>
 
-        <div class="input-group m-1">
+        <div class="input-group m-1 p-1">
             <select class="form-control"
                 ng-options="sr.srid as sr.auth_srid for sr in  sensorService.refSys | filter:search" ng-model="refSys">
                 <input class="p-1" style="width: 50%;" type="text" placeholder="filter" ng-model="search">
@@ -46,6 +46,7 @@
             <input class="form-control" type="datetime-local" ng-model="measurementTime"></input>
         </div>
         <div class="input-group m-1 p-1" ng-show="phenomena[0].phenomenon_name == 'Location'">
+            <span style="text-align: center; background-color: rgba(115, 219, 160, 0.4);">Click on the map and press map button to set location</span>
             <div class="input-group-prepend m-1">
                 <button class="btn btn-primary btn-sm" title="Get Location" ng-click="getLocationFromMap()"><i
                         class="icon-map"></i></button>

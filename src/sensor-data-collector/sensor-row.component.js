@@ -1,9 +1,10 @@
 import moment from 'moment';
 import Map from 'ol/Map';
+import { toStringHDMS, createStringXY } from 'ol/coordinate';
 import { Tile, Group, Image as ImageLayer } from 'ol/layer';
 import { TileWMS, WMTS, OSM, XYZ } from 'ol/source';
+import { transform, transformExtent } from 'ol/proj';
 import View from 'ol/View';
-import { fromLonLat } from 'ol/proj';
 export default {
     template: require('./partials/sensor-row.html'),
     bindings: {
@@ -36,9 +37,19 @@ export default {
                 });
             },
             dataRequest(sensorClicked) {
-                console.log($scope.time);
+                console.log($scope.measurementTime);
             },
             getLocationFromMap() {
+                if (angular.isUndefined(!queryBaseService.last_coordinate_clicked)) return
+                else {
+                    var coords = queryBaseService.last_coordinate_clicked;
+                    var map = HsMap.map;
+                    var epsg4326Coordinate = transform(coords,
+                        map.getView().getProjection(), 'EPSG:4326'
+                    );
+                    $scope.measuredValue = createStringXY(7)(epsg4326Coordinate)
+                }
+
                 // const el = angular.element(document.getElementById('miniMap'));
                 // if (el) $scope.createMiniMap();
                 // $scope.newMap = !$scope.newMap;

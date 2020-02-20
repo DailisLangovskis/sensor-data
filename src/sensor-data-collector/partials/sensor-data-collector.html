@@ -6,9 +6,9 @@
         </div>
         <div ng-show="sensorsTabVisible">
             <div class="row">
-                <div class="col">
+                <div class="col text-right">
                     <button type="button" class="m-1 btn btn-secondary btn-sm" ng-click="selectDeselectAllSensors()"
-                        translate>Toggle all</button>
+                        translate>SELECT/DESELECT ALL</button>
                 </div>
             </div>
             <sens.sensor-row ng-repeat="sensor in sensorService.sensors" sensor="sensor">
@@ -20,12 +20,14 @@
                 </div>
             </div>
         </div>
-        <div style="padding: 5px;" class="col-3 offset-3 text-right">
-            <div class="btn-group">
-                <button class="btn btn-success btn-sm" ng-click="addSensor()">ADD SENSOR</button>
-                <button class="btn btn-secondary btn-sm" ng-click="showSensors()">SHOW EXISTING</button>
+        <div class="row">
+            <div class="col m-1 p-1 text-center">
+                <div class="btn-group">
+                    <button class="btn btn-success btn-sm" ng-click="addSensor()">ADD SENSOR</button>
+                    <button class="btn btn-secondary btn-sm" ng-click="showSensors()">SHOW EXISTING</button>
+                </div>
             </div>
-        </div>
+        </div>  
         <div class="row">
             <div class="input-group m-1" ng-show="addSensorTabVisible">
                 <div class="input-group m-1">

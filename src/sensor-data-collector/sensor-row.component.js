@@ -39,9 +39,9 @@ export default {
                 console.log($scope.time);
             },
             getLocationFromMap() {
-                const el = angular.element(document.getElementById('miniMap'));
-                if (el) $scope.createMiniMap();
-                $scope.newMap = !$scope.newMap;
+                // const el = angular.element(document.getElementById('miniMap'));
+                // if (el) $scope.createMiniMap();
+                // $scope.newMap = !$scope.newMap;
             },
             addData(sensorClicked) {
                 sensorService.getSelectedPhenomena(sensorClicked)

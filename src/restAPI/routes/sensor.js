@@ -26,7 +26,9 @@ router.post('/data', [
     check('phenomenaId').isNumeric().withMessage("This is not a numeric value!"),
 ], addSensorDataHandler)
 router.get('/phenomena/:id', getPhenomenaDataHandler)
-router.post('/delete', deleteSensorsHandler)
+router.post('/delete', [
+    check('params').isLength({min: 1}).withMessage("There was no sensor selected!")
+], deleteSensorsHandler)
 router.get('/data', async (req, res) => {
     try {
         const { rows } = await db.query('SELECT sensor_name,sensor_id,sensor_type FROM sensors')
@@ -52,8 +54,12 @@ function addSensorDataHandler(req, res) {
     }
 }
 function deleteSensorsHandler(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
     var id = req.body.params.join(',');
-    var deleteSensor = 'DELETE FROM sensors WHERE sensor_id IN ('+id+')';
+    var deleteSensor = 'DELETE FROM sensors WHERE sensor_id IN (' + id + ')';
     try {
         db.query(deleteSensor)
             .then(_ => {

@@ -10,11 +10,9 @@ const router = new Router();
 module.exports = router
 router.use(bodyparser());
 router.get('/data', async (req, res) => {
-    try {
-        console.log('Get list');           
+    try {           
         const { rows } = await db.query('SELECT srid, auth_srid FROM spatial_ref_sys')
         res.send(rows)
-        console.log(rows);
     } catch (e) {
         console.log(e.stack)
     }

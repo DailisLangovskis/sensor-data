@@ -54,18 +54,18 @@ export default ['$http',
                         console.error("Error!", error);
                     })
             },
-            saveSensors: function (sensorName, sensorType, phenomenaId) {
-                if (me.sensors.some(name => name.sensor_name === sensorName)) alert("This sensor already exists!")
-                else {
+            saveSensors: function (sensorName, sensorType, phenomenaId) {    
                     var data = { name: sensorName, type: sensorType, phenomenaId: phenomenaId };
-                    $http.post('http://localhost:8099/api/sensor/data', data)
+                    return $http.post('http://localhost:8099/api/sensor/data', data)
                         .then(function success() {
                             me.getSensors();
+                            return false;
                         })
                         .catch(function (error) {
-                            console.log("Error!", error);
+                            var gottenErrors = error.data.errors.map(msg => msg.msg)
+                            alert(gottenErrors);
+                            return true;
                         });
-                }
             },
             deleteSelectedSensors() {
                 var deleteAll = window.confirm("Do you really want to delete all selected sensors from the database?");

@@ -36,7 +36,7 @@ export default ['$http',
                 $http.get('http://localhost:8099/api/ref-sys/data')
                     .then(function success(response) {
                         return response.data
-                    }). then (function(response){
+                    }).then(function (response) {
                         me.refSys = response;
                     })
                     .catch(function (error) {
@@ -54,36 +54,43 @@ export default ['$http',
                         console.error("Error!", error);
                     })
             },
-            saveSensors: function (sensorName, sensorType, phenomenaId) {    
-                    var data = { name: sensorName, type: sensorType, phenomenaId: phenomenaId };
-                    return $http.post('http://localhost:8099/api/sensor/data', data)
-                        .then(function success() {
-                            me.getSensors();
-                            return false;
-                        })
-                        .catch(function (error) {
-                            var gottenErrors = error.data.errors.map(msg => msg.msg)
-                            alert(gottenErrors);
-                            return true;
-                        });
+            saveSensors: function (sensorName, sensorType, phenomenaId) {
+                var data = { name: sensorName, type: sensorType, phenomenaId: phenomenaId };
+                return $http.post('http://localhost:8099/api/sensor/data', data)
+                    .then(function success(res) {
+                        me.newAlert(res.data, 2000, "green");
+                        me.getSensors();
+                        return false;
+                    })
+                    .catch(function (error) {
+                        var gottenErrors = error.data.errors.map(msg => msg.msg)
+                        me.newAlert(gottenErrors, 2000, "red");
+                        return true;
+                    });
             },
             deleteSelectedSensors() {
                 var deleteAll = window.confirm("Do you really want to delete all selected sensors from the database?");
                 if (deleteAll) {
                     var checked = me.sensors.filter(sensor => sensor.checked == true).map(id => id.sensor_id);
                     $http.post('http://localhost:8099/api/sensor/delete', { params: checked })
-                        .then(function success() {
-                            alert("All selected sensors have been deleted!")
+                        .then(function success(res) {
+                            me.newAlert(res.data, 2000, "green");
+                        })
+                        .then(_ => {
                             me.getSensors();
                         })
                         .catch(function (error) {
-                            console.error("Error!", error);
+                            var gottenErrors = error.data.errors.map(msg => msg.msg)
+                            me.newAlert(gottenErrors, 2000, "red");
                         });
 
                 }
-                else {
-
-                }
+            },
+            newAlert(msg, timer, background) {
+                document.getElementById('alert').innerHTML = '<b>' + msg + '</b>';
+                document.getElementById('alert').style.backgroundColor = background;
+                document.getElementById('alert').style.opacity = "0.7";
+                setTimeout(function () { document.getElementById('alert').innerHTML = ''; }, timer)
             },
         })
         me.getReferencingSystems();

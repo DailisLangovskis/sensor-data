@@ -17,6 +17,7 @@ export default {
             sensorService,
             phenomena: '',
             sensorType: '',
+            location: '',
             measuredValue: '',
             measurementTime: new Date(),
             dataTabExpanded: false,
@@ -40,14 +41,18 @@ export default {
                 console.log($scope.measurementTime);
             },
             getLocationFromMap() {
-                if (angular.isUndefined(!queryBaseService.last_coordinate_clicked)) return
+                if (!queryBaseService.last_coordinate_clicked) return
                 else {
                     var coords = queryBaseService.last_coordinate_clicked;
                     var map = HsMap.map;
                     var epsg4326Coordinate = transform(coords,
                         map.getView().getProjection(), 'EPSG:4326'
                     );
-                    $scope.measuredValue = createStringXY(7)(epsg4326Coordinate)
+                    $scope.location = createStringXY(7)(epsg4326Coordinate)
+                    if ($scope.phenomena[0].phenomenon_name === "Location") {
+                        $scope.measuredValue = createStringXY(7)(epsg4326Coordinate)
+                    }
+
                 }
 
                 // const el = angular.element(document.getElementById('miniMap'));
@@ -60,18 +65,26 @@ export default {
                         $scope.phenomena = sensorService.phenomena;
                     })
                     .catch(function (error) {
-                        console.error("Error!", error);
+                        sensorService.newAlert(error, 2000, "red");;
                     })
                 $scope.sensorType = sensorClicked.sensor_type;
                 $scope.dataTabExpanded = !$scope.dataTabExpanded;
             },
-            saveData(measuredValue, time, referencingSystem) {
+            saveData(sensorClicked, phenomenaId, measuredValue, time, referencingSystem, location) {
                 time = moment.moment(time).format("YYYY-MM-DD HH:mm:ssZ");
-                console.log(time);
-                $scope.dataTabExpanded = !$scope.dataTabExpanded;
-                $scope.measuredValue = '';
-                $scope.refSys = '';
-                $scope.search = '';
+                let loc = location.split(',');
+                let lon = loc[0];
+                let lat = loc[1];
+                //console.log(sensorClicked, phenomenaId, measuredValue, time, referencingSystem, lon, lat)
+                sensorService.saveData(sensorClicked, phenomenaId, measuredValue, time, referencingSystem, lon, lat).then(function (response) {
+                   if (response == false) {
+                        $scope.dataTabExpanded = !$scope.dataTabExpanded;
+                        $scope.measuredValue = '';
+                        $scope.refSys = '';
+                        $scope.search = '';
+                        $scope.location = '';
+                    }
+               })
             }
         });
     }]

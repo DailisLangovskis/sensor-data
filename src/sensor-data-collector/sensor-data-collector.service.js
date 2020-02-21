@@ -68,6 +68,19 @@ export default ['$http',
                         return true;
                     });
             },
+            saveData: function (sensorClicked, phenomenaId, measuredValue, time, referencingSystem, lon, lat){
+                var data = {sensor: sensorClicked, phenomena: phenomenaId, measuredValue: measuredValue, time: time, refSys: referencingSystem, lon: lon, lat:lat}
+                return $http.post('http://localhost:8099/api/observation/save', data)
+                    .then(function success(res) {
+                        me.newAlert(res.data, 2000, "green");
+                        return false;
+                    })
+                    .catch(function (error) {
+                        var gottenErrors = error.data.errors.map(msg => msg.msg)
+                        me.newAlert(gottenErrors, 2000, "red");
+                        return true;
+                    });
+            },
             deleteSelectedSensors() {
                 var deleteAll = window.confirm("Do you really want to delete all selected sensors from the database?");
                 if (deleteAll) {

@@ -27,7 +27,7 @@ router.post('/data', [
 ], addSensorDataHandler)
 router.get('/phenomena/:id', getPhenomenaDataHandler)
 router.post('/delete', [
-    check('params').isLength({min: 1}).withMessage("There was no sensor selected!")
+    check('params').isLength({ min: 1 }).withMessage("There was no sensor selected!")
 ], deleteSensorsHandler)
 router.get('/data', async (req, res) => {
     try {
@@ -72,7 +72,7 @@ function deleteSensorsHandler(req, res) {
 }
 async function getPhenomenaDataHandler(req, res) {
     var id = req.params.id;
-    var selectPhenomena = 'Select phenomenons.phenomenon_name, phenomenons.unit FROM sensors INNER JOIN phenomenons ON sensors.phenomena_id = phenomenons.id WHERE sensor_id = $1';
+    var selectPhenomena = 'Select phenomenons.phenomenon_name, phenomenons.unit, phenomenons.id  FROM sensors INNER JOIN phenomenons ON sensors.phenomena_id = phenomenons.id WHERE sensor_id = $1';
     try {
         const { rows } = await db.query(selectPhenomena, [id])
         res.send(rows);

@@ -9,6 +9,7 @@ export default ['$http',
             sensors: [],
             phenomenas: [],
             phenomena: '',
+            featureCollection: '',
             refSys: [],
             selectDeselectAllSensors() {
                 me.btnSelectDeseletClicked = !me.btnSelectDeseletClicked;
@@ -54,6 +55,17 @@ export default ['$http',
                         console.error("Error!", error);
                     })
             },
+            getSelectedFeatureCollection: function (sensorSelected) {
+                return $http.get('http://localhost:8099/api/features/load/' + sensorSelected.sensor_id)
+                    .then(function success(response) {
+                        return response.data;
+                    }).then(function (response) {
+                        me.featureCollection = response;
+                    })
+                    .catch(function (error) {
+                        console.error("Error!", error);
+                    })
+            },
             saveSensors: function (sensorName, sensorType, phenomenaId) {
                 var data = { name: sensorName, type: sensorType, phenomenaId: phenomenaId };
                 return $http.post('http://localhost:8099/api/sensor/data', data)
@@ -68,16 +80,20 @@ export default ['$http',
                         return true;
                     });
             },
-            saveData: function (sensorClicked, phenomenaId, measuredValue, time, referencingSystem, lon, lat){
-                var data = {sensor: sensorClicked, phenomena: phenomenaId, measuredValue: measuredValue, time: time, refSys: referencingSystem, lon: lon, lat:lat}
+            saveData: function (sensorClicked, phenomenaId, measuredValue, time, referencingSystem, wktGeom){
+                var data = {sensor: sensorClicked, phenomena: phenomenaId, measuredValue: measuredValue, time: time, refSys: referencingSystem, wktGeom: wktGeom}
                 return $http.post('http://localhost:8099/api/observation/save', data)
                     .then(function success(res) {
                         me.newAlert(res.data, 2000, "green");
                         return false;
                     })
                     .catch(function (error) {
-                        var gottenErrors = error.data.errors.map(msg => msg.msg)
-                        me.newAlert(gottenErrors, 2000, "red");
+                        console.log(error.data.errors)
+                        if(error.data.errors) {
+                            var gottenErrors = error.data.errors.map(msg => msg.msg)
+                            me.newAlert(gottenErrors, 2000, "red");
+                        }
+                        
                         return true;
                     });
             },

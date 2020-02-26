@@ -1,7 +1,6 @@
 const Router = require('express-promise-router');
 const db = require('../db');
 const bodyparser = require('body-parser');
-const { check, validationResult } = require('express-validator');
 // create a new express-promise-router
 // this has the same API as the normal express router except
 // it allows you to use async functions as route handlers

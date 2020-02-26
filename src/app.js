@@ -133,8 +133,10 @@ module.value('config', {
 
 });
 
-module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service',
-    function ($scope, Core, $compile, layoutService) {
+module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service', 'hs.query.baseService',
+    function ($scope, Core, $compile, layoutService, queryBaseService) {
+        queryBaseService.nonQueryablePanels.push('*');
+        queryBaseService.activateQueries();
         $scope.Core = Core;
         $scope.panelVisible = layoutService.panelVisible;
         layoutService.sidebarRight = false;

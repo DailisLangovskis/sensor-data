@@ -12,11 +12,10 @@ router.use(bodyparser());
 router.post('/save', [
     check('sensor').isNumeric(),
     check('phenomena').isNumeric(),
-    check('measuredValue').isNumeric().exists(),
+    check('measuredValue').isNumeric().withMessage("Measured value must be a numeric value!").exists(),
     check('time').exists(),
     check('refSys').isNumeric().exists(),
-    check('lon').exists(),
-    check('lat').exists(),
+    check('wktGeom').exists(),
 ], addObservationDataHandler)
 
 function addObservationDataHandler(req, res) {
@@ -24,9 +23,9 @@ function addObservationDataHandler(req, res) {
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
     }
-    var insertSensor = 'INSERT INTO observations(sensor_id, phenomena_id, ref_sys_id, time_stamp, observed_value, longitude, latitude) VALUES ($1,$2,$3,$4,$5,$6,$7)';
+    var insertSensor = 'INSERT INTO observations(sensor_id, phenomena_id, ref_sys_id, time_stamp, observed_value, wkt_geom) VALUES ($1,$2,$3,$4,$5,$6)';
     try {
-        db.query(insertSensor, [req.body.sensor, req.body.phenomena, req.body.refSys, req.body.time, req.body.measuredValue, req.body.lon, req.body.lat])
+        db.query(insertSensor, [req.body.sensor, req.body.phenomena, req.body.refSys, req.body.time, req.body.measuredValue, req.body.wktGeom])
             .then(_ => {
                 res.send('Insert completed!');
             })

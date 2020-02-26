@@ -5,6 +5,7 @@ import { Tile, Group, Image as ImageLayer } from 'ol/layer';
 import { TileWMS, WMTS, OSM, XYZ } from 'ol/source';
 import { transform, transformExtent } from 'ol/proj';
 import View from 'ol/View';
+import { WKT } from 'ol/format';
 export default {
     template: require('./partials/sensor-row.html'),
     bindings: {
@@ -18,42 +19,45 @@ export default {
             phenomena: '',
             sensorType: '',
             location: '',
+            featureGeomWKT: '',
             measuredValue: '',
             measurementTime: new Date(),
             dataTabExpanded: false,
             search: '',
             refSys: '',
-            createMiniMap() {
-                var map = new Map({
-                    target: 'miniMap',
-                    layers: [
-                        new Tile({
-                            source: new OSM()
-                        })
-                    ],
-                    view: new View({
-                        center: [0, 0],
-                        zoom: 2,
-                    })
-                });
-            },
+            // createMiniMap() {
+            //     var map = new Map({
+            //         target: 'miniMap',
+            //         layers: [
+            //             new Tile({
+            //                 source: new OSM()
+            //             })
+            //         ],
+            //         view: new View({
+            //             center: [0, 0],
+            //             zoom: 2,
+            //         })
+            //     });
+            // },
             dataRequest(sensorClicked) {
-                console.log($scope.measurementTime);
+                sensorService.getSelectedFeatureCollection(sensorClicked)
+                .then(_ => {
+                    console.log(sensorService.featureCollection)
+                })
             },
-            getLocationFromMap() {
-                if (!queryBaseService.last_coordinate_clicked) return
-                else {
-                    var coords = queryBaseService.last_coordinate_clicked;
+            getLocationFromMap() {           
+                    var queryFeature = queryBaseService.queryLayer.getSource().getFeatures();
+                    var formatWKT = new WKT();
+                    $scope.featureGeomWKT = formatWKT.writeFeature(queryFeature[0]).toString();
+                    var coords = queryFeature[0].getGeometry().flatCoordinates;
                     var map = HsMap.map;
                     var epsg4326Coordinate = transform(coords,
                         map.getView().getProjection(), 'EPSG:4326'
                     );
                     $scope.location = createStringXY(7)(epsg4326Coordinate)
                     if ($scope.phenomena[0].phenomenon_name === "Location") {
-                        $scope.measuredValue = createStringXY(7)(epsg4326Coordinate)
+                        $scope.measuredValue = 1;
                     }
-
-                }
 
                 // const el = angular.element(document.getElementById('miniMap'));
                 // if (el) $scope.createMiniMap();
@@ -68,23 +72,22 @@ export default {
                         sensorService.newAlert(error, 2000, "red");;
                     })
                 $scope.sensorType = sensorClicked.sensor_type;
+                $scope.measurementTime = new Date();
                 $scope.dataTabExpanded = !$scope.dataTabExpanded;
             },
-            saveData(sensorClicked, phenomenaId, measuredValue, time, referencingSystem, location) {
+            saveData(sensorClicked, phenomenaId, measuredValue, time, referencingSystem) {
                 time = moment.moment(time).format("YYYY-MM-DD HH:mm:ssZ");
-                let loc = location.split(',');
-                let lon = loc[0];
-                let lat = loc[1];
-                //console.log(sensorClicked, phenomenaId, measuredValue, time, referencingSystem, lon, lat)
-                sensorService.saveData(sensorClicked, phenomenaId, measuredValue, time, referencingSystem, lon, lat).then(function (response) {
-                   if (response == false) {
+                sensorService.saveData(sensorClicked, phenomenaId, measuredValue, time, referencingSystem, $scope.featureGeomWKT).then(function (response) {
+                    if (response == false) {
                         $scope.dataTabExpanded = !$scope.dataTabExpanded;
                         $scope.measuredValue = '';
                         $scope.refSys = '';
                         $scope.search = '';
                         $scope.location = '';
+                        $scope.featureGeomWKT = '';
+                        $scope.measurementTime = new Date();
                     }
-               })
+                })
             }
         });
     }]

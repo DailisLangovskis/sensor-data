@@ -1,17 +1,20 @@
 FROM node:10.16-alpine
 
-RUN apk add --no-cache git
-RUN npm i pm2 -g
+RUN apk --update add --no-cache git nodejs npm make g++
 
 ARG LAYMAN_GS_HOST
 ARG LAYMAN_GS_PORT
 
 RUN mkdir /code
+
+
+COPY src /code/src
+COPY package.json /code
+COPY node_modules /code/node_modules
+
 WORKDIR /code
 
-ADD src /code/src
-ADD package.json /code
-ADD node_modules /code/node_modules
+RUN npm install
+RUN node node_modules/hslayers-ng/scripts/bootstrap-isolate.js
 
-ENTRYPOINT ["pm2", "--no-daemon", "start", "/code/src/ecosystem.config.js"]
 

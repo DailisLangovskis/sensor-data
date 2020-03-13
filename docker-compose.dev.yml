@@ -1,23 +1,60 @@
-version: '2.1'
+version: '0.1'
 
 services:
     sensor-data:
         container_name: sensor-data
         build:
-            context: .
+            context: ./sensor-data-collector
             dockerfile: Dockerfile
         image: sensor-data:latest
-        environment:
-            NODE_ENV: development
-            PROXY_PORT: 8085
-            HTTP_PORT: 8082
+        env_file:
+            - .env  
         ports: #Forwarded from host to docker container
-            - 8082:8082 # main application
-            - 8085:8085 # proxy service
+            - ${HTTP_PORT}:${HTTP_PORT} # main application
+        links:
+            - rest-api
         volumes:
-            - ./src:/code/src
-            - ./static:/code/static
-            - ./node_modules:/code/node_modules
-            - ./package.json:/code/package.json
+            - "./src:/code/src"
+            - "./static:/code/static" 
+            - "./node_modules:/code/node_modules"
+            - "./package.json:/code/package.json"
             #Execute npm link in hslayers-ng repo and then npm link hslayers-ng in this repo
-            - ${HSLPATH}:/code/node_modules/hslayers-ng 
+            - "${HSLPATH}:/code/node_modules/hslayers-ng" 
+        command: > 
+            node_modules/.bin/webpack-dev-server --config src/webpack.dev.js
+    sensor-data-proxy:
+        container_name: sensor-data-proxy
+        image: sensor-data:latest
+        env_file:
+            - .env
+        ports: #Forwarded from host to docker container
+             - ${PROXY_PORT}:${PROXY_PORT} # proxy service
+        command: >
+            node src/proxy.js
+    rest-api:
+        build:
+            context: ./src/restAPI
+            dockerfile: Dockerfile
+        image: rest-api
+        container_name: rest-api
+        env_file:
+            - .env
+        ports:
+            - ${API_PORT}:${API_PORT} # rest api service
+        links:
+            - sensor-data-db
+        volumes:
+            - "./restAPI:/code/restAPI"
+        command: >
+            npm run serve-api
+
+    sensor-data-db:
+        build:
+            context: ./src/restAPI
+            dockerfile: Dockerfile.apidb
+        image: sensor-data-db
+        container_name: sensor-data-db 
+        restart: always
+
+
+              

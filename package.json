@@ -9,7 +9,7 @@
     "start": "http-server ./static -p 8082",
     "dev": "node node_modules/webpack/bin/webpack.js --config src/webpack.dev.js --progress --watch",
     "serve": "npm run build && npm run start",
-    "server": "nodemon src/restAPI/app.js"
+    "serve-api": "nodemon ./restAPI/app.js"
   },
   "author": "",
   "license": "ISC",

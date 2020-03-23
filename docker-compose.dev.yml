@@ -1,39 +1,37 @@
-version: '0.1'
+version: '2.0'
 
 services:
     sensor-data:
-        container_name: sensor-data
-        build:
-            context: ./sensor-data-collector
+        container_name: sensor-data-ui
+        build:           
+            context: ./src
             dockerfile: Dockerfile
-        image: sensor-data:latest
+        image: sensor-data-ui:latest
         env_file:
             - .env  
         ports: #Forwarded from host to docker container
             - ${HTTP_PORT}:${HTTP_PORT} # main application
-        links:
+        depends_on:
             - rest-api
         volumes:
-            - "./src:/code/src"
-            - "./static:/code/static" 
-            - "./node_modules:/code/node_modules"
-            - "./package.json:/code/package.json"
+            - "./sensor-data-collector:/code/sensor-data-collector"
+            - "./images:/code/images"
             #Execute npm link in hslayers-ng repo and then npm link hslayers-ng in this repo
             - "${HSLPATH}:/code/node_modules/hslayers-ng" 
         command: > 
-            node_modules/.bin/webpack-dev-server --config src/webpack.dev.js
+            npm run web
     sensor-data-proxy:
         container_name: sensor-data-proxy
-        image: sensor-data:latest
+        image: sensor-data-ui:latest
         env_file:
             - .env
         ports: #Forwarded from host to docker container
              - ${PROXY_PORT}:${PROXY_PORT} # proxy service
         command: >
-            node src/proxy.js
+            npm run proxy
     rest-api:
         build:
-            context: ./src/restAPI
+            context: ./restAPI
             dockerfile: Dockerfile
         image: rest-api
         container_name: rest-api
@@ -41,7 +39,7 @@ services:
             - .env
         ports:
             - ${API_PORT}:${API_PORT} # rest api service
-        links:
+        depends_on:
             - sensor-data-db
         volumes:
             - "./restAPI:/code/restAPI"
@@ -49,12 +47,25 @@ services:
             npm run serve-api
 
     sensor-data-db:
-        build:
-            context: ./src/restAPI
-            dockerfile: Dockerfile.apidb
-        image: sensor-data-db
+        image: timescale/timescaledb-postgis:latest-pg11
+        volumes:
+            - ./postgresql/data:/var/lib/postgresql/11/main
         container_name: sensor-data-db 
+        env_file:
+            - .env
         restart: always
+    nginx:
+        image: nginx:1.16-apine
+        volumes:
+            - ./nginx.conf:/etc/nginx/sites-available/default.conf
+        env_file:
+             - .env
+        ports:
+            - ${NGINX_PORT}:${NGINX_PORT}
+        depends_on:
+            - sensor-data
+            - rest-api
+            - sensor-data-proxy
 
 
               

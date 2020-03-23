@@ -6,3 +6,5 @@ tmp
 static.zip
 launch.json
 .env
+.sql
+.vscode

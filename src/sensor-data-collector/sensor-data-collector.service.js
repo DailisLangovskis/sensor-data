@@ -1,6 +1,3 @@
-import { check } from "express-validator";
-import { mapValuesLimit } from "async";
-
 export default ['$http',
     function ($http) {
         var me = this;

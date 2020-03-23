@@ -1,6 +1,6 @@
 // ./app.js
 const dotenv = require('dotenv')
-const result = dotenv.config()
+const result = dotenv.config({path: require('find-config')('.env')})
 if (result.error) {
     throw result.error
 }

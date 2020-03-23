@@ -72,7 +72,7 @@ var bookmarkSource = new VectorSource({
 import bookMarkIcon from 'images/mrkr-bookmark.png';
 
 module.value('config', {
-    proxyPrefix: "/proxy/",
+   proxyPrefix: "/proxy/",
     default_layers: [
         new Tile({
             source: new OSM(),

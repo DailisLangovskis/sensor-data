@@ -13,6 +13,8 @@ services:
             - ${HTTP_PORT}:${HTTP_PORT} # main application
         depends_on:
             - rest-api
+            - sensor-data-db
+            - sensor-data-proxy
         volumes:
             - "./src:/code/src"
             - "./static:/code/static"

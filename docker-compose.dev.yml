@@ -14,10 +14,9 @@ services:
         depends_on:
             - rest-api
         volumes:
-            - "./sensor-data-collector:/code/sensor-data-collector"
-            - "./images:/code/images"
+            - "./src:/code/src"
             #Execute npm link in hslayers-ng repo and then npm link hslayers-ng in this repo
-            - "${HSLPATH}:/code/node_modules/hslayers-ng" 
+            - "${HSLPATH}:/code/src/node_modules/hslayers-ng" 
         command: > 
             npm run web
     sensor-data-proxy:
@@ -30,11 +29,12 @@ services:
         command: >
             npm run proxy
     rest-api:
+        container_name: rest-api
         build:
             context: ./restAPI
             dockerfile: Dockerfile
-        image: rest-api
-        container_name: rest-api
+        image: rest-api:latest
+        
         env_file:
             - .env
         ports:
@@ -45,23 +45,31 @@ services:
             - "./restAPI:/code/restAPI"
         command: >
             npm run serve-api
-
     sensor-data-db:
-        image: timescale/timescaledb-postgis:latest-pg11
+        container_name: sensor-data-db
+        build:           
+            context: ./postgresql
+            dockerfile: Dockerfile
+        image: sensor-data-db:latest
         volumes:
-            - ./postgresql/data:/var/lib/postgresql/11/main
+            - ./postgresql/data:/var/lib/postgresql/data
+            - ./postgresql/dump:/docker-entrypoint-initdb.d/
         container_name: sensor-data-db 
         env_file:
             - .env
         restart: always
-    nginx:
-        image: nginx:1.16-apine
-        volumes:
-            - ./nginx.conf:/etc/nginx/sites-available/default.conf
+    reverse-proxy:
+        container_name: reverse-proxy
+        build:           
+            context: .
+            dockerfile: Dockerfile.nginx
+        image: reverse-proxy:latest
         env_file:
              - .env
+        volumes:
+            - ./nginx.conf:/etc/nginx/sites-available/default.conf
         ports:
-            - ${NGINX_PORT}:${NGINX_PORT}
+            - ${NGINX_PORT}:80
         depends_on:
             - sensor-data
             - rest-api

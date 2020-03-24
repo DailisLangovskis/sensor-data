@@ -6,5 +6,6 @@ tmp
 static.zip
 launch.json
 .env
-sensor_dump.sql
+data.sql
+shema.sql
 .vscode

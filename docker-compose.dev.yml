@@ -52,7 +52,7 @@ services:
             dockerfile: Dockerfile
         image: sensor-data-db:latest
         volumes:
-            - ./postgresql/data:/var/lib/postgresql/data
+            - sensordb:/var/lib/postgresql/data
             - ./postgresql/dump:/docker-entrypoint-initdb.d/
         container_name: sensor-data-db 
         env_file:
@@ -77,3 +77,5 @@ services:
 
 
               
+volumes:
+    sensordb:

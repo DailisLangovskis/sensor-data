@@ -5,11 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "boostrap": "node node_modules/hslayers-ng/scripts/bootstrap-isolate.js ",
+    "bootstrap": "node node_modules/hslayers-ng/scripts/bootstrap-isolate.js ",
     "web": "http-server ./static -p 8082",
-    "dev": "node node_modules/webpack/bin/webpack.js --config webpack.dev.js --progress --watch",
-    "serve-dev": "npm run dev && npm run web",
-    "proxy": "node proxy.js"
+    "build": "node node_modules/webpack/bin/webpack --config ./src/webpack.dev.js --watch",
+    "dev-server": "node node_modules/.bin/webpack-dev-server --config ./src/webpack.dev.js",
+    "proxy": "node ./src/proxy.js"
   },
   "author": "",
   "license": "ISC",

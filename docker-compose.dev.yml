@@ -4,7 +4,7 @@ services:
     sensor-data:
         container_name: sensor-data-ui
         build:           
-            context: ./src
+            context: .
             dockerfile: Dockerfile
         image: sensor-data-ui:latest
         env_file:
@@ -15,10 +15,13 @@ services:
             - rest-api
         volumes:
             - "./src:/code/src"
+            - "./static:/code/static"
+            - "./node_modules:/code/node_modules"
+            - "./package.json:/code/package.json"
             #Execute npm link in hslayers-ng repo and then npm link hslayers-ng in this repo
-            - "${HSLPATH}:/code/src/node_modules/hslayers-ng" 
+            - "${HSLPATH}:/code/node_modules/hslayers-ng" 
         command: > 
-            npm run web
+            npm run dev-server
     sensor-data-proxy:
         container_name: sensor-data-proxy
         image: sensor-data-ui:latest
@@ -52,12 +55,13 @@ services:
             dockerfile: Dockerfile
         image: sensor-data-db:latest
         volumes:
-            - ./postgresql/data:/var/lib/postgresql/data
+            - sensordb:/var/lib/postgresql/data
             - ./postgresql/dump:/docker-entrypoint-initdb.d/
         container_name: sensor-data-db 
         env_file:
             - .env
         restart: always
+
     reverse-proxy:
         container_name: reverse-proxy
         build:           
@@ -74,6 +78,7 @@ services:
             - sensor-data
             - rest-api
             - sensor-data-proxy
-
+volumes: 
+    sensordb:
 
               

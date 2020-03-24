@@ -6,14 +6,13 @@ ARG LAYMAN_GS_HOST
 ARG LAYMAN_GS_PORT
 
 RUN mkdir /code
-
-COPY ./ /code/
-
 WORKDIR /code
 
-RUN npm install
+COPY ./src /code/src
+COPY package.json /code
 
-RUN npm run dev
+RUN npm install
+RUN node node_modules/hslayers-ng/scripts/bootstrap-isolate.js
 
 
 

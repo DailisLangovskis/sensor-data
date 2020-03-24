@@ -1,9 +1,9 @@
 FROM docker
 
-RUN apk --update add git nodejs npm
+RUN apk --update add --no-cache nodejs npm
 
 COPY ./ /code/
 
 WORKDIR /code/
 
-RUN npm i
+RUN npm install

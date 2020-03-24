@@ -21,6 +21,7 @@
     "http-server": "^0.12.1",
     "moment": "^2.24.0",
     "momentum": "^4.0.0",
+    "hslayers-ng": "^1.14.0",
     "vega": "^5.9.1",
     "vega-embed": "^6.2.2",
     "vega-lite": "^4.1.1"

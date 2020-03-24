@@ -6,5 +6,5 @@ tmp
 static.zip
 launch.json
 .env
-.sql
+sensor_dump.sql
 .vscode

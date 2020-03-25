@@ -1,8 +1,8 @@
 FROM timescale/timescaledb-postgis:latest-pg11
 
-COPY ./create_db.sh /docker-entrypoint-initdb.d/20-create_db.sh
+# COPY ./create_db.sh /docker-entrypoint-initdb.d/create_db.sh
 
-# COPY ./dump/schema.sql /schema.sql
-# COPY ./dump/data.sql /data.sql
+COPY ./dump/shema.sql /docker-entrypoint-initdb.d
 
-RUN chmod +x /docker-entrypoint-initdb.d/20-create_db.sh
+
+# RUN chmod +x /docker-entrypoint-initdb.d/create_db.sh

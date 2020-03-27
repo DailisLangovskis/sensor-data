@@ -12,3 +12,6 @@ start-prod:
 
 build-npm-link-hsl:
 	docker-compose -f docker-compose.dev.yml build --no-cache && npm link hslayers-ng
+
+clear-database:
+	docker-compose -f docker-compose.dev.yml run --rm --no-deps sensor-data-db bash /code/reset-empty-database.sh

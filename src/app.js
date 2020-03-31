@@ -16,13 +16,12 @@ import { Tile, Group, Image as ImageLayer } from 'ol/layer';
 import { TileWMS, WMTS, OSM, XYZ } from 'ol/source';
 import { Style, Icon, Stroke, Fill, Circle, Text } from 'ol/style';
 import Feature from 'ol/Feature';
-//import datasourceList from './datasource-list';
+
 import VectorLayer from 'ol/layer/Vector';
 import { Vector as VectorSource } from 'ol/source';
 import { Polygon, LineString, GeometryType, Point } from 'ol/geom';
 import './sensor-data-collector/sensor-data-collector.module';
-//import meteoLayers from './meteo-layers.js';
-//import vegetationLayers from './vegetation-layers-';
+
 
 var module = angular.module('hs', [
     'hs.sidebar',
@@ -37,7 +36,7 @@ var module = angular.module('hs', [
     'hs.save-map',
     'hs.measure',
     'hs.addLayers',
-    'sens.sensorDataCollector'
+    'sens.sensorDataCollectorModule'
 ]);
 
 module.directive('hs', ['config', 'Core', 'hs.map.service', function (config, Core, hsMap) {
@@ -76,9 +75,11 @@ module.value('config', {
     default_layers: [
         new Tile({
             source: new OSM(),
-            title: "Base layer",
+            title: "Open Street layer",
             base: true,
-            removable: false
+            visible:false,
+            removable: false,
+            editor: { editable: false },
         }),
         new VectorLayer({
             title: 'Test',
@@ -129,25 +130,24 @@ module.value('config', {
         user_id: 6, //Needed for senslogOT
         group: 'kynsperk', //Needed for MapLogOT
         user: 'kynsperk' //Needed for MapLogOT
-    }
-
+    },
+    allowAddExternalDatasets: true
 });
 
 module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service', 'hs.query.baseService',
     function ($scope, Core, $compile, layoutService, queryBaseService) {
-        queryBaseService.nonQueryablePanels.push('*');
-        //queryBaseService.activateQueries();
+        queryBaseService.nonQueryablePanels.push('sensor-data-collector-index');
         $scope.Core = Core;
         $scope.panelVisible = layoutService.panelVisible;
-        layoutService.sidebarRight = false;
+        layoutService.sidebarRight = false;   
         //layoutService.sidebarToggleable = false;
         Core.singleDatasources = true;
+        layoutService.setDefaultPanel("sensor-data-collector-index");
         layoutService.sidebarButtons = true;
        // layoutService.sidebarRight = true;
-        layoutService.setDefaultPanel('layermanager');
         $scope.$on("scope_loaded", function (event, args) {
             if (args == 'Sidebar') {
-                var el = angular.element('<sens.sensor-data-collector hs.draggable ng-if="Core.exists(\'sens.sensorDataCollector\')" ng-show="panelVisible(\'sensor-data-collector\', this)"></sens.sensor-data-collector>')[0];
+                var el = angular.element('<sens.index hs.draggable ng-if="Core.exists(\'sens.sensorDataCollectorModule\')" ng-show="panelVisible(\'sensor-data-collector-index\', this)"></sens.index>')[0];
                 layoutService.panelListElement.appendChild(el);
                 $compile(el)($scope);
 

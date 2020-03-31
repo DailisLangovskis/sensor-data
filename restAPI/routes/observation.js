@@ -14,23 +14,23 @@ router.post('/save', [
     check('phenomena').isNumeric(),
     check('measuredValue').isNumeric().withMessage("Measured value must be a numeric value!").exists(),
     check('time').exists(),
-    check('refSys').isNumeric().exists(),
+    // check('refSys').isNumeric().exists(),
     check('wktGeom').exists(),
 ], addObservationDataHandler)
 
-function addObservationDataHandler(req, res) {
+async function addObservationDataHandler(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
     }
-    var insertSensor = 'INSERT INTO observations(sensor_id, phenomena_id, ref_sys_id, time_stamp, observed_value, wkt_geom) VALUES ($1,$2,$3,$4,$5,$6)';
+    var insertSensor = 'INSERT INTO observations(sensor_id, phenomena_id, time_stamp, observed_value, wkt_geom) VALUES ($1,$2,$3,$4,$5)';
     try {
-        db.query(insertSensor, [req.body.sensor, req.body.phenomena, req.body.refSys, req.body.time, req.body.measuredValue, req.body.wktGeom])
+        await db.query(insertSensor, [req.body.sensor, req.body.phenomena, req.body.time, req.body.measuredValue, req.body.wktGeom])
             .then(_ => {
-                res.send('Insert completed!');
+                res.status(201).send('Insert completed!');
             })
             .catch(e => console.log(e.stack))
-    } catch (e) {
-        console.log(e.stack);
+    } catch (e){
+        console.log(e.stack)
     }
 }

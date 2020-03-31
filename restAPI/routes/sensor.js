@@ -25,35 +25,38 @@ router.post('/data', [
         .withMessage('Must be at less 20 chars long'),
     check('phenomenaId').isNumeric().withMessage("This is not a numeric value!"),
 ], addSensorDataHandler)
+
 router.get('/phenomena/:id', getPhenomenaDataHandler)
+
 router.post('/delete', [
     check('params').isLength({ min: 1 }).withMessage("There was no sensor selected!")
 ], deleteSensorsHandler)
+
 router.get('/data', async (req, res) => {
     try {
         const { rows } = await db.query('SELECT sensor_name,sensor_id,sensor_type FROM sensors')
-        res.send(rows)
-    } catch (e) {
+        res.status(201).send(rows)
+    } catch (e){
         console.log(e.stack)
     }
 })
-function addSensorDataHandler(req, res) {
+async function addSensorDataHandler(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
     }
     var insertSensor = 'INSERT INTO sensors(sensor_name, sensor_type,phenomena_id) VALUES ($1,$2,$3)';
     try {
-        db.query(insertSensor, [req.body.name, req.body.type, req.body.phenomenaId])
+        await db.query(insertSensor, [req.body.name, req.body.type, req.body.phenomenaId])
             .then(_ => {
-                res.send('Insert completed!');
+                res.status(201).send('Insert Completed');
             })
             .catch(e => console.log(e.stack))
     } catch (e) {
-        console.log(e.stack);
+        console.log(e.stack)
     }
 }
-function deleteSensorsHandler(req, res) {
+async function deleteSensorsHandler(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
@@ -61,13 +64,13 @@ function deleteSensorsHandler(req, res) {
     var id = req.body.params.join(',');
     var deleteSensor = 'DELETE FROM sensors WHERE sensor_id IN (' + id + ')';
     try {
-        db.query(deleteSensor)
+        await db.query(deleteSensor)
             .then(_ => {
-                res.send('Delete completed!');
+                res.status(201).send('Sensors deleted');
             })
             .catch(e => console.log(e.stack))
     } catch (e) {
-        console.log(e.stack);
+        console.log(e.stack)
     }
 }
 async function getPhenomenaDataHandler(req, res) {
@@ -78,8 +81,8 @@ async function getPhenomenaDataHandler(req, res) {
       WHERE sensor_id = $1';
     try {
         const { rows } = await db.query(selectPhenomena, [id])
-        res.send(rows);
+        res.status(201).send(rows);
     } catch (e) {
-        console.log(e.stack);
+        console.log(e.stack)
     }
 }

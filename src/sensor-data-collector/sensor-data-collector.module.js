@@ -1,7 +1,9 @@
 import sensorDataCollectorService from './sensor-data-collector.service';
-import sensorDataCollectorComponent from './sensor-data-collector.component';
 import sensorRowComponent from './sensor-row.component';
-angular.module('sens.sensorDataCollector', ['hs.core', 'hs.map'])
+import sensorDataCollectorComponent from './sensor-data-collector.component';
+import indexComponent from './index.component';
+import userAuthService from './user-auth.service';
+angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map'])
     .directive('sens.sensorDataCollector.sidebarBtn', function () {
         return {
             template: require('./partials/sidebar-btn.directive.html')
@@ -9,6 +11,11 @@ angular.module('sens.sensorDataCollector', ['hs.core', 'hs.map'])
     })
 
     .service("sens.sensorDataCollector.service", sensorDataCollectorService)
+    
+    .service("sens.userAuth.service", userAuthService)
 
     .component('sens.sensorDataCollector', sensorDataCollectorComponent)
+
+    .component('sens.index', indexComponent)
+
     .component('sens.sensorRow', sensorRowComponent);

@@ -1,8 +1,9 @@
 export default {
     template: require('./partials/sensor-data-collector.html'),
-    controller: ['$scope', 'sens.sensorDataCollector.service',
-        function ($scope, sensorService) {
+    controller: ['$scope', 'sens.sensorDataCollector.service', 'hs.query.baseService',
+        function ($scope, sensorService, queryBaseService) {
             angular.extend($scope, {
+                queryBaseService,
                 sensorService,
                 selectDeselectAllSensors: sensorService.selectDeselectAllSensors,
                 deleteSelectedSensors: sensorService.deleteSelectedSensors,
@@ -17,8 +18,8 @@ export default {
                 showSensors() {
                     $scope.sensorsTabVisible = !$scope.sensorsTabVisible
                 },
-                saveSensor(sensorName, sensorType, phenomenaId) {
-                    sensorService.saveSensors(sensorName, sensorType, phenomenaId).then(function (response) {
+                saveSensor() {
+                    sensorService.saveSensors($scope.sensorName, $scope.sensorType, $scope.phenomenaId).then(function (response) {
                         if (response == false) {
                             $scope.addSensorTabVisible = !$scope.addSensorTabVisible;
                             $scope.sensorName = '';
@@ -27,7 +28,7 @@ export default {
                         }
                     })
                 }
-            })
+            })         
         }
     ]
 }

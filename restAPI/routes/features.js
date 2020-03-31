@@ -31,8 +31,8 @@ async function featureDataHandler(req, res) {
                  WHERE observations.sensor_id = $1) inputs) features";
     try {
         const { rows } = await db.query(postgisToGeoJSON, [id])
-        res.send(rows);
+        res.status(201).send(rows);
     } catch (e) {
-        console.log(e.stack);
+        console.log(e.stack)
     }
 }

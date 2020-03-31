@@ -27,7 +27,7 @@
                 readonly></input>
         </div>
 
-        <div class="input-group m-1 p-1">
+        <!-- <div class="input-group m-1 p-1">
             <select class="form-control"
                 ng-options="sr.srid as sr.auth_srid for sr in  sensorService.refSys | filter:search" ng-model="refSys">
                 <input class="p-1" style="width: 50%;" type="text" placeholder="filter" ng-model="search">
@@ -35,7 +35,7 @@
             <div class="input-group-append">
                 <span class="input-group-text">EPSG</span>
             </div>
-        </div>
+        </div> -->
         <div ng-show="phenomena[0].phenomenon_name != 'Location'" class="input-group m-1 p-1">
             <input class="form-control" placeholder="measured value" ng-model="measuredValue"></input>
             <div class="input-group-append">
@@ -54,23 +54,13 @@
             <input class="form-control" placeholder="location" ng-model="location" readonly></input>
         </div>
     </div>
-    <div class="row" ng-show="phenomena && measuredValue && measurementTime && refSys && location">
+    <div class="row" ng-show="phenomena && measuredValue && measurementTime && location">
         <div class="col-6 mb-2 text-left">
             <div class="btn-group">
-                <button class="btn btn-primary btn-sm" title="Save measured data!"
-                    ng-click="saveData($ctrl.sensor.sensor_id, phenomena[0].id, measuredValue, measurementTime, refSys)"><i
+                <button class="btn btn-primary btn-sm" title="Save measured data"
+                    ng-click="saveData($ctrl.sensor.sensor_id, phenomena[0].id, measuredValue, measurementTime)"><i
                         class="icon-save-floppy"></i></button>
             </div>
         </div>
-    </div>
-</div>
-<style>
-    .customMap {
-        height: 200px;
-        width: 100%;
-    }
-</style>
-<div ng-show="newMap">
-    <div id="miniMap" class="customMap">
     </div>
 </div>

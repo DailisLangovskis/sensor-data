@@ -1,5 +1,5 @@
-export default ['$http',
-    function ($http) {
+export default ['$http', 'sens.userAuth.service',
+    function ($http, userAuthService) {
         var me = this;
         angular.extend(me, {
             btnSelectDeseletClicked: true,
@@ -7,13 +7,13 @@ export default ['$http',
             phenomenas: [],
             phenomena: '',
             featureCollection: '',
-            refSys: [],
+            // refSys: [],
             selectDeselectAllSensors() {
                 me.btnSelectDeseletClicked = !me.btnSelectDeseletClicked;
                 me.sensors.forEach(sensor => sensor.checked = me.btnSelectDeseletClicked);
             },
             getSensors: function () {
-                $http.get('http://localhost:8099/api/sensor/data')
+                $http.get('http://localhost:8099/api/sensor/data', { headers: { authorization: userAuthService.accessToken } })
                     .then(function success(response) {
                         me.sensors = response.data;
                     })
@@ -22,7 +22,7 @@ export default ['$http',
                     });
             },
             getPhenomenas: function () {
-                $http.get('http://localhost:8099/api/phenomena/data')
+                $http.get('http://localhost:8099/api/phenomena/data', { headers: { authorization: userAuthService.accessToken } })
                     .then(function success(response) {
                         me.phenomenas = response.data;
                     })
@@ -30,19 +30,19 @@ export default ['$http',
                         console.error("Error!", error);
                     });
             },
-            getReferencingSystems: function () {
-                $http.get('http://localhost:8099/api/ref-sys/data')
-                    .then(function success(response) {
-                        return response.data
-                    }).then(function (response) {
-                        me.refSys = response;
-                    })
-                    .catch(function (error) {
-                        console.error("Error!", error);
-                    });
-            },
+            // getReferencingSystems: function () {
+            //     $http.get('http://localhost:8099/api/ref-sys/data')
+            //         .then(function success(response) {
+            //             return response.data
+            //         }).then(function (response) {
+            //             me.refSys = response;
+            //         })
+            //         .catch(function (error) {
+            //             console.error("Error!", error);
+            //         });
+            // },
             getSelectedPhenomena: function (sensorSelected) {
-                return $http.get('http://localhost:8099/api/sensor/phenomena/' + sensorSelected.sensor_id)
+                return $http.get('http://localhost:8099/api/sensor/phenomena/' + sensorSelected.sensor_id, { headers: { authorization: userAuthService.accessToken } })
                     .then(function success(response) {
                         return response.data;
                     }).then(function (response) {
@@ -53,7 +53,7 @@ export default ['$http',
                     })
             },
             getSelectedFeatureCollection: function (sensorSelected) {
-                return $http.get('http://localhost:8099/api/features/load/' + sensorSelected.sensor_id)
+                return $http.get('http://localhost:8099/api/features/load/' + sensorSelected.sensor_id, { headers: { authorization: userAuthService.accessToken } })
                     .then(function success(response) {
                         return response.data;
                     }).then(function (response) {
@@ -65,7 +65,7 @@ export default ['$http',
             },
             saveSensors: function (sensorName, sensorType, phenomenaId) {
                 var data = { name: sensorName, type: sensorType, phenomenaId: phenomenaId };
-                return $http.post('http://localhost:8099/api/sensor/data', data)
+                return $http.post('http://localhost:8099/api/sensor/data', data, { headers: { authorization: userAuthService.accessToken } })
                     .then(function success(res) {
                         me.newAlert(res.data, 2000, "green");
                         me.getSensors();
@@ -77,20 +77,19 @@ export default ['$http',
                         return true;
                     });
             },
-            saveData: function (sensorClicked, phenomenaId, measuredValue, time, referencingSystem, wktGeom){
-                var data = {sensor: sensorClicked, phenomena: phenomenaId, measuredValue: measuredValue, time: time, refSys: referencingSystem, wktGeom: wktGeom}
-                return $http.post('http://localhost:8099/api/observation/save', data)
+            saveData: function (sensorClicked, phenomenaId, measuredValue, time, wktGeom) {
+                var data = { sensor: sensorClicked, phenomena: phenomenaId, measuredValue: measuredValue, time: time, wktGeom: wktGeom }
+                return $http.post('http://localhost:8099/api/observation/save', data, { headers: { authorization: userAuthService.accessToken } })
                     .then(function success(res) {
                         me.newAlert(res.data, 2000, "green");
                         return false;
                     })
                     .catch(function (error) {
-                        console.log(error.data.errors)
-                        if(error.data.errors) {
+                        if (error.data.errors) {
                             var gottenErrors = error.data.errors.map(msg => msg.msg)
                             me.newAlert(gottenErrors, 2000, "red");
                         }
-                        
+
                         return true;
                     });
             },
@@ -98,7 +97,7 @@ export default ['$http',
                 var deleteAll = window.confirm("Do you really want to delete all selected sensors from the database?");
                 if (deleteAll) {
                     var checked = me.sensors.filter(sensor => sensor.checked == true).map(id => id.sensor_id);
-                    $http.post('http://localhost:8099/api/sensor/delete', { params: checked })
+                    $http.post('http://localhost:8099/api/sensor/delete', { params: checked }, { headers: { authorization: userAuthService.accessToken } })
                         .then(function success(res) {
                             me.newAlert(res.data, 2000, "green");
                         })
@@ -119,8 +118,9 @@ export default ['$http',
                 setTimeout(function () { document.getElementById('alert').innerHTML = ''; }, timer)
             },
         })
-        me.getReferencingSystems();
-        me.getSensors();
-        me.getPhenomenas();
+        // me.getReferencingSystems();
+        // me.getSensors();
+        // me.getPhenomenas();
+
     }
 ]

@@ -23,29 +23,16 @@ export default {
             measuredValue: '',
             measurementTime: new Date(),
             dataTabExpanded: false,
-            search: '',
-            refSys: '',
-            // createMiniMap() {
-            //     var map = new Map({
-            //         target: 'miniMap',
-            //         layers: [
-            //             new Tile({
-            //                 source: new OSM()
-            //             })
-            //         ],
-            //         view: new View({
-            //             center: [0, 0],
-            //             zoom: 2,
-            //         })
-            //     });
-            // },
+            // search: '',
+            // refSys: '',
+
             dataRequest(sensorClicked) {
                 sensorService.getSelectedFeatureCollection(sensorClicked)
                 .then(_ => {
                     console.log(sensorService.featureCollection)
                 })
             },
-            getLocationFromMap() {           
+            getLocationFromMap() {            
                     var queryFeature = queryBaseService.queryLayer.getSource().getFeatures();
                     var formatWKT = new WKT();
                     $scope.featureGeomWKT = formatWKT.writeFeature(queryFeature[0]).toString();
@@ -75,14 +62,14 @@ export default {
                 $scope.measurementTime = new Date();
                 $scope.dataTabExpanded = !$scope.dataTabExpanded;
             },
-            saveData(sensorClicked, phenomenaId, measuredValue, time, referencingSystem) {
+            saveData(sensorClicked, phenomenaId, measuredValue, time) {
                 time = moment.moment(time).format("YYYY-MM-DD HH:mm:ssZ");
-                sensorService.saveData(sensorClicked, phenomenaId, measuredValue, time, referencingSystem, $scope.featureGeomWKT).then(function (response) {
+                sensorService.saveData(sensorClicked, phenomenaId, measuredValue, time, $scope.featureGeomWKT).then(function (response) {
                     if (response == false) {
                         $scope.dataTabExpanded = !$scope.dataTabExpanded;
                         $scope.measuredValue = '';
-                        $scope.refSys = '';
-                        $scope.search = '';
+                        // $scope.refSys = '';
+                        // $scope.search = '';
                         $scope.location = '';
                         $scope.featureGeomWKT = '';
                         $scope.measurementTime = new Date();

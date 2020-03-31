@@ -11,8 +11,8 @@ router.use(bodyparser());
 router.get('/data', async (req, res) => {
     try {           
         const { rows } = await db.query('SELECT phenomenon_name,unit,id FROM phenomenons')
-        res.send(rows)
-    } catch (e) {
+        res.status(201).send(rows)
+    } catch (e){
         console.log(e.stack)
     }
 })

@@ -15,6 +15,7 @@ import { transform, transformExtent } from 'ol/proj';
 import { Tile, Group, Image as ImageLayer } from 'ol/layer';
 import { TileWMS, WMTS, OSM, XYZ } from 'ol/source';
 import { Style, Icon, Stroke, Fill, Circle, Text } from 'ol/style';
+import BingMaps from 'ol/source/BingMaps';
 import Feature from 'ol/Feature';
 
 import VectorLayer from 'ol/layer/Vector';
@@ -39,11 +40,11 @@ var module = angular.module('hs', [
     'sens.sensorDataCollectorModule'
 ]);
 
-module.directive('hs', ['config', 'Core', 'hs.map.service', function (config, Core, hsMap) {
+module.directive('hs', ['config', 'Core','hs.layout.service',function (config, Core, layoutService) {
     return {
         template: Core.hslayersNgTemplate,
         link: function (scope, element) {
-            Core.fullScreenMap(element);
+            layoutService.fullScreenMap(element, Core);
         }
     };
 }]);
@@ -73,14 +74,23 @@ import bookMarkIcon from 'images/mrkr-bookmark.png';
 module.value('config', {
    proxyPrefix: "/proxy/",
     default_layers: [
-        new Tile({
-            source: new OSM(),
-            title: "Open Street layer",
-            base: true,
-            visible:false,
-            removable: false,
-            editor: { editable: false },
-        }),
+        // new Tile({
+        //     source: new OSM(),
+        //     title: "Open Street layer",
+        //     base: true,
+        //     visible:false,
+        //     removable: false,
+        //     editor: { editable: false },
+        // }),
+        // new Tile({
+        //     title: 'Aerial imagery',
+        //     source: new BingMaps({
+        //       key: 'Agm4srKgjuV675yk_5UBC_rEcOhEM0riLN3krcbD-Z9rgg6qGO6PTxlcYWRDAqm2',
+        //       imagerySet: 'AerialWithLabels'
+        //     }),
+        //     base: true,
+        //     visible: true
+        //   }), 
         new VectorLayer({
             title: 'Test',
             style: new Style({
@@ -141,7 +151,6 @@ module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service', 'h
         $scope.panelVisible = layoutService.panelVisible;
         layoutService.sidebarRight = false;   
         //layoutService.sidebarToggleable = false;
-        Core.singleDatasources = true;
         layoutService.setDefaultPanel("sensor-data-collector-index");
         layoutService.sidebarButtons = true;
        // layoutService.sidebarRight = true;

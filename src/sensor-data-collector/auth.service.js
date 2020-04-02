@@ -1,5 +1,5 @@
-export default ['$window', '$injector',
-    function ($window, $injector) {
+export default ['$window', '$injector', 'config', 
+    function ($window, $injector, config) {
         var me = this;
         angular.extend(me, {
             toLogin: true,
@@ -24,17 +24,17 @@ export default ['$window', '$injector',
             },
             isLoggedIn: function () {
                 if ($window.localStorage.getItem('JWT') === null) {
-                    return false;
+                    me.toLogin = true;
                 }
                 else {
-                    return true;
+                    me.toLogin = false;
                 }
             },
             returnToLogin: function () {
                 return me.toLogin = true;
             },
             logOut: function () {
-                $injector.get('$http').post('http://localhost:8099/auth/delete', { refreshToken: me.getRefreshToken() })
+                $injector.get('$http').post(config.sensorApiEndpoint + '/auth/delete', { refreshToken: me.getRefreshToken() })
                     .then(function success(res) {
                         me.clearAllToken();
                         me.toLogin = true;
@@ -45,5 +45,6 @@ export default ['$window', '$injector',
             }
 
         })
+        me.isLoggedIn()
     }
 ]

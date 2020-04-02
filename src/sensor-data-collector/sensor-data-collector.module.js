@@ -22,8 +22,8 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map'])
 
     .service("sens.sensorRow.service", sensorRowService)
 
-    .service("sens.authInterceptor", ['sens.auth.service', '$q', '$window', '$injector',
-        function (authService, $q, $window, $injector) {
+    .service("sens.authInterceptor", ['sens.auth.service', '$q', '$window', '$injector','config',
+        function (authService, $q, $window, $injector,config ) {
             var inFlightAuthRequest = null;
             return {
                 request: function (config) {
@@ -34,7 +34,7 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map'])
                     return config;
                 },
                 responseError: function (response) {
-                    if (response.config.url == 'http://localhost:8099/auth/token') {
+                    if (response.config.url == config.sensorApiEndpoint + '/auth/token') {
                         authService.clearAllToken();
                         authService.returnToLogin();
                     } else {
@@ -43,7 +43,7 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map'])
                                 authService.clearToken();
                                 var deffered = $q.defer();
                                 if (!inFlightAuthRequest) {
-                                    inFlightAuthRequest = $injector.get('$http').post('http://localhost:8099/auth/token', { refreshToken: authService.getRefreshToken() });
+                                    inFlightAuthRequest = $injector.get('$http').post(config.sensorApiEndpoint +'/auth/token', { refreshToken: authService.getRefreshToken() });
 
                                 }
                                 inFlightAuthRequest.then(function (res) {

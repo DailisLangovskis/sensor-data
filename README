@@ -1,13 +1,15 @@
 For development:
 
 ```
-export HSLPATH=~/Projects/hslayers-ng
 ```
 
  run
 
 ```
 make build-dev
+
+make clear-database
+
 make start-dev
 ```
 
@@ -15,6 +17,9 @@ For production
 
 ```
 make build-dev
+
+make clear-database
+
 make start-dev
 ```
 

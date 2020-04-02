@@ -10,4 +10,4 @@ if (result.error) {
 console.log(result.parsed)
 mountRoutes(app)
 
-app.listen(8099, () => console.log('App is listening on port 8099!'))
+app.listen(3000, () => console.log('App is listening on port 3000!'))

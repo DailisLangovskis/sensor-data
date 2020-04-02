@@ -52,22 +52,19 @@ router.post('/', [
     })
 router.post('/token', (req, res) => {
     const refreshToken = req.body.refreshToken
-    if(refreshToken == null) return res.sendStatus(401)
+    if (refreshToken == null) return res.sendStatus(401)
     if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403)
-    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user)=>{
-        if(err) return res.sendStatus(403)
-        const accessToken = generateAccessToken({name: user.name})
-        res.json({ accessToken: accessToken})
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403)
+        const accessToken = generateAccessToken({ name: user.name })
+        res.json({ accessToken: accessToken })
     })
 })
 
 function generateAccessToken(user) {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3s' })
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' })
 }
 router.post('/delete', (req, res) => {
-    console.log(req.body)
-    console.log(refreshTokens)
     refreshTokens = refreshTokens.filter(token => token !== req.body.refreshToken)
-    console.log(refreshTokens)
     res.sendStatus(204)
 })

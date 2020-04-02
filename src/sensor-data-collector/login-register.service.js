@@ -1,10 +1,10 @@
-export default ['$http', 'sens.auth.service',
-    function ($http, authService) {
+export default ['$http', 'sens.auth.service','config',
+    function ($http, authService, config) {
         var me = this;
         angular.extend(me, {
             registerUser: function (name, lastname, email, username, password) {
                 var user = { name: name, lastname: lastname, email: email, username: username, password: password };
-                return $http.post('http://localhost:8099/registerUser', user)
+                return $http.post(config.sensorApiEndpoint + '/registerUser', user)
                     .then(function success(res) {
                         me.userAlert(res.data, 2000, "green");
                         return false;
@@ -20,7 +20,7 @@ export default ['$http', 'sens.auth.service',
             },
             login: function (username, password) {
                 var user = { username: username, password: password };
-                return $http.post('http://localhost:8099/auth', user)
+                return $http.post(config.sensorApiEndpoint + '/auth', user)
                     .then(function success(res) {
                         authService.setToken(res.data.accessToken);
                         authService.setRefreshToken(res.data.refreshToken);
@@ -37,7 +37,6 @@ export default ['$http', 'sens.auth.service',
                         return true;
                     });
             },
-            loggedIn: authService.isLoggedIn,
             userAlert(msg, timer, background) {
                 document.getElementById('alert-user').innerHTML = '<b>' + msg + '</b>';
                 document.getElementById('alert-user').style.backgroundColor = background;
@@ -45,6 +44,5 @@ export default ['$http', 'sens.auth.service',
                 setTimeout(function () { document.getElementById('alert-user').innerHTML = ''; }, timer)
             },
         })
-        me.loggedIn();
     }
 ]

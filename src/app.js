@@ -141,7 +141,8 @@ module.value('config', {
         group: 'kynsperk', //Needed for MapLogOT
         user: 'kynsperk' //Needed for MapLogOT
     },
-    allowAddExternalDatasets: true
+    allowAddExternalDatasets: true,
+    sensorApiEndpoint: 'http://localhost:3000/api'
 });
 
 module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service', 'hs.query.baseService',

@@ -1,5 +1,5 @@
-export default ['$http',
-    function ($http) {
+export default ['$http', 'config',
+    function ($http, config) {
         var me = this;
         angular.extend(me, {
             btnSelectDeseletClicked: true,
@@ -13,7 +13,7 @@ export default ['$http',
                 me.sensors.forEach(sensor => sensor.checked = me.btnSelectDeseletClicked);
             },
             getSensors: function () {
-                $http.get('http://localhost:8099/api/sensor/data')
+                $http.get(config.sensorApiEndpoint + '/sensor/data')
                     .then(function success(response) {
                         me.sensors = response.data;
                     })
@@ -22,7 +22,7 @@ export default ['$http',
                     });
             },
             getPhenomenas: function () {
-                $http.get('http://localhost:8099/api/phenomena/data')
+                $http.get(config.sensorApiEndpoint + '/phenomena/data')
                     .then(function success(response) {
                         me.phenomenas = response.data;
                     })
@@ -31,7 +31,7 @@ export default ['$http',
                     });
             },
             // getReferencingSystems: function () {
-            //     $http.get('http://localhost:8099/api/ref-sys/data')
+            //     $http.get('http://localhost:3000/api/ref-sys/data')
             //         .then(function success(response) {
             //             return response.data
             //         }).then(function (response) {
@@ -42,7 +42,7 @@ export default ['$http',
             //         });
             // },
             getSelectedPhenomena: function (sensorSelected) {
-                return $http.get('http://localhost:8099/api/sensor/phenomena/' + sensorSelected.sensor_id)
+                return $http.get(config.sensorApiEndpoint + '/sensor/phenomena/' + sensorSelected.sensor_id)
                     .then(function success(response) {
                         return response.data;
                     }).then(function (response) {
@@ -53,7 +53,7 @@ export default ['$http',
                     })
             },
             getSelectedFeatureCollection: function (sensorSelected) {
-                return $http.get('http://localhost:8099/api/features/load/' + sensorSelected.sensor_id)
+                return $http.get(config.sensorApiEndpoint + '/features/load/' + sensorSelected.sensor_id)
                     .then(function success(response) {
                         return response.data;
                     }).then(function (response) {
@@ -65,7 +65,7 @@ export default ['$http',
             },
             saveSensors: function (sensorName, sensorType, phenomenaId) {
                 var data = { name: sensorName, type: sensorType, phenomenaId: phenomenaId };
-                return $http.post('http://localhost:8099/api/sensor/data', data)
+                return $http.post(config.sensorApiEndpoint + '/sensor/data', data)
                     .then(function success(res) {
                         me.newAlert(res.data, 2000, "green");
                         me.getSensors();
@@ -82,7 +82,7 @@ export default ['$http',
             },
             saveData: function (sensorClicked, phenomenaId, measuredValue, time, wktGeom) {
                 var data = { sensor: sensorClicked, phenomena: phenomenaId, measuredValue: measuredValue, time: time, wktGeom: wktGeom }
-                return $http.post('http://localhost:8099/api/observation/save', data)
+                return $http.post(config.sensorApiEndpoint + '/observation/save', data)
                     .then(function success(res) {
                         me.newAlert(res.data, 2000, "green");
                         return false;
@@ -100,7 +100,7 @@ export default ['$http',
                 var deleteAll = window.confirm("Do you really want to delete all selected sensors from the database?");
                 if (deleteAll) {
                     var checked = me.sensors.filter(sensor => sensor.checked == true).map(id => id.sensor_id);
-                    $http.post('http://localhost:8099/api/sensor/delete', { params: checked })
+                    $http.post(config.sensorApiEndpoint + '/sensor/delete', { params: checked })
                         .then(function success(res) {
                             me.newAlert(res.data, 2000, "green");
                         })

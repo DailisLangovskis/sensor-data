@@ -1,7 +1,7 @@
 export default {
     template: require('./partials/sensor-data-collector.html'),
-    controller: ['$scope', 'sens.sensorDataCollector.service', 'hs.query.baseService',
-        function ($scope, sensorService, queryBaseService) {
+    controller: ['$scope', 'sens.sensorDataCollector.service', 'hs.query.baseService', '$window', '$http', 'sens.auth.service', 
+        function ($scope, sensorService, queryBaseService, $window, $http, authService) {
             angular.extend($scope, {
                 queryBaseService,
                 sensorService,
@@ -27,6 +27,10 @@ export default {
                             $scope.phenomenaId = '';
                         }
                     })
+                },
+                logout() {
+                    authService.clearAllToken();
+                    $http.defaults.headers.common['authorization'] = '';
                 }
             })         
         }

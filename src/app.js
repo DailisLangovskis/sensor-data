@@ -146,20 +146,19 @@ module.value('config', {
 
 module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service', 'hs.query.baseService',
     function ($scope, Core, $compile, layoutService, queryBaseService) {
-        queryBaseService.nonQueryablePanels.push('sensor-data-collector-index');
+        queryBaseService.nonQueryablePanels.push('sensor-data-collector');
         $scope.Core = Core;
         $scope.panelVisible = layoutService.panelVisible;
         layoutService.sidebarRight = false;   
         //layoutService.sidebarToggleable = false;
-        layoutService.setDefaultPanel("sensor-data-collector-index");
+        
         layoutService.sidebarButtons = true;
        // layoutService.sidebarRight = true;
         $scope.$on("scope_loaded", function (event, args) {
             if (args == 'Sidebar') {
-                var el = angular.element('<sens.index hs.draggable ng-if="Core.exists(\'sens.sensorDataCollectorModule\')" ng-show="panelVisible(\'sensor-data-collector-index\', this)"></sens.index>')[0];
+                var el = angular.element('<sens.index hs.draggable ng-if="Core.exists(\'sens.sensorDataCollectorModule\')" ng-show="panelVisible(\'sensor-data-collector\', this)"></sens.index>')[0];
                 layoutService.panelListElement.appendChild(el);
                 $compile(el)($scope);
-
                 var toolbar_button = angular.element('<sens.sensor-data-collector.sidebar-btn>')[0];
                 layoutService.sidebarListElement.appendChild(toolbar_button);
                 $compile(toolbar_button)(event.targetScope);

@@ -1,5 +1,5 @@
-export default ['$http', 'sens.userAuth.service',
-    function ($http, userAuthService) {
+export default ['$http',
+    function ($http) {
         var me = this;
         angular.extend(me, {
             btnSelectDeseletClicked: true,
@@ -13,7 +13,7 @@ export default ['$http', 'sens.userAuth.service',
                 me.sensors.forEach(sensor => sensor.checked = me.btnSelectDeseletClicked);
             },
             getSensors: function () {
-                $http.get('http://localhost:8099/api/sensor/data', { headers: { authorization: userAuthService.accessToken } })
+                $http.get('http://localhost:8099/api/sensor/data')
                     .then(function success(response) {
                         me.sensors = response.data;
                     })
@@ -22,7 +22,7 @@ export default ['$http', 'sens.userAuth.service',
                     });
             },
             getPhenomenas: function () {
-                $http.get('http://localhost:8099/api/phenomena/data', { headers: { authorization: userAuthService.accessToken } })
+                $http.get('http://localhost:8099/api/phenomena/data')
                     .then(function success(response) {
                         me.phenomenas = response.data;
                     })
@@ -42,7 +42,7 @@ export default ['$http', 'sens.userAuth.service',
             //         });
             // },
             getSelectedPhenomena: function (sensorSelected) {
-                return $http.get('http://localhost:8099/api/sensor/phenomena/' + sensorSelected.sensor_id, { headers: { authorization: userAuthService.accessToken } })
+                return $http.get('http://localhost:8099/api/sensor/phenomena/' + sensorSelected.sensor_id)
                     .then(function success(response) {
                         return response.data;
                     }).then(function (response) {
@@ -53,7 +53,7 @@ export default ['$http', 'sens.userAuth.service',
                     })
             },
             getSelectedFeatureCollection: function (sensorSelected) {
-                return $http.get('http://localhost:8099/api/features/load/' + sensorSelected.sensor_id, { headers: { authorization: userAuthService.accessToken } })
+                return $http.get('http://localhost:8099/api/features/load/' + sensorSelected.sensor_id)
                     .then(function success(response) {
                         return response.data;
                     }).then(function (response) {
@@ -65,31 +65,34 @@ export default ['$http', 'sens.userAuth.service',
             },
             saveSensors: function (sensorName, sensorType, phenomenaId) {
                 var data = { name: sensorName, type: sensorType, phenomenaId: phenomenaId };
-                return $http.post('http://localhost:8099/api/sensor/data', data, { headers: { authorization: userAuthService.accessToken } })
+                return $http.post('http://localhost:8099/api/sensor/data', data)
                     .then(function success(res) {
                         me.newAlert(res.data, 2000, "green");
                         me.getSensors();
                         return false;
                     })
                     .catch(function (error) {
-                        var gottenErrors = error.data.errors.map(msg => msg.msg)
-                        me.newAlert(gottenErrors, 2000, "red");
+                        console.log(error);
+                        if (error.hasOwnProperty('errors')) {
+                            var gottenErrors = error.errors.map(msg => msg.msg)
+                            me.newAlert(gottenErrors, 2000, "red");
+                        }
                         return true;
                     });
             },
             saveData: function (sensorClicked, phenomenaId, measuredValue, time, wktGeom) {
                 var data = { sensor: sensorClicked, phenomena: phenomenaId, measuredValue: measuredValue, time: time, wktGeom: wktGeom }
-                return $http.post('http://localhost:8099/api/observation/save', data, { headers: { authorization: userAuthService.accessToken } })
+                return $http.post('http://localhost:8099/api/observation/save', data)
                     .then(function success(res) {
                         me.newAlert(res.data, 2000, "green");
                         return false;
                     })
                     .catch(function (error) {
-                        if (error.data.errors) {
-                            var gottenErrors = error.data.errors.map(msg => msg.msg)
+                        console.log(error);
+                        if (error.hasOwnProperty('errors')) {
+                            var gottenErrors = error.errors.map(msg => msg.msg)
                             me.newAlert(gottenErrors, 2000, "red");
                         }
-
                         return true;
                     });
             },
@@ -97,7 +100,7 @@ export default ['$http', 'sens.userAuth.service',
                 var deleteAll = window.confirm("Do you really want to delete all selected sensors from the database?");
                 if (deleteAll) {
                     var checked = me.sensors.filter(sensor => sensor.checked == true).map(id => id.sensor_id);
-                    $http.post('http://localhost:8099/api/sensor/delete', { params: checked }, { headers: { authorization: userAuthService.accessToken } })
+                    $http.post('http://localhost:8099/api/sensor/delete', { params: checked })
                         .then(function success(res) {
                             me.newAlert(res.data, 2000, "green");
                         })
@@ -105,8 +108,11 @@ export default ['$http', 'sens.userAuth.service',
                             me.getSensors();
                         })
                         .catch(function (error) {
-                            var gottenErrors = error.data.errors.map(msg => msg.msg)
-                            me.newAlert(gottenErrors, 2000, "red");
+                            console.log(error);
+                            if (error.hasOwnProperty('errors')) {
+                                var gottenErrors = error.errors.map(msg => msg.msg)
+                                me.newAlert(gottenErrors, 2000, "red");
+                            }
                         });
 
                 }

@@ -22,8 +22,8 @@ router.post('/data', [
             })
     }).withMessage("This sensor already exists!"),
     check('type').isLength({ min: 1, max: 20 })
-        .withMessage('Must be at less 20 chars long'),
-    check('phenomenaId').isNumeric().withMessage("This is not a numeric value!"),
+        .withMessage('Sensor type be at less 20 chars long'),
+    check('phenomenaId').isNumeric().withMessage("Given phenomena id is not a numeric value!"),
 ], addSensorDataHandler)
 
 router.get('/phenomena/:id', getPhenomenaDataHandler)
@@ -83,6 +83,6 @@ async function getPhenomenaDataHandler(req, res) {
         const { rows } = await db.query(selectPhenomena, [id])
         res.status(201).send(rows);
     } catch (e) {
-        console.log(e.stack)
+        console.log(e.stack) 
     }
 }

@@ -1,78 +1,80 @@
 <div class="card panel-default mainpanel">
-    <hs.layout.panel-header panel-name="sensor-data-collector-index" panel-title="'Sensor data collector'||translate">
+    <hs.layout.panel-header panel-name="sensor-data-collector" panel-title="'Sensor data collector'||translate">
     </hs.layout.panel-header>
     <div class="container-fluid">
         <div id="alert-user" style="font-weight: bold; text-align: center;">
         </div>
-        <div style="text-align: center;">
-            <strong>LOGIN</strong>
-        </div>
-        <form ng-submit="login()" class="form" role="form">
-            <div class="row">
-                <div class="input-group m-1">
-                    <div class="input-group m-1">
-                        <input type="text" class="form-control" ng-model="logUsername" placeholder="Username"
-                            required=""></input>
-                    </div>
-                    <div class="input-group m-1">
-                        <input type="password" class="form-control" ng-model="logPassword" placeholder="Password"
-                            required=""></input>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group col m-1 p-1 text-center">
-                    <button type="submit" class="btn btn-success btn-sm">Login</button>
-                </div>
-            </div>
-        </form>
-
-        <div class="row">
-            <div class="col m-1 p-1 text-center">
-                <button class="btn btn-primary btn-sm" ng-click="registerTab()">Create new account</button>
-            </div>
-        </div>
-        <div ng-show="registerTabVisible">
+        <div ng-hide="authService.isLoggedIn()">
             <div style="text-align: center;">
-                <strong>REGISTER</strong>
-                <form name="form" ng-submit="register()" role="form">
-                    <div class="row">
+                <strong>LOGIN</strong>
+            </div>
+            <form ng-submit="login()" class="form" role="form">
+                <div class="row">
+                    <div class="input-group m-1">
                         <div class="input-group m-1">
-                            <div class="input-group m-1">
-                                <input type="text" class="form-control" ng-model="name" placeholder="Name"
-                                    required=""></input>
-                            </div>
-                            <div class="input-group m-1">
-                                <input type="text" class="form-control" ng-model="lastname" placeholder="Lastname"
-                                    required=""></input>
-                            </div>
-                            <div class="input-group m-1">
-                                <input type="email" class="form-control" ng-model="email" placeholder="Email"
-                                    required=""></input>
-                            </div>
-                            <div class="input-group m-1">
-                                <input type="text" class="form-control" ng-model="username" placeholder="Username"
-                                    required=""></input>
-                            </div>
-                            <div class="input-group m-1">
-                                <input type="password" class="form-control" ng-model="password" placeholder="Password"
-                                    required=""></input>
-                            </div>
-                            <div class="input-group m-1">
-                                <input type="password" class="form-control" ng-model="rePassword"
-                                    placeholder="Re-enter password" required=""></input>
-                            </div>
+                            <input type="text" class="form-control" ng-model="logUsername" placeholder="Username"
+                                required=""></input>
+                        </div>
+                        <div class="input-group m-1">
+                            <input type="password" class="form-control" ng-model="logPassword" placeholder="Password"
+                                required=""></input>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="form-group col m-1 p-1 text-center">
-                            <button type="submit" class="btn btn-success btn-sm">Register</button>
-                        </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col m-1 p-1 text-center">
+                        <button type="submit" class="btn btn-success btn-sm">Login</button>
                     </div>
-                </form>
+                </div>
+            </form>
+
+            <div class="row">
+                <div class="col m-1 p-1 text-center">
+                    <button class="btn btn-primary btn-sm" ng-click="registerTab()">Create new account</button>
+                </div>
+            </div>
+            <div ng-show="registerTabVisible">
+                <div style="text-align: center;">
+                    <strong>REGISTER</strong>
+                    <form name="form" ng-submit="register()" role="form">
+                        <div class="row">
+                            <div class="input-group m-1">
+                                <div class="input-group m-1">
+                                    <input type="text" class="form-control" ng-model="name" placeholder="Name"
+                                        required=""></input>
+                                </div>
+                                <div class="input-group m-1">
+                                    <input type="text" class="form-control" ng-model="lastname" placeholder="Lastname"
+                                        required=""></input>
+                                </div>
+                                <div class="input-group m-1">
+                                    <input type="email" class="form-control" ng-model="email" placeholder="Email"
+                                        required=""></input>
+                                </div>
+                                <div class="input-group m-1">
+                                    <input type="text" class="form-control" ng-model="username" placeholder="Username"
+                                        required=""></input>
+                                </div>
+                                <div class="input-group m-1">
+                                    <input type="password" class="form-control" ng-model="password"
+                                        placeholder="Password" required=""></input>
+                                </div>
+                                <div class="input-group m-1">
+                                    <input type="password" class="form-control" ng-model="rePassword"
+                                        placeholder="Re-enter password" required=""></input>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col m-1 p-1 text-center">
+                                <button type="submit" class="btn btn-success btn-sm">Register</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-        <sens.sensor-data-collector>
+        <sens.sensor-data-collector ng-show="authService.isLoggedIn()">
         </sens.sensor-data-collector>
     </div>
 </div>

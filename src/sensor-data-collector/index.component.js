@@ -1,8 +1,10 @@
 export default {
     template: require('./partials/index.html'),
-    controller: ['$scope', 'sens.userAuth.service', 'sens.sensorDataCollector.service',
-        function ($scope, authService, sensorService) {
+    controller: ['$scope', "sens.loginRegister.service", 'sens.sensorDataCollector.service',"sens.auth.service",
+        function ($scope, loginRegister, sensorService, authService) {
             angular.extend($scope, {
+                loginRegister,
+                authService,
                 name: '',
                 lastname: '',
                 email: '',
@@ -11,9 +13,10 @@ export default {
                 rePassword: '',
                 logUsername: '',
                 logPassword: '',
-                registerTabVisible: false,
+                registerTabVisible: false, 
+
                 login() {
-                    authService.login($scope.logUsername, $scope.logPassword).then(function (response) {
+                    loginRegister.login($scope.logUsername, $scope.logPassword).then(function (response) {
                         if (response == false) {
                             $scope.logUsername = '';
                             $scope.logPassword = '';
@@ -34,7 +37,7 @@ export default {
                         $scope.rePassword = '';
                     }
                     else {
-                        authService.registerUser($scope.name, $scope.lastname, $scope.email, $scope.username, $scope.password).then(function (response) {
+                        loginRegister.registerUser($scope.name, $scope.lastname, $scope.email, $scope.username, $scope.password).then(function (response) {
                             if (response == false) {
                                 $scope.name = '';
                                 $scope.lastname = '';

@@ -20,7 +20,7 @@ export default ['$http', 'sens.auth.service',
             },
             login: function (username, password) {
                 var user = { username: username, password: password };
-                return $http.post('http://localhost:8099/login', user)
+                return $http.post('http://localhost:8099/auth', user)
                     .then(function success(res) {
                         authService.setToken(res.data.accessToken);
                         authService.setRefreshToken(res.data.refreshToken);

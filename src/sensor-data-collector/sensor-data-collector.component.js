@@ -29,9 +29,8 @@ export default {
                         }
                     })
                 },
-                toLogin(){
-                    authService.toLogin = true;
-                }
+
+                                  
             })         
         }
     ]

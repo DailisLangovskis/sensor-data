@@ -3,7 +3,7 @@ const helmet = require('helmet')
 const compression = require('compression')
 const api = require('./api.v0')
 const express = require('express')
-const login = require('./login')
+const auth = require('./auth')
 const rateLimit = require('express-rate-limit')
 const registerUser = require('./registerUser')
 const auth_middleware = require('./auth_middleware')
@@ -24,12 +24,12 @@ const limiter = rateLimit({
 var auth_token = auth_middleware.authentificateToken
 module.exports = app => {
   app.use(express.json())
-  app.all('/api/*',cors)
+  app.all('/api/*', cors)
   app.use(compression())
   app.use(helmet())
   app.use(limiter)
-  app.use('/registerUser',cors, registerUser)
-  app.use('/login', cors, login)
+  app.use('/registerUser', cors, registerUser)
+  app.use('/auth', cors, auth)
   app.use('/api', auth_token, api)
 
 

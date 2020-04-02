@@ -51,7 +51,6 @@ router.post('/', [
 
     })
 router.post('/token', (req, res) => {
-    console.log(req.body)
     const refreshToken = req.body.refreshToken
     if(refreshToken == null) return res.sendStatus(401)
     if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403)
@@ -61,12 +60,14 @@ router.post('/token', (req, res) => {
         res.json({ accessToken: accessToken})
     })
 })
-router.delete('/logout', (req, res) =>{
-    refreshTokens = refreshTokens.filter(token => token !== req.body.refreshToken)
-    res.sendStatus(204)
-})
 
 function generateAccessToken(user) {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15s' })
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3s' })
 }
-
+router.post('/delete', (req, res) => {
+    console.log(req.body)
+    console.log(refreshTokens)
+    refreshTokens = refreshTokens.filter(token => token !== req.body.refreshToken)
+    console.log(refreshTokens)
+    res.sendStatus(204)
+})

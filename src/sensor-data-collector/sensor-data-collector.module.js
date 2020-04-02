@@ -34,20 +34,20 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map'])
                     return config;
                 },
                 responseError: function (response) {
-                    if (response.config.url == 'http://localhost:8099/login/token') {
+                    if (response.config.url == 'http://localhost:8099/auth/token') {
                         authService.clearAllToken();
-                        authService.toLogin();
+                        authService.returnToLogin();
                     } else {
                         switch (response.status) {
                             case 401:
                                 authService.clearToken();
                                 var deffered = $q.defer();
                                 if (!inFlightAuthRequest) {
-                                    inFlightAuthRequest = $injector.get('$http').post('http://localhost:8099/login/token', { refreshToken: authService.getRefreshToken() });
+                                    inFlightAuthRequest = $injector.get('$http').post('http://localhost:8099/auth/token', { refreshToken: authService.getRefreshToken() });
 
                                 }
                                 inFlightAuthRequest.then(function (res) {
-                                    inFlightAuthRequest = null;
+                                    inFlightAuthRequest = null
                                     authService.setToken(res.data.accessToken);
                                     $injector.get('$http')(response.config).then(function (resp) {
                                         deffered.resolve(resp);
@@ -58,7 +58,7 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map'])
                                     inFlightAuthRequest = null;
                                     deffered.reject();
                                     authService.clearAllToken();
-                                    authService.toLogin();
+                                    authService.returnToLogin();
                                     $window.alert(error);
                                     return;
                                 });

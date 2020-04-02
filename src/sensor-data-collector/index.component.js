@@ -18,6 +18,7 @@ export default {
                 login() {
                     loginRegister.login($scope.logUsername, $scope.logPassword).then(function (response) {
                         if (response == false) {
+                            authService.toLogin = false;
                             $scope.logUsername = '';
                             $scope.logPassword = '';
 

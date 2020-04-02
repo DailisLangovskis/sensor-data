@@ -2,6 +2,7 @@ export default ['$window',
     function ($window) {
         var me = this;
         angular.extend(me, {
+            toLogin: true,
             getToken: function() {
                 return $window.localStorage.getItem('JWT');
             },
@@ -28,7 +29,11 @@ export default ['$window',
                 else {
                     return true;
                 }
+            },
+            toLogin(){
+                return me.toLogin=true;
             }
+
         })
     }
 ]

@@ -1,8 +1,9 @@
 export default {
     template: require('./partials/sensor-data-collector.html'),
-    controller: ['$scope', 'sens.sensorDataCollector.service', 'hs.query.baseService', '$window', '$http', 'sens.auth.service', 
-        function ($scope, sensorService, queryBaseService, $window, $http, authService) {
+    controller: ['$scope', 'sens.sensorDataCollector.service', 'hs.query.baseService', 'sens.auth.service', 
+        function ($scope, sensorService, queryBaseService, authService) {
             angular.extend($scope, {
+                authService,
                 queryBaseService,
                 sensorService,
                 selectDeselectAllSensors: sensorService.selectDeselectAllSensors,
@@ -28,9 +29,8 @@ export default {
                         }
                     })
                 },
-                logout() {
-                    authService.clearAllToken();
-                    $http.defaults.headers.common['authorization'] = '';
+                toLogin(){
+                    authService.toLogin = true;
                 }
             })         
         }

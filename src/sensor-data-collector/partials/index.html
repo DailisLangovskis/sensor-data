@@ -4,7 +4,7 @@
     <div class="container-fluid">
         <div id="alert-user" style="font-weight: bold; text-align: center;">
         </div>
-        <div ng-hide="authService.isLoggedIn()">
+        <div ng-hide="!authService.toLogin">
             <div style="text-align: center;">
                 <strong>LOGIN</strong>
             </div>
@@ -74,7 +74,7 @@
                 </div>
             </div>
         </div>
-        <sens.sensor-data-collector ng-show="authService.isLoggedIn()">
+        <sens.sensor-data-collector ng-hide="authService.toLogin">
         </sens.sensor-data-collector>
     </div>
 </div>

@@ -5,6 +5,7 @@ import indexComponent from './index.component';
 import loginRegisterService from './login-register.service';
 import sensorRowService from './sensor-row.service';
 import authService from './auth.service';
+import { deepEqual } from 'vega-lite/build/src/util';
 
 angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map'])
     .directive('sens.sensorDataCollector.sidebarBtn', function () {
@@ -21,18 +22,56 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map'])
 
     .service("sens.sensorRow.service", sensorRowService)
 
-    .service("sens.authInterceptor", ['sens.auth.service', '$q','$window',
-        function (authService, $q, $window) {
-            var authInterceptor = {
-                responseError: function (response) {
-                    if (response.status === 403) {
-                        authService.clearAllToken();
-                        $window.alert(response.data);
+    .service("sens.authInterceptor", ['sens.auth.service', '$q', '$window', '$injector',
+        function (authService, $q, $window, $injector) {
+            var inFlightAuthRequest = null;
+            return {
+                request: function (config) {
+                    config.headers = config.headers || {};
+                    if (authService.getToken()) {
+                        config.headers['authorization'] = authService.getToken()
                     }
-                    return $q.reject(response.data);
+                    return config;
+                },
+                responseError: function (response) {
+                    if (response.config.url == 'http://localhost:8099/login/token') {
+                        authService.clearAllToken();
+                        authService.toLogin();
+                    } else {
+                        switch (response.status) {
+                            case 401:
+                                authService.clearToken();
+                                var deffered = $q.defer();
+                                if (!inFlightAuthRequest) {
+                                    inFlightAuthRequest = $injector.get('$http').post('http://localhost:8099/login/token', { refreshToken: authService.getRefreshToken() });
+
+                                }
+                                inFlightAuthRequest.then(function (res) {
+                                    inFlightAuthRequest = null;
+                                    authService.setToken(res.data.accessToken);
+                                    $injector.get('$http')(response.config).then(function (resp) {
+                                        deffered.resolve(resp);
+                                    }, function (resp) {
+                                        deffered.reject(resp);
+                                    });
+                                }, function (error) {
+                                    inFlightAuthRequest = null;
+                                    deffered.reject();
+                                    authService.clearAllToken();
+                                    authService.toLogin();
+                                    $window.alert(error);
+                                    return;
+                                });
+                                return deffered.promise;
+                                break;
+                            default:
+                                return $q.reject(response.data);
+                                break;
+                        }
+                        return response || $q.when(response);
+                    };
                 }
-            };
-            return authInterceptor;
+            }
         }])
 
     .component('sens.sensorDataCollector', sensorDataCollectorComponent)

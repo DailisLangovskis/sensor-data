@@ -1,7 +1,7 @@
 const Router = require('express-promise-router')
 const db = require('../db')
 const bodyparser = require('body-parser')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const { check, validationResult } = require('express-validator')
 const jwt = require('jsonwebtoken')
 // create a new express-promise-router
@@ -40,7 +40,7 @@ router.post('/', [
                     res.json({ accessToken: accessToken, refreshToken: refreshToken, msg: 'Successful login!' })
                 }
                 else {
-                    res.status(404).send(404, { errors: [{ msg: 'Username or password does not exist!' }] })
+                    res.status(404).send({ errors: [{ msg: 'Username or password does not exist!' }] })
                 }
             } catch (e) {
                 res.status(500).send()

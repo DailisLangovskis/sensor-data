@@ -138,7 +138,7 @@ module.value('config', {
     senslog: {
         url: 'http://foodie.lesprojekt.cz:8080',
         user_id: 6, //Needed for senslogOT
-        group: 'kynsperk', //Needed for MapLogOT
+        group: 'kynsperk', //Needed for MapLogOT 
         user: 'kynsperk' //Needed for MapLogOT
     },
     allowAddExternalDatasets: true,

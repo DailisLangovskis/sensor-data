@@ -24,7 +24,6 @@ export default ['$http', 'sens.auth.service','config',
                     .then(function success(res) {
                         authService.setToken(res.data.accessToken);
                         authService.setRefreshToken(res.data.refreshToken);
-                        //$http.defaults.headers.common['authorization'] = authService.getToken();
                         me.userAlert(res.data.msg, 2000, "green");
                         return false;
                     })

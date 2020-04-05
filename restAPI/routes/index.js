@@ -8,7 +8,7 @@ const rateLimit = require('express-rate-limit')
 
 const cors = require('cors')({
   origin: function (origin, callback) {
-    if (["http://localhost:8082", "http://0.0.0.0:8082", "http://localhost:3000".indexOf(origin) !== -1 || typeof origin == 'undefined']) {
+    if (["http://localhost:8082", "http://0.0.0.0:8082","http://localhost/sensor-data".indexOf(origin) !== -1 || typeof origin == 'undefined']) {
       callback(null, true)
     } else {
       callback(new Error('Not allowed by CORS'))

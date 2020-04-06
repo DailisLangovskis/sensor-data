@@ -8,7 +8,7 @@ export default {
         sensor: '=',
 
     },
-    controller: ['$scope', 'sens.sensorDataCollector.service', 'hs.map.service', 'hs.query.baseService', function ($scope, sensorService, HsMap, queryBaseService) {
+    controller: ['$scope', 'sens.sensor.service', 'hs.map.service', 'hs.query.baseService', function ($scope, sensorService, HsMap, queryBaseService) {
         angular.extend($scope, {
             newMap: false,
             sensorService,
@@ -19,15 +19,14 @@ export default {
             measuredValue: '',
             measurementTime: new Date(),
             dataTabExpanded: false,
-            // search: '',
-            // refSys: '',
+            
 
-            dataRequest(sensorClicked) {
-                sensorService.getSelectedFeatureCollection(sensorClicked)
-                    .then(_ => {
-                        console.log(sensorService.featureCollection)
-                    })
-            },
+            // dataRequest(sensorClicked) {
+            //     sensorService.getSelectedFeatureCollection(sensorClicked)
+            //         .then(_ => {
+            //             console.log(sensorService.featureCollection)
+            //         })
+            // },
             getLocationFromMap() {  
                 var queryFeature = queryBaseService.queryLayer.getSource().getFeatures();
                 var formatWKT = new WKT();
@@ -41,13 +40,9 @@ export default {
                 if ($scope.phenomena[0].phenomenon_name === "Location") {
                     $scope.measuredValue = 1;
                 }
-
-                // const el = angular.element(document.getElementById('miniMap'));
-                // if (el) $scope.createMiniMap();
-                // $scope.newMap = !$scope.newMap;
             },
             addData(sensorClicked) {
-                sensorService.getSelectedPhenomena(sensorClicked)
+                sensorService.getSensorPhenomena(sensorClicked)
                     .then(_ => {
                         $scope.phenomena = sensorService.phenomena;
                     })
@@ -64,8 +59,6 @@ export default {
                     if (response == false) {
                         $scope.dataTabExpanded = !$scope.dataTabExpanded;
                         $scope.measuredValue = '';
-                        // $scope.refSys = '';
-                        // $scope.search = '';
                         $scope.location = '';
                         $scope.featureGeomWKT = '';
                         $scope.measurementTime = new Date();

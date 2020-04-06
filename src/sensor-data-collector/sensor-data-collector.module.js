@@ -1,12 +1,14 @@
-import sensorDataCollectorService from './sensor-data-collector.service';
+import sensorService from './sensor.service';
 import sensorRowComponent from './sensor-row.component';
 import sensorDataCollectorComponent from './sensor-data-collector.component';
-import indexComponent from './index.component';
+import indexComponent from './sensor-index.component';
 import loginRegisterService from './login-register.service';
 import sensorRowService from './sensor-row.service';
 import authService from './auth.service';
-import groupsRowComponent from './groups-row.component';
-import unitsRowComponent from './units-row.component';
+import groupsRowComponent from './sensor-groups-row.component';
+import unitsRowComponent from './sensor-units-row.component';
+import sensorGroupService from './sensor-group.service';
+import sensorUnitService from './sensor-unit.service';
 
 
 angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map'])
@@ -16,13 +18,17 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map'])
         };
     })
 
-    .service("sens.sensorDataCollector.service", sensorDataCollectorService)
+    .service("sens.sensor.service", sensorService)
 
     .service("sens.loginRegister.service", loginRegisterService)
 
     .service("sens.auth.service", authService)
 
     .service("sens.sensorRow.service", sensorRowService)
+
+    .service("sens.sensorGroup.service", sensorGroupService)
+
+    .service("sens.sensorUnit.service", sensorUnitService)
 
     .component('sens.sensorDataCollector', sensorDataCollectorComponent)
 

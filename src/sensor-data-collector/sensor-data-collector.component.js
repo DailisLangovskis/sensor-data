@@ -1,12 +1,12 @@
 export default {
     template: require('./partials/sensor-data-collector.html'),
-    controller: ['$scope', 'sens.auth.service', 'sens.sensorDataCollector.service', 'sens.loginRegister.service',
-        function ($scope, authService, sensorService, loginRegisterService) {
+    controller: ['$scope', 'sens.auth.service', 'sens.sensorGroup.service', 'sens.loginRegister.service',
+        function ($scope, authService, groupService, loginRegisterService) {
             angular.extend($scope, {
                 loginRegisterService,
-                sensorService,
-                selectDeselectAllGroups: sensorService.selectDeselectAllGroups,
-                deleteSelectedGroups: sensorService.deleteSelectedGroups,
+                groupService,
+                selectDeselectAllGroups: groupService.selectDeselectAllGroups,
+                deleteSelectedGroups: groupService.deleteSelectedGroups,
                 addGroupTabVisible: false,
                 groupsTabVisible: false,
                 groupName: '',
@@ -14,10 +14,13 @@ export default {
                     $scope.addGroupTabVisible = !$scope.addGroupTabVisible
                 },
                 showGroups() {
-                    $scope.groupsTabVisible = !$scope.groupsTabVisible
+                    if(groupService.groups == '') return window.alert("There were no groups found!") 
+                    else{
+                        $scope.groupsTabVisible = !$scope.groupsTabVisible
+                    }
                 },
                 saveGroup() {
-                    sensorService.saveGroups($scope.groupName).then(function (response) {
+                    groupService.saveGroups($scope.groupName).then(function (response) {
                         if (response == false) {
                             $scope.addGroupTabVisible = !$scope.addGroupTabVisible;
                             $scope.groupName = '';

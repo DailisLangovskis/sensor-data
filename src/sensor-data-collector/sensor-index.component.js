@@ -1,7 +1,7 @@
 export default {
     template: require('./partials/index.html'),
-    controller: ['$scope', "sens.loginRegister.service", 'sens.sensorDataCollector.service',"sens.auth.service",
-        function ($scope, loginRegister, sensorService, authService) {
+    controller: ['$scope', "sens.loginRegister.service", 'sens.sensorGroup.service',"sens.auth.service",
+        function ($scope, loginRegister, groupService, authService) {
             angular.extend($scope, {
                 loginRegister,
                 authService,
@@ -24,9 +24,7 @@ export default {
 
                         }
                     }).then(_ => {
-                        sensorService.getGroups();
-                        // sensorService.getSensors();
-                        // sensorService.getPhenomenas();
+                        groupService.getGroups();
                     })
                 },
                 registerTab() {

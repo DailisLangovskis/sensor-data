@@ -9,20 +9,20 @@
     </div>
     <div class="col-4 m-1 pt-1 pr-0 text-right">
         <div class="btn-group">
-            <button class="btn btn-primary btn-sm" title="Show existing units"
+            <button class="btn btn-light btn-sm" title="Show existing units"
                 ng-click="showUnits($ctrl.group)"><i class="icon-search"></i></button>
         </div>
     </div>
 </div>
   <div ng-show="unitsTabVisible">
-        <sens.units-row ng-repeat="unit in sensorService.selectedGroupUnits" unit="unit">
+        <sens.units-row ng-repeat="unit in groupService.selectedGroupUnits" unit="unit">
         </sens.units-row>
         <div class="row">
             <div class="col m-1 text-right pr-2">
                 <div class="btn-group mr-1">
-                    <button type="button" class=" btn btn-secondary btn-sm" ng-click="selectDeselectAllGroups()"
+                    <button type="button" class=" btn btn-secondary btn-sm" ng-click="selectDeselectAllUnits()"
                         translate>SELECT/DESELECT UNITS</button>
-                    <button class="btn btn-danger btn-sm" ng-click="deleteSelectedGroups()"><i
+                    <button class="btn btn-light btn-sm" ng-click="deleteSelectedUnits()"><i
                             class="icon-trash"></i></button>
                 </div>
             </div>

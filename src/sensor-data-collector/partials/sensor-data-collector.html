@@ -5,19 +5,19 @@
         <span style="text-align: left; padding: 5px;"><strong>Hello
                 {{loginRegisterService.loggedInUser}}!</strong></span>
         <div class="col text-right pr-0">
-            <button type="button" class="mt-1 mb-1 pt-1 pb-1 btn btn-primary btn-sm" ng-click="logout()"
+            <button type="button" class="mt-1 mb-1 pt-1 pb-1 btn btn-danger btn-sm" ng-click="logout()"
                 translate>Exit</button>
         </div>
     </div>
+    <hr style="margin:1px; height:1px;border:none;color:rgb(0, 0, 0);background-color: rgb(0, 0, 0);">
     <div class="m-1" ng-show="groupsTabVisible">
-        <hr style="margin:1px; height:1px;border:none;color:rgb(0, 0, 0);background-color: rgb(0, 0, 0);">
-        <sens.groups-row ng-repeat="group in sensorService.groups" group="group"></sens.groups-row>
+        <sens.groups-row ng-repeat="group in groupService.groups" group="group"></sens.groups-row>
         <div class="row">
             <div class="col m-1 text-right pr-2">
                 <div class="btn-group mr-1">
                     <button type="button" class=" btn btn-secondary btn-sm" ng-click="selectDeselectAllGroups()"
                         translate>SELECT/DESELECT GROUPS</button>
-                    <button class="btn btn-danger btn-sm" ng-click="deleteSelectedGroups()"><i
+                    <button class="btn btn-light btn-sm" ng-click="deleteSelectedGroups()"><i
                             class="icon-trash"></i></button>
                 </div>
             </div>
@@ -26,7 +26,7 @@
     <div class="row">
         <div class="col m-1 p-1 text-center">
             <div class="btn-group">
-                <button class="btn btn-success btn-sm" ng-click="addGroup()">ADD GROUP</button>
+                <button class="btn btn-success btn-sm" ng-click="addGroup()">ADD SENSOR GROUP</button>
                 <button class="btn btn-primary btn-sm" ng-click="showGroups()">SHOW GROUPS</button>
             </div>
         </div>

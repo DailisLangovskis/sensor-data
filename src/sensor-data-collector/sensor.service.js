@@ -1,27 +1,22 @@
-export default ['$http', 'config','sens.auth.service',
-    function ($http, config, authService) {
+export default ['$http', 'config','sens.auth.service', 'sens.sensorGroup.service',
+    function ($http, config, authService, groupService) {
         var me = this;
         angular.extend(me, {
             btnSelectDeseletClicked: true,
             sensors: [],
             phenomenas: [],
-            groups: [],
-            selectedGroupUnits: [],
             phenomena: '',
             featureCollection: '',
-            checkIfLoggedIn(){
-                if(authService.loggedIn) me.getGroups();
+            newAlert:groupService.newAlert,
+            init(){
+                if(authService.loggedIn) me.getSensors();
             },
             selectDeselectAllSensors() {
                 me.btnSelectDeseletClicked = !me.btnSelectDeseletClicked;
                 me.sensors.forEach(sensor => sensor.checked = me.btnSelectDeseletClicked);
             },
-            selectDeselectAllGroups() {
-                me.btnSelectDeseletClicked = !me.btnSelectDeseletClicked;
-                me.groups.forEach(group => group.checked = me.btnSelectDeseletClicked);
-            },
             getSensors: function () {
-                $http.get(config.sensorApiEndpoint + '/sensor/data')
+                $http.get(config.sensorApiEndpoint + '/sensors/data')
                     .then(function success(response) {
                         me.sensors = response.data;
                     })
@@ -38,25 +33,8 @@ export default ['$http', 'config','sens.auth.service',
                         console.error("Error!", error);
                     });
             },
-            getGroupUnits: function(groupSelected){
-                return $http.get(config.sensorApiEndpoint + '/groups/units/' + groupSelected.id)
-                .then(function success(response) {
-                    return response.data;
-                }).then(function (response) {
-                    if(response == '') {
-                    window.alert("No units found for this group!")
-                    return false
-                    }else {
-                        me.selectedGroupUnits = response;
-                        return true
-                    }
-                })
-                .catch(function (error) {
-                    console.error("Error!", error);
-                })
-            },
-            getSelectedPhenomena: function (sensorSelected) {
-                return $http.get(config.sensorApiEndpoint + '/sensor/phenomena/' + sensorSelected.sensor_id)
+            getSensorPhenomena: function (sensorSelected) {
+                return $http.get(config.sensorApiEndpoint + '/sensors/phenomena/' + sensorSelected.sensor_id)
                     .then(function success(response) {
                         return response.data;
                     }).then(function (response) {
@@ -79,7 +57,7 @@ export default ['$http', 'config','sens.auth.service',
             },
             saveSensors: function (sensorName, sensorType, phenomenaId) {
                 var data = { name: sensorName, type: sensorType, phenomenaId: phenomenaId };
-                return $http.post(config.sensorApiEndpoint + '/sensor/data', data)
+                return $http.post(config.sensorApiEndpoint + '/sensors/data', data)
                     .then(function success(res) {
                         me.newAlert(res.data, 2000, "green");
                         me.getSensors();
@@ -112,38 +90,11 @@ export default ['$http', 'config','sens.auth.service',
                         return true;
                     });
             },
-            getGroups(){
-                $http.get(config.sensorApiEndpoint + '/groups/data')
-                    .then(function success(response) {
-                        me.groups = response.data;
-                    })
-                    .catch(function (error) {
-                        console.error("Error!", error);
-                    });
-            },
-            saveGroups: function (groupName) {
-                var data = { name: groupName};
-                return $http.post(config.sensorApiEndpoint + '/groups/data', data)
-                    .then(function success(res) {
-                        me.newAlert(res.data, 2000, "green");
-                        me.getGroups();
-                        return false;
-                    })
-                    .catch(function (error) {
-                        if(angular.isDefined(error)){
-                            if (error.hasOwnProperty('errors')) {
-                                var gottenErrors = error.errors.map(msg => msg.msg)
-                                me.newAlert(gottenErrors, 2000, "red");
-                            }
-                        }           
-                        return true;
-                    });
-            },
             deleteSelectedSensors() {
                 var deleteAll = window.confirm("Do you really want to delete all selected sensors from the database?");
                 if (deleteAll) {
                     var checked = me.sensors.filter(sensor => sensor.checked == true).map(id => id.sensor_id);
-                    $http.post(config.sensorApiEndpoint + '/sensor/delete', { params: checked })
+                    $http.post(config.sensorApiEndpoint + '/sensors/delete', { params: checked })
                         .then(function success(res) {
                             me.newAlert(res.data, 2000, "green");
                         })
@@ -161,13 +112,7 @@ export default ['$http', 'config','sens.auth.service',
 
                 }
             },
-            newAlert(msg, timer, background) {
-                document.getElementById('alert').innerHTML = '<b>' + msg + '</b>';
-                document.getElementById('alert').style.backgroundColor = background;
-                document.getElementById('alert').style.opacity = "0.7";
-                setTimeout(function () { document.getElementById('alert').innerHTML = ''; }, timer)
-            },
         })
-        me.checkIfLoggedIn();
+        me.init();
     }
 ]

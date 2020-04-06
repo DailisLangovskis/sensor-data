@@ -25,21 +25,21 @@ router.post('/data', [
         .withMessage('Sensor type be at less 20 chars long'),
     check('phenomenaId').isNumeric().withMessage("Given phenomena id is not a numeric value!"),
 ], addSensorDataHandler)
-
+router.get('/data', async (req, res) => {
+    try {
+        const { rows } = await db.query('SELECT sensor_name,sensor_id,sensor_type FROM sensors')
+        res.status(201).send(rows)
+    } catch (e) {
+        console.log(e.stack)
+    }
+})
 router.get('/phenomena/:id', getPhenomenaDataHandler)
 
 router.post('/delete', [
     check('params').isLength({ min: 1 }).withMessage("There was no sensor selected!")
 ], deleteSensorsHandler)
 
-router.get('/data', async (req, res) => {
-    try {
-        const { rows } = await db.query('SELECT sensor_name,sensor_id,sensor_type FROM sensors')
-        res.status(201).send(rows)
-    } catch (e){
-        console.log(e.stack)
-    }
-})
+
 async function addSensorDataHandler(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -83,6 +83,6 @@ async function getPhenomenaDataHandler(req, res) {
         const { rows } = await db.query(selectPhenomena, [id])
         res.status(201).send(rows);
     } catch (e) {
-        console.log(e.stack) 
+        console.log(e.stack)
     }
 }

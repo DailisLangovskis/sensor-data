@@ -4,12 +4,12 @@ export default {
         unit: '=',
 
     },
-    controller: ['$scope', 'sens.sensorDataCollector.service',
-        function ($scope, sensorService) {
+    controller: ['$scope', 'sens.sensorUnit.service',
+        function ($scope, unitService) {
             angular.extend($scope, {
-                sensorService,
-                selectDeselectAllSensors: sensorService.selectDeselectAllSensors,
-                deleteSelectedSensors: sensorService.deleteSelectedSensors,
+                unitService,
+                selectDeselectAllSensors: unitService.selectDeselectAllSensors,
+                deleteSelectedSensors: unitService.deleteSelectedSensors,
                 addSensorTabVisible: false,
                 sensorsTabVisible: false,
                 sensorName: '',
@@ -18,11 +18,16 @@ export default {
                 addSensor() {
                     $scope.addSensorTabVisible = !$scope.addSensorTabVisible
                 },
-                showSensors() {
-                    $scope.sensorsTabVisible = !$scope.sensorsTabVisible
+                showSensors(unitClicked) {
+                    unitService.showUnitSensors(unitClicked).then(function (response) {
+                        if (response != true) return;
+                        else {
+                            $scope.sensorsTabVisible = !$scope.sensorsTabVisible;
+                        }
+                    })
                 },
                 saveSensor() {
-                    sensorService.saveSensors($scope.sensorName, $scope.sensorType, $scope.phenomenaId).then(function (response) {
+                    unitService.saveSensors($scope.sensorName, $scope.sensorType, $scope.phenomenaId).then(function (response) {
                         if (response == false) {
                             $scope.addSensorTabVisible = !$scope.addSensorTabVisible;
                             $scope.sensorName = '';

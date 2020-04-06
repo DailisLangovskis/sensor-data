@@ -9,28 +9,27 @@
     </div>
     <div class="col-4 m-1 pt-1 pr-0 text-right">
         <div class="btn-group">
-            <button class="btn btn-success btn-sm" title="Show existing units"
-                ng-click="showUnits($ctrl.group)"><i class="icon-search"></i></button>
+            <button class="btn btn-success btn-sm" title="Show existing sensors" ng-click="showSensors($ctrl.unit)"><i
+                    class="icon-search"></i></button>
         </div>
     </div>
 </div>
-<!-- <div ng-show="sensorsTabVisible">
-        <div class="row">
-            <div class="col text-right pr-0">
-                <button type="button" class="m-1  btn btn-secondary btn-sm" ng-click="selectDeselectAllSensors()"
-                    translate>SELECT/DESELECT ALL</button>
-            </div>
-        </div>
-        <sens.sensor-row ng-repeat="sensor in sensorService.sensors" sensor="sensor">
-        </sens.sensor-row>
-        <div class="col-12 m-1 text-right pr-0">
-            <div class="btn-group">
-                <button class="btn btn-danger btn-sm" ng-click="deleteSelectedSensors()"><i
+<div ng-show="sensorsTabVisible">
+    <hr style="margin:1px; height:1px;border:none;color:rgb(0, 0, 0);background-color: rgb(0, 0, 0);">
+    <sens.sensor-row ng-repeat="sensor in unitService.unitsSensors" sensor="sensor">
+    </sens.sensor-row>
+    <div class="row">
+        <div class="col m-1 text-right pr-2">
+            <div class="btn-group mr-1">
+                <button type="button" class=" btn btn-secondary btn-sm" ng-click="selectDeselectAllSensors()"
+                    translate>SELECT/DESELECT SENSORS</button>
+                <button class="btn btn-light btn-sm" ng-click="deleteSelectedSensors()"><i
                         class="icon-trash"></i></button>
             </div>
         </div>
     </div>
-    <div class="row">
+</div>
+<!-- <div class="row">
         <div class="col m-1 p-1 text-center">
             <div class="btn-group">
                 <button class="btn btn-success btn-sm" ng-click="addSensor()">ADD SENSOR</button>

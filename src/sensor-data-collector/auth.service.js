@@ -1,4 +1,4 @@
-export default ['$window', '$injector', 'config', 
+export default ['$window', '$injector', 'config',
     function ($window, $injector, config) {
         var me = this;
         angular.extend(me, {

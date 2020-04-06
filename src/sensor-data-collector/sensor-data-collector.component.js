@@ -1,4 +1,3 @@
-
 export default {
     template: require('./partials/sensor-data-collector.html'),
     controller: ['$scope', 'sens.auth.service', 'sens.sensorDataCollector.service', 'sens.loginRegister.service',
@@ -6,30 +5,26 @@ export default {
             angular.extend($scope, {
                 loginRegisterService,
                 sensorService,
-                selectDeselectAllSensors: sensorService.selectDeselectAllSensors,
-                deleteSelectedSensors: sensorService.deleteSelectedSensors,
-                addSensorTabVisible: false,
-                sensorsTabVisible: false,
-                sensorName: '',
-                sensorType: '',
-                phenomenaId: '',
-                addSensor() {
-                    $scope.addSensorTabVisible = !$scope.addSensorTabVisible
+                selectDeselectAllGroups: sensorService.selectDeselectAllGroups,
+                deleteSelectedGroups: sensorService.deleteSelectedGroups,
+                addGroupTabVisible: false,
+                groupsTabVisible: false,
+                groupName: '',
+                addGroup() {
+                    $scope.addGroupTabVisible = !$scope.addGroupTabVisible
                 },
-                showSensors() {
-                    $scope.sensorsTabVisible = !$scope.sensorsTabVisible
+                showGroups() {
+                    $scope.groupsTabVisible = !$scope.groupsTabVisible
                 },
-                saveSensor() {
-                    sensorService.saveSensors($scope.sensorName, $scope.sensorType, $scope.phenomenaId).then(function (response) {
+                saveGroup() {
+                    sensorService.saveGroups($scope.groupName).then(function (response) {
                         if (response == false) {
-                            $scope.addSensorTabVisible = !$scope.addSensorTabVisible;
-                            $scope.sensorName = '';
-                            $scope.sensorType = '';
-                            $scope.phenomenaId = '';
+                            $scope.addGroupTabVisible = !$scope.addGroupTabVisible;
+                            $scope.groupName = '';
                         }
                     })
                 },
-                logout:authService.logout           
+                logout: authService.logout
             })
         }
     ]

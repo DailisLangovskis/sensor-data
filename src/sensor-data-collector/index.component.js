@@ -24,8 +24,9 @@ export default {
 
                         }
                     }).then(_ => {
-                        sensorService.getSensors();
-                        sensorService.getPhenomenas();
+                        sensorService.getGroups();
+                        // sensorService.getSensors();
+                        // sensorService.getPhenomenas();
                     })
                 },
                 registerTab() {

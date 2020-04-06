@@ -35,7 +35,7 @@ router.post('/', [
                 var user = rows[0];
                 if (await bcrypt.compare(req.body.password, user.password)) {
                     const accessToken = generateAccessToken(user)
-                    const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '15s' })
+                    const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '300d' })
                     refreshTokens.push(refreshToken)
                     res.json({ username: user.username, accessToken: accessToken, refreshToken: refreshToken, msg: 'Successful login!' })
                 }
@@ -62,7 +62,7 @@ router.post('/token', (req, res) => {
 })
 
 function generateAccessToken(user) {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5s' })
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '300d' })
 }
 router.post('/delete', (req, res) => {
     refreshTokens = refreshTokens.filter(token => token !== req.body.refreshToken)

@@ -1,5 +1,6 @@
 const Router = require('express-promise-router')
 const sensor = require('./sensor')
+const groups = require('./groups')
 const phenomena = require('./phenomena')
 const rateLimit = require('express-rate-limit')
 const observation = require('./observation')
@@ -23,6 +24,7 @@ const timeSeries = rateLimit({
 });
 
 var auth_token = auth_middleware.authentificateToken
+router.use('/groups', [auth_token,postLimiter], groups)
 router.use('/sensor', [auth_token,postLimiter], sensor)
 router.use('/phenomena', [auth_token,postLimiter], phenomena)
 router.use('/observation', [auth_token,postLimiter], observation)

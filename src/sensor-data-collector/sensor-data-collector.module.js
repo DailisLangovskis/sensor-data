@@ -5,7 +5,9 @@ import indexComponent from './index.component';
 import loginRegisterService from './login-register.service';
 import sensorRowService from './sensor-row.service';
 import authService from './auth.service';
-import { deepEqual } from 'vega-lite/build/src/util';
+import groupsRowComponent from './groups-row.component';
+import unitsRowComponent from './units-row.component';
+
 
 angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map'])
     .directive('sens.sensorDataCollector.sidebarBtn', function () {
@@ -27,6 +29,10 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map'])
     .component('sens.index', indexComponent)
 
     .component('sens.sensorRow', sensorRowComponent)
+
+    .component('sens.groupsRow', groupsRowComponent)
+
+    .component('sens.unitsRow', unitsRowComponent)
 
     .service("sens.authInterceptor", ['sens.auth.service', '$q', '$window', '$injector', 'config',
         function (authService, $q, $window, $injector, config) {

@@ -6,6 +6,7 @@ export default ['$http', 'sens.auth.service', 'config',
             checkIfUserLoggedIn: function () {
                 if (authService.loggedIn) {
                     me.loggedInUser = authService.getUsername();
+
                 } else {
                     me.loggedInUser = '';
                 }

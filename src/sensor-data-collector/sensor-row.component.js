@@ -1,10 +1,6 @@
 import moment from 'moment';
-import Map from 'ol/Map';
 import { toStringHDMS, createStringXY } from 'ol/coordinate';
-import { Tile, Group, Image as ImageLayer } from 'ol/layer';
-import { TileWMS, WMTS, OSM, XYZ } from 'ol/source';
 import { transform, transformExtent } from 'ol/proj';
-import View from 'ol/View';
 import { WKT } from 'ol/format';
 export default {
     template: require('./partials/sensor-row.html'),

@@ -1,0 +1,62 @@
+<div class="row">
+    <div class="col-7 m-1">
+        <div class="input-group mt-2 mb-2">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" ng-model="$ctrl.group.checked" />
+                <label class="form-check-label">Group: {{$ctrl.group.group_name}}</label>
+            </div>
+        </div>
+    </div>
+    <div class="col-4 m-1 pt-1 pr-0 text-right">
+        <div class="btn-group">
+            <button class="btn btn-primary btn-sm" title="Show existing units"
+                ng-click="showUnits($ctrl.group)"><i class="icon-search"></i></button>
+        </div>
+    </div>
+</div>
+  <div ng-show="unitsTabVisible">
+        <sens.units-row ng-repeat="unit in sensorService.selectedGroupUnits" unit="unit">
+        </sens.units-row>
+        <div class="row">
+            <div class="col m-1 text-right pr-2">
+                <div class="btn-group mr-1">
+                    <button type="button" class=" btn btn-secondary btn-sm" ng-click="selectDeselectAllGroups()"
+                        translate>SELECT/DESELECT UNITS</button>
+                    <button class="btn btn-danger btn-sm" ng-click="deleteSelectedGroups()"><i
+                            class="icon-trash"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="row">
+        <div class="col m-1 p-1 text-center">
+            <div class="btn-group">
+                <button class="btn btn-success btn-sm" ng-click="addUnit()">ADD UNIT</button>
+                <button class="btn btn-primary btn-sm" ng-click="showUnits()">SHOW UNITS</button>
+            </div>
+        </div>
+    </div> -->
+    <!-- <div class="row">
+        <div class="input-group m-1" ng-show="addSensorTabVisible">
+            <div class="input-group m-1">
+                <input class="form-control" placeholder="Sensor name" ng-model="sensorName"></input>
+            </div>
+            <div class="input-group m-1">
+                <input class="form-control" placeholder="Sensor type" ng-model="sensorType"></input>
+            </div>
+            <div class="input-group m-1">
+                <select class="form-control" ng-options="ph.id as ph.phenomenon_name for ph in sensorService.phenomenas"
+                    ng-model="phenomenaId">
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row" ng-show="sensorName && sensorType && phenomenaId">
+        <div class="col-6 mb-2 text-left">
+            <div class="btn-group">
+                <button class="btn btn-primary btn-sm" ng-click="saveSensor(sensorName, sensorType, phenomenaId)"><i
+                        class="icon-save-floppy"></i></button>
+            </div>
+        </div>
+    </div> -->
+    <hr style="margin:1px; height:1px;border:none;color:rgb(0, 0, 0);background-color: rgb(0, 0, 0);">

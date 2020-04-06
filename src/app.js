@@ -12,8 +12,6 @@ import 'sidebar.module';
 import 'draw.module';
 import View from 'ol/View';
 import { transform, transformExtent } from 'ol/proj';
-import { Tile, Group, Image as ImageLayer } from 'ol/layer';
-import { TileWMS, WMTS, OSM, XYZ } from 'ol/source';
 import { Style, Icon, Stroke, Fill, Circle, Text } from 'ol/style';
 import BingMaps from 'ol/source/BingMaps';
 import Feature from 'ol/Feature';

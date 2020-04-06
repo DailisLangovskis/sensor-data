@@ -21,9 +21,7 @@ const timeSeries = rateLimit({
     windowMs: 1 * 60 * 1000,
     max: 1000,
 });
-router.get('/', (req, res) => {
-    res.status(404).send('Nothing here');
-});
+
 var auth_token = auth_middleware.authentificateToken
 router.use('/sensor', [auth_token,postLimiter], sensor)
 router.use('/phenomena', [auth_token,postLimiter], phenomena)

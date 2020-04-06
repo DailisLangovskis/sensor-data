@@ -35,9 +35,9 @@ router.post('/', [
                 var user = rows[0];
                 if (await bcrypt.compare(req.body.password, user.password)) {
                     const accessToken = generateAccessToken(user)
-                    const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET)
+                    const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '15s' })
                     refreshTokens.push(refreshToken)
-                    res.json({ accessToken: accessToken, refreshToken: refreshToken, msg: 'Successful login!' })
+                    res.json({ username: user.username, accessToken: accessToken, refreshToken: refreshToken, msg: 'Successful login!' })
                 }
                 else {
                     res.status(404).send({ errors: [{ msg: 'Username or password does not exist!' }] })
@@ -52,17 +52,17 @@ router.post('/', [
     })
 router.post('/token', (req, res) => {
     const refreshToken = req.body.refreshToken
-    if (refreshToken == null) return res.sendStatus(401)
+    if (refreshToken == null) {throw new Error('Please login to proceed!')}
     if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403)
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-        if (err) return res.sendStatus(403)
+        if (err) return res.status(403).send('Please login to proceed!')
         const accessToken = generateAccessToken({ name: user.name })
         res.json({ accessToken: accessToken })
     })
 })
 
 function generateAccessToken(user) {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' })
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5s' })
 }
 router.post('/delete', (req, res) => {
     refreshTokens = refreshTokens.filter(token => token !== req.body.refreshToken)

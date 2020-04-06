@@ -22,8 +22,14 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map'])
 
     .service("sens.sensorRow.service", sensorRowService)
 
-    .service("sens.authInterceptor", ['sens.auth.service', '$q', '$window', '$injector','config',
-        function (authService, $q, $window, $injector,config ) {
+    .component('sens.sensorDataCollector', sensorDataCollectorComponent)
+
+    .component('sens.index', indexComponent)
+
+    .component('sens.sensorRow', sensorRowComponent)
+
+    .service("sens.authInterceptor", ['sens.auth.service', '$q', '$window', '$injector', 'config',
+        function (authService, $q, $window, $injector, config) {
             var inFlightAuthRequest = null;
             return {
                 request: function (config) {
@@ -34,32 +40,34 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map'])
                     return config;
                 },
                 responseError: function (response) {
-                    if (response.config.url == config.sensorApiEndpoint + '/auth/token') {
-                        authService.clearAllToken();
-                        authService.returnToLogin();
-                    } else {
+                    // if (response.config.url == config.sensorApiEndpoint + '/auth/token') {
+                    //     authService.clearAllToken();
+                    //     authService.returnToLogin();
+                    //     return;
+                    //} else {
                         switch (response.status) {
                             case 401:
                                 authService.clearToken();
                                 var deffered = $q.defer();
                                 if (!inFlightAuthRequest) {
-                                    inFlightAuthRequest = $injector.get('$http').post(config.sensorApiEndpoint +'/auth/token', { refreshToken: authService.getRefreshToken() });
+                                    inFlightAuthRequest = $injector.get('$http').post(config.sensorApiEndpoint + '/auth/token', { refreshToken: authService.getRefreshToken() });
 
                                 }
                                 inFlightAuthRequest.then(function (res) {
                                     inFlightAuthRequest = null
-                                    authService.setToken(res.data.accessToken);
-                                    $injector.get('$http')(response.config).then(function (resp) {
-                                        deffered.resolve(resp);
-                                    }, function (resp) {
-                                        deffered.reject(resp);
-                                    });
+                                        authService.setToken(res.data.accessToken);
+                                        $injector.get('$http')(response.config).then(function (resp) {
+                                            deffered.resolve(resp);
+                                        }, function (resp) {
+                                            deffered.reject(resp);
+                                        });
+
                                 }, function (error) {
                                     inFlightAuthRequest = null;
                                     deffered.reject();
                                     authService.clearAllToken();
                                     authService.returnToLogin();
-                                    $window.alert(error);
+                                    $window.alert("Please relog into the site!");
                                     return;
                                 });
                                 return deffered.promise;
@@ -69,16 +77,10 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map'])
                                 break;
                         }
                         return response || $q.when(response);
-                    };
+                    //};
                 }
             }
         }])
-
-    .component('sens.sensorDataCollector', sensorDataCollectorComponent)
-
-    .component('sens.index', indexComponent)
-
-    .component('sens.sensorRow', sensorRowComponent)
 
     .config(['$httpProvider', function ($httpProvider) {
         $httpProvider.interceptors.push('sens.authInterceptor');

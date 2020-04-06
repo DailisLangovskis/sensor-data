@@ -1,5 +1,5 @@
-export default ['$http', 'config',
-    function ($http, config) {
+export default ['$http', 'config','sens.auth.service', 
+    function ($http, config, authService) {
         var me = this;
         angular.extend(me, {
             btnSelectDeseletClicked: true,
@@ -7,7 +7,6 @@ export default ['$http', 'config',
             phenomenas: [],
             phenomena: '',
             featureCollection: '',
-            // refSys: [],
             selectDeselectAllSensors() {
                 me.btnSelectDeseletClicked = !me.btnSelectDeseletClicked;
                 me.sensors.forEach(sensor => sensor.checked = me.btnSelectDeseletClicked);
@@ -30,17 +29,6 @@ export default ['$http', 'config',
                         console.error("Error!", error);
                     });
             },
-            // getReferencingSystems: function () {
-            //     $http.get('http://localhost:3000/api/ref-sys/data')
-            //         .then(function success(response) {
-            //             return response.data
-            //         }).then(function (response) {
-            //             me.refSys = response;
-            //         })
-            //         .catch(function (error) {
-            //             console.error("Error!", error);
-            //         });
-            // },
             getSelectedPhenomena: function (sensorSelected) {
                 return $http.get(config.sensorApiEndpoint + '/sensor/phenomena/' + sensorSelected.sensor_id)
                     .then(function success(response) {
@@ -72,11 +60,12 @@ export default ['$http', 'config',
                         return false;
                     })
                     .catch(function (error) {
-                        console.log(error);
-                        if (error.hasOwnProperty('errors')) {
-                            var gottenErrors = error.errors.map(msg => msg.msg)
-                            me.newAlert(gottenErrors, 2000, "red");
-                        }
+                        if(angular.isDefined(error)){
+                            if (error.hasOwnProperty('errors')) {
+                                var gottenErrors = error.errors.map(msg => msg.msg)
+                                me.newAlert(gottenErrors, 2000, "red");
+                            }
+                        }           
                         return true;
                     });
             },
@@ -88,11 +77,12 @@ export default ['$http', 'config',
                         return false;
                     })
                     .catch(function (error) {
-                        console.log(error);
-                        if (error.hasOwnProperty('errors')) {
-                            var gottenErrors = error.errors.map(msg => msg.msg)
-                            me.newAlert(gottenErrors, 2000, "red");
-                        }
+                        if(angular.isDefined(error)){
+                            if (error.hasOwnProperty('errors')) {
+                                var gottenErrors = error.errors.map(msg => msg.msg)
+                                me.newAlert(gottenErrors, 2000, "red");
+                            }
+                        } 
                         return true;
                     });
             },
@@ -108,11 +98,12 @@ export default ['$http', 'config',
                             me.getSensors();
                         })
                         .catch(function (error) {
-                            console.log(error);
-                            if (error.hasOwnProperty('errors')) {
-                                var gottenErrors = error.errors.map(msg => msg.msg)
-                                me.newAlert(gottenErrors, 2000, "red");
-                            }
+                            if(angular.isDefined(error)){
+                                if (error.hasOwnProperty('errors')) {
+                                    var gottenErrors = error.errors.map(msg => msg.msg)
+                                    me.newAlert(gottenErrors, 2000, "red");
+                                }
+                            } 
                         });
 
                 }

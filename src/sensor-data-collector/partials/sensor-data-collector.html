@@ -2,21 +2,29 @@
     <div id="alert" style="font-weight: bold; text-align: center;">
     </div>
     <div class="row">
-        <div class="col text-right">
-            <button type="button" class="m-1 p-1 btn btn-primary btn-sm" ng-click="authService.logOut()"
+        <span style="text-align: left; padding: 5px;"><strong>Hello {{loginRegisterService.loggedInUser}}!</strong></span>
+        <div class="col text-right pr-0">
+            <button type="button" class="mt-1 mb-1 pt-1 pb-1 btn btn-primary btn-sm" ng-click="logout()"
                 translate>Exit</button>
+        </div>
+    </div>
+    <div>
+        <div class="row">
+            <div class="col m-1 p-1 text-center">  
+                    <button class="btn btn-success btn-sm" ng-click="myGroups()">MY GROUPS</button>
+            </div>
         </div>
     </div>
     <div ng-show="sensorsTabVisible">
         <div class="row">
-            <div class="col text-right">
-                <button type="button" class="m-1 btn btn-secondary btn-sm" ng-click="selectDeselectAllSensors()"
+            <div class="col text-right pr-0">
+                <button type="button" class="m-1  btn btn-secondary btn-sm" ng-click="selectDeselectAllSensors()"
                     translate>SELECT/DESELECT ALL</button>
             </div>
         </div>
         <sens.sensor-row ng-repeat="sensor in sensorService.sensors" sensor="sensor">
         </sens.sensor-row>
-        <div class="col-12 m-1 text-right">
+        <div class="col-12 m-1 text-right pr-0">
             <div class="btn-group">
                 <button class="btn btn-danger btn-sm" ng-click="deleteSelectedSensors()"><i
                         class="icon-trash"></i></button>

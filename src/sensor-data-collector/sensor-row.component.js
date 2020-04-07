@@ -10,7 +10,6 @@ export default {
     },
     controller: ['$scope', 'sens.sensor.service', 'hs.map.service', 'hs.query.baseService', function ($scope, sensorService, HsMap, queryBaseService) {
         angular.extend($scope, {
-            newMap: false,
             sensorService,
             phenomena: '',
             sensorType: '',
@@ -19,7 +18,7 @@ export default {
             measuredValue: '',
             measurementTime: new Date(),
             dataTabExpanded: false,
-            
+
 
             // dataRequest(sensorClicked) {
             //     sensorService.getSelectedFeatureCollection(sensorClicked)
@@ -27,7 +26,7 @@ export default {
             //             console.log(sensorService.featureCollection)
             //         })
             // },
-            getLocationFromMap() {  
+            getLocationFromMap() {
                 var queryFeature = queryBaseService.queryLayer.getSource().getFeatures();
                 var formatWKT = new WKT();
                 $scope.featureGeomWKT = formatWKT.writeFeature(queryFeature[0]).toString();
@@ -66,5 +65,19 @@ export default {
                 })
             }
         });
+        $scope.$on('logout', function () {
+            $scope.phenomena = '';
+                $scope.sensorType = '';
+                $scope.location = '';
+                $scope.featureGeomWKT = '';
+                $scope.measuredValue = '';
+                $scope.measurementTime = new Date();
+                $scope.dataTabExpanded = false;
+                sensorService.btnSelectDeseletClicked = true;
+                sensorService.sensors = [];
+                sensorService.phenomena = [];
+                sensorService.phenomena = '';
+                sensorService.featureCollection = '';
+        })
     }]
 };

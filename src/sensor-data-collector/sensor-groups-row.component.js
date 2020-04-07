@@ -8,6 +8,7 @@ export default {
         angular.extend($scope, {
             groupService,
             selectDeselectAllUnits:groupService.selectDeselectAllUnits,
+            deleteSelectedUnits:groupService.deleteSelectedUnits,
             unitsTabVisible: false,
 
             showUnits(groupClicked) {
@@ -17,7 +18,10 @@ export default {
                         $scope.unitsTabVisible = !$scope.unitsTabVisible;
                     }
                 })
-            }
+            },
         });
+        $scope.$on('logout', function () {
+            $scope.unitsTabVisible = false;
+        })
     }]
 };

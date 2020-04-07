@@ -41,3 +41,43 @@ router.get('/units/:id', async (req, res) => {
         console.log(e.stack)
     }
 })
+router.post('/delete', [
+    check('params').isLength({ min: 1 }).withMessage("There was no group selected!")
+], deleteGroupsHandler)
+async function deleteGroupsHandler(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
+    var id = req.body.params.join(',');
+    var deleteGroups = 'DELETE FROM groups WHERE id IN (' + id + ')';
+    try {
+        await db.query(deleteGroups)
+            .then(_ => {
+                res.status(201).send('Groups deleted');
+            })
+            .catch(e => console.log(e.stack))
+    } catch (e) {
+        console.log(e.stack)
+    }
+}
+router.post('/delete/units', [
+    check('params').isLength({ min: 1 }).withMessage("There was no unit selected!")
+], deleteUnitsHandler)
+async function deleteUnitsHandler(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
+    var id = req.body.params.join(',');
+    var deleteUnits = 'DELETE FROM units WHERE id IN (' + id + ')';
+    try {
+        await db.query(deleteUnits)
+            .then(_ => {
+                res.status(201).send('Units deleted');
+            })
+            .catch(e => console.log(e.stack))
+    } catch (e) {
+        console.log(e.stack)
+    }
+}

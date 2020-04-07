@@ -1,7 +1,7 @@
 export default {
     template: require('./partials/index.html'),
-    controller: ['$scope', "sens.loginRegister.service", 'sens.sensorGroup.service',"sens.auth.service",
-        function ($scope, loginRegister, groupService, authService) {
+    controller: ['$scope', "sens.loginRegister.service", "sens.auth.service",
+        function ($scope, loginRegister, authService) {
             angular.extend($scope, {
                 loginRegister,
                 authService,
@@ -13,7 +13,7 @@ export default {
                 rePassword: '',
                 logUsername: '',
                 logPassword: '',
-                registerTabVisible: false, 
+                registerTabVisible: false,
 
                 login() {
                     loginRegister.login($scope.logUsername, $scope.logPassword).then(function (response) {
@@ -23,8 +23,6 @@ export default {
                             $scope.logPassword = '';
 
                         }
-                    }).then(_ => {
-                        groupService.getGroups();
                     })
                 },
                 registerTab() {
@@ -50,6 +48,18 @@ export default {
                         })
                     }
                 }
+            })
+            $scope.$on('logout', function () {
+                $scope.name = '';
+                    $scope.lastname = '';
+                    $scope.email = '';
+                    $scope.usernam = '';
+                    $scope.password = '';
+                    $scope.rePassword = '';
+                    $scope.logUsername = '';
+                    $scope.logPassword = '';
+                    $scope.registerTabVisible = false;
+                    loginRegister.loggedInUser = '';
             })
         }
     ]

@@ -14,8 +14,8 @@ export default {
                     $scope.addGroupTabVisible = !$scope.addGroupTabVisible
                 },
                 showGroups() {
-                    if(groupService.groups == '') return window.alert("There were no groups found!") 
-                    else{
+                    if (groupService.groups == '') return window.alert("There were no groups found!")
+                    else {
                         $scope.groupsTabVisible = !$scope.groupsTabVisible
                     }
                 },
@@ -27,7 +27,17 @@ export default {
                         }
                     })
                 },
-                logout: authService.logout
+                logout() {
+                    $scope.$broadcast('logout');
+                    $scope.$emit('logout');
+                    $scope.groupName = '';
+                    groupService.groups = [],
+                    groupService.selectedGroupUnits = [],
+                    groupService.groupSelected = {},
+                    $scope.groupsTabVisible = false;
+                    $scope.addGroupTabVisible = false;
+                    authService.logout();
+                }
             })
         }
     ]

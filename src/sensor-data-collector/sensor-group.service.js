@@ -2,23 +2,25 @@ export default ['$http', 'config','sens.auth.service',
     function ($http, config, authService) {
         var me = this;
         angular.extend(me, {
-            btnSelectDeseletClicked: true,
+            btnSelectDeselectClicked: true,
             groups: [],
             selectedGroupUnits: [],
+            groupSelected: {},
             
             init(){
                 if(authService.loggedIn) me.getGroups();
             },
             selectDeselectAllGroups() {
-                me.btnSelectDeseletClicked = !me.btnSelectDeseletClicked;
-                me.groups.forEach(group => group.checked = me.btnSelectDeseletClicked);
+                me.btnSelectDeselectClicked = !me.btnSelectDeselectClicked;
+                me.groups.forEach(group => group.checked = me.btnSelectDeselectClicked);
             },
             selectDeselectAllUnits() {
-                me.btnSelectDeseletClicked = !me.btnSelectDeseletClicked;
-                me.selectedGroupUnits.forEach(unit => unit.checked = me.btnSelectDeseletClicked);
+                me.btnSelectDeselectClicked = !me.btnSelectDeselectClicked;
+                me.selectedGroupUnits.forEach(unit => unit.checked = me.btnSelectDeselectClicked);
             },
 
-            getGroupUnits: function(groupSelected){
+            getGroupUnits(groupSelected){
+                me.groupSelected = groupSelected;
                 return $http.get(config.sensorApiEndpoint + '/groups/units/' + groupSelected.id)
                 .then(function success(response) {
                     return response.data;
@@ -61,6 +63,50 @@ export default ['$http', 'config','sens.auth.service',
                         }           
                         return true;
                     });
+            },
+            deleteSelectedGroups(){
+                var deleteAll = window.confirm("Do you really want to delete all selected groups from the database?");
+                if (deleteAll) {
+                    var checked = me.groups.filter(group => group.checked == true).map(id => id.id);
+                    $http.post(config.sensorApiEndpoint + '/groups/delete', { params: checked })
+                        .then(function success(res) {
+                            me.newAlert(res.data, 2000, "green");
+                        })
+                        .then(_ => {
+                            me.getGroups();
+                        })
+                        .catch(function (error) {
+                            if(angular.isDefined(error)){
+                                if (error.hasOwnProperty('errors')) {
+                                    var gottenErrors = error.errors.map(msg => msg.msg)
+                                    me.newAlert(gottenErrors, 2000, "red");
+                                }
+                            } 
+                        });
+
+                }
+            },
+            deleteSelectedUnits(){
+                var deleteAll = window.confirm("Do you really want to delete all selected units from the group?");
+                if (deleteAll) {
+                    var checked = me.selectedGroupUnits.filter(unit => unit.checked == true).map(id => id.id);
+                    $http.post(config.sensorApiEndpoint + '/groups/delete/units', { params: checked })
+                        .then(function success(res) {
+                            me.newAlert(res.data, 2000, "green");
+                        })
+                        .then(_ => {
+                            me.getGroupUnits(me.groupSelected);
+                        })
+                        .catch(function (error) {
+                            if(angular.isDefined(error)){
+                                if (error.hasOwnProperty('errors')) {
+                                    var gottenErrors = error.errors.map(msg => msg.msg)
+                                    me.newAlert(gottenErrors, 2000, "red");
+                                }
+                            } 
+                        });
+
+                }
             },
             newAlert(msg, timer, background) {
                 document.getElementById('alert').innerHTML = '<b>' + msg + '</b>';

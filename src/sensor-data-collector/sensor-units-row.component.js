@@ -36,6 +36,16 @@ export default {
                         }
                     })
                 },
+            });
+            $scope.$on('logout', function () {
+                $scope.addSensorTabVisible = false;
+                $scope.sensorsTabVisible = false;
+                $scope.sensorName = '';
+                $scope.sensorType = '';
+                $scope.phenomenaId = '';
+                unitService.btnSelectDeseletClicked= true;
+                unitService.unitsSensors= [];
+                unitService.featureCollection= '';
             })
         }
     ]

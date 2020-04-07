@@ -28,6 +28,28 @@ export default ['$http', 'config','sens.auth.service','sens.sensorGroup.service'
                     console.error("Error!", error);
                 })
             },
+            deleteSelectedSensors(){
+                var deleteAll = window.confirm("Do you really want to delete all selected sensors from the database?");
+                if (deleteAll) {
+                    var checked = me.unitsSensors.filter(sensor => sensor.checked == true).map(id => id.sensor_id);
+                    $http.post(config.sensorApiEndpoint + '/units/delete/sensors', { params: checked })
+                        .then(function success(res) {
+                            me.newAlert(res.data, 2000, "green");
+                        })
+                        .then(_ => {
+                            me.getGroups();
+                        })
+                        .catch(function (error) {
+                            if(angular.isDefined(error)){
+                                if (error.hasOwnProperty('errors')) {
+                                    var gottenErrors = error.errors.map(msg => msg.msg)
+                                    me.newAlert(gottenErrors, 2000, "red");
+                                }
+                            } 
+                        });
+
+                }
+            }
         })
     }
 ]

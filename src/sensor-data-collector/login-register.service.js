@@ -1,5 +1,5 @@
-export default ['$http', 'sens.auth.service', 'config',
-    function ($http, authService, config) {
+export default ['$http', 'sens.auth.service', 'config','sens.sensorGroup.service',
+    function ($http, authService, config, groupService) {
         var me = this;
         angular.extend(me, {
             loggedInUser: '',
@@ -37,6 +37,10 @@ export default ['$http', 'sens.auth.service', 'config',
                         authService.setRefreshToken(res.data.refreshToken);
                         me.loggedInUser = user.username;
                         me.userAlert(res.data.msg, 2000, "green");
+                        
+                    })
+                    .then(function () {
+                        groupService.getGroups();
                         return false;
                     })
                     .catch(function (error) {

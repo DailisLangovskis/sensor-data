@@ -1,4 +1,4 @@
-<div class="row">
+<li class="row">
     <div class="col-8 m-1">
         <div class="input-group">
             <div class="form-check">
@@ -9,15 +9,15 @@
     </div>
     <div class="col-3 m-1 pr-0 text-right">
         <div class="btn-group">
-            <button class="btn btn-secondary btn-sm" title="Add new measurement" ng-click="addData($ctrl.sensor)"><i
+            <button class="btn btn-outline-secondary btn-sm" title="Add new measurement" ng-click="addData($ctrl.sensor)"><i
                     class="icon-calcplus"></i></button>
-            <button class="btn btn-primary btn-sm" title="Search for measurement data"
-                ng-click="dataRequest($ctrl.sensor)"><i class="icon-map"></i></button>
+            <button class="btn btn-outline-primary btn-sm" title="Search for measurement data"
+                ng-click="dataRequest($ctrl.sensor)"><i class="icon-analytics-piechart"></i></button>
         </div>
     </div>
-</div>
+</li>
 <hr style="margin:1px; height:1px;border:none;color:rgb(0, 0, 0);background-color: rgb(0, 0, 0);">
-<div ng-show="dataTabExpanded">
+<div ng-show="addSensorTabVisible">
     <div class="row">
         <div class="input-group m-1">
             <input class="form-control" placeholder="sensor type" ng-model="sensorType" readonly></input>
@@ -39,7 +39,7 @@
             <span style="text-align: center; background-color: rgba(115, 219, 160, 0.4);">Click on the map and press map
                 button to set location</span>
             <div class="input-group-prepend m-1">
-                <button class="btn btn-primary btn-sm" title="Get Location" ng-click="getLocationFromMap()"><i
+                <button class="btn btn-outline-primary btn-sm" title="Get Location" ng-click="getLocationFromMap()"><i
                         class="icon-map"></i></button>
             </div>
             <input class="form-control" placeholder="location" ng-model="location" readonly></input>

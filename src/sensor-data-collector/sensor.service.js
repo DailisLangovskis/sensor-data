@@ -8,17 +8,22 @@ export default ['$http', 'config','sens.auth.service', 'sens.sensorGroup.service
             phenomena: '',
             featureCollection: '',
             newAlert:groupService.newAlert,
-            init(){
-                if(authService.loggedIn) me.getSensors();
-            },
             selectDeselectAllSensors() {
                 me.btnSelectDeseletClicked = !me.btnSelectDeseletClicked;
                 me.sensors.forEach(sensor => sensor.checked = me.btnSelectDeseletClicked);
             },
             getSensors: function () {
-                $http.get(config.sensorApiEndpoint + '/sensors/data')
+                return $http.get(config.sensorApiEndpoint + '/sensors/data')
                     .then(function success(response) {
-                        me.sensors = response.data;
+                        if(response.data == ''){
+                            me.sensors = '';
+                            return false;
+                        }
+                        else{
+                            me.sensors = response.data;
+                            return true;
+                        }
+                        
                     })
                     .catch(function (error) {
                         console.error("Error!", error);
@@ -113,6 +118,5 @@ export default ['$http', 'config','sens.auth.service', 'sens.sensorGroup.service
                 }
             },
         })
-        me.init();
     }
 ]

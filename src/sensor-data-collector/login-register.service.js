@@ -40,7 +40,6 @@ export default ['$http', 'sens.auth.service', 'config','sens.sensorGroup.service
                         
                     })
                     .then(function () {
-                        groupService.getGroups();
                         return false;
                     })
                     .catch(function (error) {

@@ -1,4 +1,4 @@
-<div class="row">
+<li class="row">
     <div class="col-7 m-1">
         <div class="input-group mt-2 mb-2">
             <div class="form-check">
@@ -9,11 +9,11 @@
     </div>
     <div class="col-4 m-1 pt-1 pr-0 text-right">
         <div class="btn-group">
-            <button class="btn btn-success btn-sm" title="Show existing sensors" ng-click="showSensors($ctrl.unit)"><i
+            <button class="btn btn-outline-warning btn-sm" title="Show existing sensors" ng-click="showSensors($ctrl.unit.id)"><i
                     class="icon-search"></i></button>
         </div>
     </div>
-</div>
+</li>
 <div ng-show="sensorsTabVisible">
     <hr style="margin:1px; height:1px;border:none;color:rgb(0, 0, 0);background-color: rgb(0, 0, 0);">
     <sens.sensor-row ng-repeat="sensor in unitService.unitsSensors" sensor="sensor">
@@ -21,9 +21,9 @@
     <div class="row">
         <div class="col m-1 text-right pr-2">
             <div class="btn-group mr-1">
-                <button type="button" class=" btn btn-secondary btn-sm" ng-click="selectDeselectAllSensors()"
+                <button type="button" class=" btn btn-outline-secondary btn-sm" ng-click="selectDeselectAllSensors()"
                     translate>SELECT/DESELECT SENSORS</button>
-                <button class="btn btn-light btn-sm" ng-click="deleteSelectedSensors()"><i
+                <button class="btn btn-outline-danger btn-sm" ng-click="deleteSelectedSensors($ctrl.unit.id)"><i
                         class="icon-trash"></i></button>
             </div>
         </div>
@@ -33,7 +33,7 @@
 <!-- <div class="row">
         <div class="col m-1 p-1 text-center">
             <div class="btn-group">
-                <button class="btn btn-success btn-sm" ng-click="addSensor()">ADD SENSOR</button>
+                <button class="btn btn-success btn-sm" ng-click="addSensorTabVisible = !addSensorTabVisible">ADD SENSOR</button>
                 <button class="btn btn-secondary btn-sm" ng-click="showSensors()">SHOW SENSORS</button>
             </div>
         </div>

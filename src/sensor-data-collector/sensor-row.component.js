@@ -17,15 +17,8 @@ export default {
             featureGeomWKT: '',
             measuredValue: '',
             measurementTime: new Date(),
-            dataTabExpanded: false,
+            addSensorTabVisible: false,
 
-
-            // dataRequest(sensorClicked) {
-            //     sensorService.getSelectedFeatureCollection(sensorClicked)
-            //         .then(_ => {
-            //             console.log(sensorService.featureCollection)
-            //         })
-            // },
             getLocationFromMap() {
                 var queryFeature = queryBaseService.queryLayer.getSource().getFeatures();
                 var formatWKT = new WKT();
@@ -50,13 +43,13 @@ export default {
                     })
                 $scope.sensorType = sensorClicked.sensor_type;
                 $scope.measurementTime = new Date();
-                $scope.dataTabExpanded = !$scope.dataTabExpanded;
+                $scope.addSensorTabVisible = !$scope.addSensorTabVisible;
             },
             saveData(sensorClicked, phenomenaId, measuredValue, time) {
                 time = moment.moment(time).format("YYYY-MM-DD HH:mm:ssZ");
                 sensorService.saveData(sensorClicked, phenomenaId, measuredValue, time, $scope.featureGeomWKT).then(function (response) {
                     if (response == false) {
-                        $scope.dataTabExpanded = !$scope.dataTabExpanded;
+                        $scope.addSensorTabVisible = !$scope.addSensorTabVisible;
                         $scope.measuredValue = '';
                         $scope.location = '';
                         $scope.featureGeomWKT = '';
@@ -72,7 +65,7 @@ export default {
                 $scope.featureGeomWKT = '';
                 $scope.measuredValue = '';
                 $scope.measurementTime = new Date();
-                $scope.dataTabExpanded = false;
+                $scope.addSensorTabVisible = false;
                 sensorService.btnSelectDeseletClicked = true;
                 sensorService.sensors = [];
                 sensorService.phenomena = [];

@@ -70,9 +70,9 @@ async function deleteUnitsHandler(req, res) {
         return res.status(422).json({ errors: errors.array() });
     }
     var id = req.body.params.join(',');
-    var deleteUnits = 'DELETE FROM units WHERE id IN (' + id + ')';
+    var deleteUnits = 'DELETE FROM units_groups WHERE unit_id IN ($1) and group_id = ($2)';
     try {
-        await db.query(deleteUnits)
+        await db.query(deleteUnits, [id, req.body.group])
             .then(_ => {
                 res.status(201).send('Units deleted');
             })

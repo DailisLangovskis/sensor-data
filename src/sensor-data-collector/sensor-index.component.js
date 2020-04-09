@@ -25,9 +25,6 @@ export default {
                         }
                     })
                 },
-                registerTab() {
-                    $scope.registerTabVisible = !$scope.registerTabVisible;
-                },
                 register() {
                     if ($scope.password !== $scope.rePassword) {
                         window.alert("Passwords do not match!");

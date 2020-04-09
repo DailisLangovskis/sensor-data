@@ -1,4 +1,4 @@
-<div class="row">
+<li class="row">
     <div class="col-7 m-1">
         <div class="input-group mt-2 mb-2">
             <div class="form-check">
@@ -9,26 +9,79 @@
     </div>
     <div class="col-4 m-1 pt-1 pr-0 text-right">
         <div class="btn-group">
-            <button class="btn btn-light btn-sm" title="Show existing units"
-                ng-click="showUnits($ctrl.group)"><i class="icon-search"></i></button>
+            <button class="btn btn-light btn-sm" title="Add new sensor unit"
+                ng-click="addUnitTabVisible = !addUnitTabVisible"><i class="icon-calcplus"></i></button>
+            <button class="btn btn-light btn-sm" title="Show existing units" ng-click="showUnits($ctrl.group.id)"><i
+                    class="icon-search"></i></button>
         </div>
     </div>
-</div>
-  <div ng-show="unitsTabVisible">
-        <sens.units-row ng-repeat="unit in groupService.selectedGroupUnits" unit="unit">
-        </sens.units-row>
+</li>
+<div ng-show="addUnitTabVisible">
+    <div class="row">
+        <div class="col m-1 p-1 text-center">
+            <div class="btn-group">
+                <button class="btn btn-outline-success btn-sm"
+                    ng-click="addNewUnitTabExpanded = !addNewUnitTabExpanded; existingUnitListVisible = false">ADD
+                    NEW UNIT</button>
+                <button class="btn btn-outline-success btn-sm" ng-click="getAllUsersUnits()">SELECT FROM MY UNIT
+                    LIST</button>
+            </div>
+        </div>
+    </div>
+    <div ng-show="addNewUnitTabExpanded">
         <div class="row">
-            <div class="col m-1 text-right pr-2">
-                <div class="btn-group mr-1">
-                    <button type="button" class=" btn btn-secondary btn-sm" ng-click="selectDeselectAllUnits()"
-                        translate>SELECT/DESELECT UNITS</button>
-                    <button class="btn btn-light btn-sm" ng-click="deleteSelectedUnits()"><i
-                            class="icon-trash"></i></button>
+            <div class="input-group m-1">
+                <input class="form-control" placeholder="Unit name" ng-model="unitName"></input>
+            </div>
+            <div class="input-group m-1">
+                <input class="form-control" placeholder="description" ng-model="description"></input>
+            </div>
+        </div>
+        <div class="row" ng-show="unitName && description">
+            <div class="col-6 mb-2 pt-1 text-left">
+                <div class="btn-group">
+                    <button class="btn btn-primary btn-sm" ng-click="saveUnit(unitName, description)"><i
+                            class="icon-save-floppy"></i></button>
                 </div>
             </div>
         </div>
     </div>
-    <!-- <div class="row">
+    <div ng-show="existingUnitListVisible">
+        <li class="row" ng-repeat="unit in unitService.allUnits">
+            <div class="col-7 m-1">
+                <div class="input-group mt-2 mb-2">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" ng-model="unit.checked" />
+                        <label class="form-check-label" style="color: rgb(136, 109, 85);">Unit: {{unit.name}}</label>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <div class="row">
+            <div class="col-6 mb-2 text-left">
+                <div class="btn-group">
+                    <button class="btn btn-primary btn-sm" ng-click="saveAddedUnits()"><i
+                            class="icon-save-floppy"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div ng-show="unitsTabVisible">
+    <sens.units-row ng-repeat="unit in groupService.selectedGroupUnits" unit="unit">
+    </sens.units-row>
+    <div class="row">
+        <div class="col m-1 text-right pr-2">
+            <div class="btn-group mr-1">
+                <button type="button" class=" btn btn-outline-secondary btn-sm" ng-click="selectDeselectAllUnits()"
+                    translate>SELECT/DESELECT UNITS</button>
+                <button class="btn btn-outline-danger btn-sm" ng-click="deleteSelectedUnits($ctrl.group.id)"><i
+                        class="icon-trash"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <div class="row">
         <div class="col m-1 p-1 text-center">
             <div class="btn-group">
                 <button class="btn btn-success btn-sm" ng-click="addUnit()">ADD UNIT</button>
@@ -44,4 +97,4 @@
             </div>
         </div>
     </div> -->
-    <hr style="margin:1px; height:1px;border:none;color:rgb(0, 0, 0);background-color: rgb(0, 0, 0);">
+<hr style="margin:1px; height:1px;border:none;color:rgb(0, 0, 0);background-color: rgb(0, 0, 0);">

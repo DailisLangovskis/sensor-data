@@ -15,16 +15,21 @@ export default {
                 sensorName: '',
                 sensorType: '',
                 phenomenaId: '',
-                addSensor() {
-                    $scope.addSensorTabVisible = !$scope.addSensorTabVisible
-                },
+
                 showSensors(unitClicked) {
-                    unitService.showUnitSensors(unitClicked).then(function (response) {
-                        if (response != true) return;
-                        else {
-                            $scope.sensorsTabVisible = !$scope.sensorsTabVisible;
-                        }
-                    })
+                    if ($scope.sensorsTabVisible) {
+                        $scope.sensorsTabVisible = !$scope.sensorsTabVisible;
+                    }
+                    else {
+                        unitService.showUnitSensors(unitClicked).then(function (response) {
+                            if (!response) {
+                                window.alert("No units found for this group!");
+                            }
+                            else {
+                                $scope.sensorsTabVisible = !$scope.sensorsTabVisible;
+                            }
+                        })
+                    }
                 },
                 saveSensor() {
                     unitService.saveSensors($scope.sensorName, $scope.sensorType, $scope.phenomenaId).then(function (response) {
@@ -43,9 +48,11 @@ export default {
                 $scope.sensorName = '';
                 $scope.sensorType = '';
                 $scope.phenomenaId = '';
-                unitService.btnSelectDeseletClicked= true;
-                unitService.unitsSensors= [];
-                unitService.featureCollection= '';
+                unitService.btnSelectDeseletClicked = true;
+                unitService.unitsSensors = [];
+                unitService.featureCollection = '';
+                unitService.unitSelected = '';
+                unitService.allUnits = [];
             })
         }
     ]

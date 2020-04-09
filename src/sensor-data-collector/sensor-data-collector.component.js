@@ -10,13 +10,22 @@ export default {
                 addGroupTabVisible: false,
                 groupsTabVisible: false,
                 groupName: '',
-                addGroup() {
-                    $scope.addGroupTabVisible = !$scope.addGroupTabVisible
-                },
                 showGroups() {
-                    if (groupService.groups == '') return window.alert("There were no groups found!")
+                    $scope.addGroupTabVisible = false;
+                    if ($scope.groupsTabVisible) {
+                        $scope.groupsTabVisible = !$scope.groupsTabVisible;
+                    }
                     else {
-                        $scope.groupsTabVisible = !$scope.groupsTabVisible
+                        groupService.getGroups().then(function (response) {
+                            if(response != true) {
+                                window.alert("No groups found for this user!")
+                                $scope.groupsTabVisible = !$scope.groupsTabVisible;
+                            }
+                            else{
+                                $scope.groupsTabVisible = !$scope.groupsTabVisible;
+                            }
+                            
+                        })
                     }
                 },
                 saveGroup() {
@@ -32,9 +41,9 @@ export default {
                     $scope.$emit('logout');
                     $scope.groupName = '';
                     groupService.groups = [],
-                    groupService.selectedGroupUnits = [],
-                    groupService.groupSelected = {},
-                    $scope.groupsTabVisible = false;
+                        groupService.selectedGroupUnits = [],
+                        groupService.groupSelected = '',
+                        $scope.groupsTabVisible = false;
                     $scope.addGroupTabVisible = false;
                     authService.logout();
                 }

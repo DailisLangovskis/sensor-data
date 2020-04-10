@@ -38,7 +38,7 @@ var module = angular.module('hs', [
     'sens.sensorDataCollectorModule'
 ]);
 
-module.directive('hs', ['config', 'Core','hs.layout.service',function (config, Core, layoutService) {
+module.directive('hs', ['config', 'Core', 'hs.layout.service', function (config, Core, layoutService) {
     return {
         template: Core.hslayersNgTemplate,
         link: function (scope, element) {
@@ -70,7 +70,7 @@ var bookmarkSource = new VectorSource({
 import bookMarkIcon from 'images/mrkr-bookmark.png';
 
 module.value('config', {
-   proxyPrefix: "/proxy/",
+    proxyPrefix: "/proxy/",
     default_layers: [
         // new Tile({
         //     source: new OSM(),
@@ -106,7 +106,7 @@ module.value('config', {
                 })
             }),
             source: bookmarkSource,
-             declutter: true,
+            declutter: true,
             cluster: true
         })
     ],
@@ -148,11 +148,11 @@ module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service', 'h
         queryBaseService.nonQueryablePanels.push('sensor-data-collector');
         $scope.Core = Core;
         $scope.panelVisible = layoutService.panelVisible;
-        layoutService.sidebarRight = false;   
+        layoutService.sidebarRight = false;
         //layoutService.sidebarToggleable = false;
-        
+
         layoutService.sidebarButtons = true;
-       // layoutService.sidebarRight = true;
+        // layoutService.sidebarRight = true;
         $scope.$on("scope_loaded", function (event, args) {
             if (args == 'Sidebar') {
                 var el = angular.element('<sens.index hs.draggable ng-if="Core.exists(\'sens.sensorDataCollectorModule\')" ng-show="panelVisible(\'sensor-data-collector\', this)"></sens.index>')[0];

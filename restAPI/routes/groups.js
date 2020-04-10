@@ -11,15 +11,28 @@ module.exports = router
 router.use(bodyparser());
 router.get('/data', async (req, res) => {
     try {
-        const { rows } = await db.query('SELECT group_name, id FROM groups where system_user_id = ($1)', [req.user.id])
+        const { rows } = await db.query('SELECT group_name, group_id FROM groups where user_id = ($1)', [req.user.id])
         res.status(201).send(rows)
     } catch (e){
         console.log(e.stack)
     }
 })
-router.post('/data', async (req, res) => {
-
-    var insertGroup = 'INSERT INTO groups (group_name, system_user_id) VALUES ($1, $2)';
+router.post('/data',[
+    check('name', 'user').custom(async (name, user,res) => {
+        return await db.query('SELECT group_id FROM groups WHERE group_name = $1 and user_id = $2', [name, user.req.user.id])
+            .then(res => {
+                if (res.rows != '') {
+                    throw new Error("This group already exists!");
+                }
+                return true;
+            })
+    }).withMessage("This group already exists!"),
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
+    var insertGroup = 'INSERT INTO groups (group_name, user_id) VALUES ($1, $2)';
     try {
         await db.query(insertGroup, [req.body.name, req.user.id])
             .then(_ => {
@@ -32,9 +45,11 @@ router.post('/data', async (req, res) => {
 })
 router.get('/units/:id', async (req, res) => {
     try {
-        var queryString = 'SELECT u.* FROM units as u\
-        INNER JOIN units_groups as ug\
-        ON u.id = ug.unit_id where ug.group_id = ($1)'
+        var queryString = 'SELECT u.*, g.group_id FROM units_groups as ug\
+        INNER JOIN units as u\
+        ON ug.unit_id = u.unit_id \
+        INNER JOIN groups as g \
+        ON ug.group_id= g.group_id WHERE ug.group_id = ($1)'
         const { rows } = await db.query(queryString, [req.params.id])
         res.status(201).send(rows)
     } catch (e){
@@ -50,7 +65,7 @@ async function deleteGroupsHandler(req, res) {
         return res.status(422).json({ errors: errors.array() });
     }
     var id = req.body.params.join(',');
-    var deleteGroups = 'DELETE FROM groups WHERE id IN (' + id + ')';
+    var deleteGroups = 'DELETE FROM groups WHERE group_id IN (' + id + ')';
     try {
         await db.query(deleteGroups)
             .then(_ => {
@@ -70,9 +85,9 @@ async function deleteUnitsHandler(req, res) {
         return res.status(422).json({ errors: errors.array() });
     }
     var id = req.body.params.join(',');
-    var deleteUnits = 'DELETE FROM units_groups WHERE unit_id IN ($1) and group_id = ($2)';
+    var deleteUnits = 'DELETE FROM units_groups WHERE unit_id IN (' + id + ') and group_id = ($1)';
     try {
-        await db.query(deleteUnits, [id, req.body.group])
+        await db.query(deleteUnits, [req.body.group])
             .then(_ => {
                 res.status(201).send('Units deleted');
             })

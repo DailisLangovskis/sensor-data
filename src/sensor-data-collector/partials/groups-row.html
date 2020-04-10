@@ -10,9 +10,10 @@
     <div class="col-4 m-1 pt-1 pr-0 text-right">
         <div class="btn-group">
             <button class="btn btn-light btn-sm" title="Add new sensor unit"
-                ng-click="addUnitTabVisible = !addUnitTabVisible"><i class="icon-calcplus"></i></button>
-            <button class="btn btn-light btn-sm" title="Show existing units" ng-click="showUnits($ctrl.group.id)"><i
-                    class="icon-search"></i></button>
+                ng-click="addUnitTabVisible = !addUnitTabVisible; unitsTabVisible = false"><i
+                    class="icon-calcplus"></i></button>
+            <button class="btn btn-light btn-sm" title="Show existing units"
+                ng-click="showUnits($ctrl.group.group_id)"><i class="icon-search"></i></button>
         </div>
     </div>
 </li>
@@ -23,24 +24,37 @@
                 <button class="btn btn-outline-success btn-sm"
                     ng-click="addNewUnitTabExpanded = !addNewUnitTabExpanded; existingUnitListVisible = false">ADD
                     NEW UNIT</button>
-                <button class="btn btn-outline-success btn-sm" ng-click="getAllUsersUnits()">SELECT FROM MY UNIT
-                    LIST</button>
+                <button class="btn btn-outline-success btn-sm" ng-click="getAllUsersUnits()">SELECT FROM LIST</button>
             </div>
         </div>
     </div>
     <div ng-show="addNewUnitTabExpanded">
-        <div class="row">
+        <div class="row pl-2 pr-2">
             <div class="input-group m-1">
                 <input class="form-control" placeholder="Unit name" ng-model="unitName"></input>
             </div>
             <div class="input-group m-1">
                 <input class="form-control" placeholder="description" ng-model="description"></input>
             </div>
+            <div class="input-group m-1 p-1">
+                <input class="form-control" type="datetime-local" ng-model="time"></input>
+            </div>
+            <div class="input-group m-1">
+                <span style="text-align: center; background-color: rgba(115, 219, 160, 0.4);">Click on the map and press
+                    map
+                    button to set location</span>
+                <div class="input-group-prepend m-1">
+                    <button class="btn btn-outline-primary btn-sm" title="Get Location"
+                        ng-click="getLocationFromMap()"><i class="icon-map"></i></button>
+                </div>
+                <input class="form-control" placeholder="location" ng-model="location" readonly></input>
+            </div>
         </div>
-        <div class="row" ng-show="unitName && description">
+        <div class="row" ng-show="unitName && description && location && time">
             <div class="col-6 mb-2 pt-1 text-left">
                 <div class="btn-group">
-                    <button class="btn btn-primary btn-sm" ng-click="saveUnit(unitName, description)"><i
+                    <button class="btn btn-primary btn-sm"
+                        ng-click="saveUnit(unitName, description,time, $ctrl.group.group_id)"><i
                             class="icon-save-floppy"></i></button>
                 </div>
             </div>
@@ -60,41 +74,26 @@
         <div class="row">
             <div class="col-6 mb-2 text-left">
                 <div class="btn-group">
-                    <button class="btn btn-primary btn-sm" ng-click="saveAddedUnits()"><i
+                    <button class="btn btn-primary btn-sm" ng-click="saveAddedUnits($ctrl.group.group_id)"><i
                             class="icon-save-floppy"></i></button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<!-- | filter:[unit.$ctrl.group.group_id] -->
 <div ng-show="unitsTabVisible">
-    <sens.units-row ng-repeat="unit in groupService.selectedGroupUnits" unit="unit">
+    <sens.units-row ng-repeat="unit in groupService.selectedGroupUnits | filter: $ctrl.group.group_id" unit="unit">
     </sens.units-row>
     <div class="row">
         <div class="col m-1 text-right pr-2">
             <div class="btn-group mr-1">
-                <button type="button" class=" btn btn-outline-secondary btn-sm" ng-click="selectDeselectAllUnits()"
-                    translate>SELECT/DESELECT UNITS</button>
-                <button class="btn btn-outline-danger btn-sm" ng-click="deleteSelectedUnits($ctrl.group.id)"><i
+                <button type="button" class=" btn btn-outline-secondary btn-sm"
+                    ng-click="selectDeselectAllUnits($ctrl.group.group_id)" translate>SELECT/DESELECT UNITS</button>
+                <button class="btn btn-outline-danger btn-sm" ng-click="deleteSelectedUnits($ctrl.group.group_id)"><i
                         class="icon-trash"></i></button>
             </div>
         </div>
     </div>
 </div>
-<!-- <div class="row">
-        <div class="col m-1 p-1 text-center">
-            <div class="btn-group">
-                <button class="btn btn-success btn-sm" ng-click="addUnit()">ADD UNIT</button>
-                <button class="btn btn-primary btn-sm" ng-click="showUnits()">SHOW UNITS</button>
-            </div>
-        </div>
-    </div>
-    <div class="row" ng-show="sensorName && sensorType && phenomenaId">
-        <div class="col-6 mb-2 text-left">
-            <div class="btn-group">
-                <button class="btn btn-primary btn-sm" ng-click="saveSensor(sensorName, sensorType, phenomenaId)"><i
-                        class="icon-save-floppy"></i></button>
-            </div>
-        </div>
-    </div> -->
 <hr style="margin:1px; height:1px;border:none;color:rgb(0, 0, 0);background-color: rgb(0, 0, 0);">

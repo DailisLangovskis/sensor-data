@@ -12,8 +12,8 @@ router.use(bodyparser());
 router.post('/data', [
     check('name').isLength({ min: 1, max: 20 })
         .withMessage('Must be at less 20 chars long'),
-    check('name').custom(async (name, res) => {
-        return await db.query('SELECT sensor_id FROM sensors WHERE sensor_name = $1', [name])
+    check('name', 'user').custom(async (name, user, res) => {
+        return await db.query('SELECT sensor_id FROM sensors WHERE sensor_name = $1 and user_id = $2', [name, user.req.user.id])
             .then(res => {
                 if (res.rows != '') {
                     throw new Error("This sensor already exists!");
@@ -27,7 +27,7 @@ router.post('/data', [
 ], addSensorDataHandler)
 router.get('/data', async (req, res) => {
     try {
-        const { rows } = await db.query('SELECT sensor_name,sensor_id,sensor_type FROM sensors')
+        const { rows } = await db.query('SELECT sensor_name,sensor_id,sensor_type FROM sensors WHERE user_id = ($1)', [req.user.id])
         res.status(201).send(rows)
     } catch (e) {
         console.log(e.stack)
@@ -45,16 +45,22 @@ async function addSensorDataHandler(req, res) {
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
     }
-    var insertSensor = 'INSERT INTO sensors(sensor_name, sensor_type,phenomena_id) VALUES ($1,$2,$3)';
+    var insertSensor = 'INSERT INTO sensors(sensor_name, sensor_type,phenomena_id, user_id) VALUES ($1,$2,$3,$4)';
+    var addToUnit = 'INSERT INTO sensors_units (sensor_id, unit_id) VALUES ($1,$2)';
     try {
-        await db.query(insertSensor, [req.body.name, req.body.type, req.body.phenomenaId])
-            .then(_ => {
-                res.status(201).send('Insert Completed');
-            })
-            .catch(e => console.log(e.stack))
-    } catch (e) {
-        console.log(e.stack)
-    }
+        await db.query(insertSensor, [req.body.name, req.body.type, req.body.phenomenaId, req.user.id])
+                .then(async _ => {
+                    await db.query('SELECT sensor_id FROM sensors WHERE sensor_name = ($1) and user_id = ($2)', [req.body.name, req.user.id])
+                        .then(async function (res) {
+                            await db.query(addToUnit, [res.rows[0].sensor_id, req.body.unit])
+                        })
+                        .catch(e => console.log(e.stack))
+                })
+                .catch(e => console.log(e.stack))
+        } catch (e) {
+            console.log(e.stack)
+        }
+        res.status(201).send("Insert completed!")
 }
 async function deleteSensorsHandler(req, res) {
     const errors = validationResult(req);
@@ -86,3 +92,17 @@ async function getPhenomenaDataHandler(req, res) {
         console.log(e.stack)
     }
 }
+router.post('/sensors_units', (req, res) => {
+    var sensors = req.body.params
+    var insertSensors = 'INSERT INTO sensors_units (sensor_id, unit_id) VALUES ($1, $2)';
+    sensors.forEach(async sensor => {
+        try {
+            await db.query(insertSensors, [sensor, req.body.unit])
+                .catch(e => console.log(e.stack))
+        } catch (e) {
+            console.log(e.stack)
+        }
+    })
+    res.status(201).send("Insert completed!")
+
+})

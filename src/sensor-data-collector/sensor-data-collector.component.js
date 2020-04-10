@@ -17,22 +17,34 @@ export default {
                     }
                     else {
                         groupService.getGroups().then(function (response) {
-                            if(response != true) {
+                            if (!response) {
                                 window.alert("No groups found for this user!")
+                            }
+                            else {
                                 $scope.groupsTabVisible = !$scope.groupsTabVisible;
                             }
-                            else{
-                                $scope.groupsTabVisible = !$scope.groupsTabVisible;
-                            }
-                            
+
                         })
                     }
                 },
+                // getAllUsersUnits(){
+                //     unitService.getAllUsersUnits()
+                // },
+                // getAllUsersSensors(){
+                //     sensorService.getAllUsersSensors()
+                // },
                 saveGroup() {
                     groupService.saveGroups($scope.groupName).then(function (response) {
-                        if (response == false) {
+                        if (!response) {
                             $scope.addGroupTabVisible = !$scope.addGroupTabVisible;
                             $scope.groupName = '';
+                        }
+                    })
+                },
+                deleteSelectedGroups() {
+                    groupService.deleteSelectedGroups().then(function (response) {
+                        if (response) {
+                            $scope.groupsTabVisible = false;
                         }
                     })
                 },

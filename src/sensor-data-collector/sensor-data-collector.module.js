@@ -3,7 +3,6 @@ import sensorRowComponent from './sensor-row.component';
 import sensorDataCollectorComponent from './sensor-data-collector.component';
 import indexComponent from './sensor-index.component';
 import loginRegisterService from './login-register.service';
-import sensorRowService from './sensor-row.service';
 import authService from './auth.service';
 import groupsRowComponent from './sensor-groups-row.component';
 import unitsRowComponent from './sensor-units-row.component';
@@ -23,8 +22,6 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map'])
     .service("sens.loginRegister.service", loginRegisterService)
 
     .service("sens.auth.service", authService)
-
-    .service("sens.sensorRow.service", sensorRowService)
 
     .service("sens.sensorGroup.service", sensorGroupService)
 
@@ -57,38 +54,38 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map'])
                     //     authService.returnToLogin();
                     //     return;
                     //} else {
-                        switch (response.status) {
-                            case 401:
-                                authService.clearToken();
-                                var deffered = $q.defer();
-                                if (!inFlightAuthRequest) {
-                                    inFlightAuthRequest = $injector.get('$http').post(config.sensorApiEndpoint + '/auth/token', { refreshToken: authService.getRefreshToken() });
+                    switch (response.status) {
+                        case 401:
+                            authService.clearToken();
+                            var deffered = $q.defer();
+                            if (!inFlightAuthRequest) {
+                                inFlightAuthRequest = $injector.get('$http').post(config.sensorApiEndpoint + '/auth/token', { refreshToken: authService.getRefreshToken() });
 
-                                }
-                                inFlightAuthRequest.then(function (res) {
-                                    inFlightAuthRequest = null
-                                        authService.setToken(res.data.accessToken);
-                                        $injector.get('$http')(response.config).then(function (resp) {
-                                            deffered.resolve(resp);
-                                        }, function (resp) {
-                                            deffered.reject(resp);
-                                        });
-
-                                }, function (error) {
-                                    inFlightAuthRequest = null;
-                                    deffered.reject();
-                                    authService.clearAllToken();
-                                    authService.returnToLogin();
-                                    $window.alert("Please relog into the site!");
-                                    return;
+                            }
+                            inFlightAuthRequest.then(function (res) {
+                                inFlightAuthRequest = null
+                                authService.setToken(res.data.accessToken);
+                                $injector.get('$http')(response.config).then(function (resp) {
+                                    deffered.resolve(resp);
+                                }, function (resp) {
+                                    deffered.reject(resp);
                                 });
-                                return deffered.promise;
-                                break;
-                            default:
-                                return $q.reject(response.data);
-                                break;
-                        }
-                        return response || $q.when(response);
+
+                            }, function (error) {
+                                inFlightAuthRequest = null;
+                                deffered.reject();
+                                authService.clearAllToken();
+                                authService.returnToLogin();
+                                $window.alert("Please relog into the site!");
+                                return;
+                            });
+                            return deffered.promise;
+                            break;
+                        default:
+                            return $q.reject(response.data);
+                            break;
+                    }
+                    return response || $q.when(response);
                     //};
                 }
             }

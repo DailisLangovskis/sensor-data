@@ -1,8 +1,8 @@
-export default ['$http', 'config', 'sens.auth.service',
-    function ($http, config, authService) {
+export default ['$http', 'config',
+    function ($http, config) {
         var me = this;
         angular.extend(me, {
-            btnSelectDeselectClicked: true,
+            btnSelectDeselectClicked: false,
             groups: [],
             selectedGroupUnits: [],
             groupSelected: '',
@@ -11,9 +11,13 @@ export default ['$http', 'config', 'sens.auth.service',
                 me.btnSelectDeselectClicked = !me.btnSelectDeselectClicked;
                 me.groups.forEach(group => group.checked = me.btnSelectDeselectClicked);
             },
-            selectDeselectAllUnits() {
+            selectDeselectAllUnits(groupClicked) {
                 me.btnSelectDeselectClicked = !me.btnSelectDeselectClicked;
-                me.selectedGroupUnits.forEach(unit => unit.checked = me.btnSelectDeselectClicked);
+                me.selectedGroupUnits.forEach(unit => {
+                    if (unit.group_id == groupClicked) {
+                        unit.checked = me.btnSelectDeselectClicked
+                    }
+                });
             },
 
             getGroupUnits(groupSelected) {
@@ -23,10 +27,9 @@ export default ['$http', 'config', 'sens.auth.service',
                         return response.data;
                     }).then(function (response) {
                         if (response == '') {
-                            me.selectedGroupUnits = '';
                             return false;
                         } else {
-                            me.selectedGroupUnits = response;
+                            me.selectedGroupUnits = me.selectedGroupUnits.concat(response.filter(data => me.selectedGroupUnits.filter(gu => gu.group_id == data.group_id && gu.unit_id == data.unit_id).length == 0));
                             return true;
                         }
                     })
@@ -38,7 +41,7 @@ export default ['$http', 'config', 'sens.auth.service',
                 return $http.get(config.sensorApiEndpoint + '/groups/data')
                     .then(function success(response) {
                         if (response.data == '') {
-                            me.groups = '';
+                            me.groups = [];
                             return false;
                         }
                         else {
@@ -72,13 +75,19 @@ export default ['$http', 'config', 'sens.auth.service',
             deleteSelectedGroups() {
                 var deleteAll = window.confirm("Do you really want to delete all selected groups from the database?");
                 if (deleteAll) {
-                    var checked = me.groups.filter(group => group.checked == true).map(id => id.id);
-                    $http.post(config.sensorApiEndpoint + '/groups/delete', { params: checked })
+                    var checked = me.groups.filter(group => group.checked == true).map(id => id.group_id);
+                    return $http.post(config.sensorApiEndpoint + '/groups/delete', { params: checked })
                         .then(function success(res) {
                             me.newAlert(res.data, 2000, "green");
                         })
                         .then(_ => {
-                            me.getGroups();
+                            me.groups = me.groups.filter(group => group.checked != true);
+                            if (me.groups == '') {
+                                return true;
+                            }
+                            else {
+                                return false;
+                            }
                         })
                         .catch(function (error) {
                             if (angular.isDefined(error)) {
@@ -94,13 +103,19 @@ export default ['$http', 'config', 'sens.auth.service',
             deleteSelectedUnits(groupSelected) {
                 var deleteAll = window.confirm("Do you really want to delete all selected units from the group?");
                 if (deleteAll) {
-                    var checked = me.selectedGroupUnits.filter(unit => unit.checked == true).map(id => id.id);
-                    $http.post(config.sensorApiEndpoint + '/groups/delete/units', { params: checked, group: groupSelected })
+                    var checked = me.selectedGroupUnits.filter(unit => unit.checked == true).map(id => id.unit_id);
+                    return $http.post(config.sensorApiEndpoint + '/groups/delete/units', { params: checked, group: groupSelected })
                         .then(function success(res) {
                             me.newAlert(res.data, 2000, "green");
                         })
                         .then(_ => {
-                            me.getGroupUnits(me.groupSelected);
+                            me.selectedGroupUnits = me.selectedGroupUnits.filter(unit => unit.checked != true);
+                            if (me.selectedGroupUnits == '') {
+                                return true;
+                            }
+                            else {
+                                return false;
+                            }
                         })
                         .catch(function (error) {
                             if (angular.isDefined(error)) {

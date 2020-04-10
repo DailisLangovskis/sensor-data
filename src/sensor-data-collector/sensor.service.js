@@ -1,5 +1,5 @@
-export default ['$http', 'config','sens.auth.service', 'sens.sensorGroup.service',
-    function ($http, config, authService, groupService) {
+export default ['$http', 'config', 'sens.sensorGroup.service',
+    function ($http, config, groupService) {
         var me = this;
         angular.extend(me, {
             btnSelectDeseletClicked: true,
@@ -7,32 +7,38 @@ export default ['$http', 'config','sens.auth.service', 'sens.sensorGroup.service
             phenomenas: [],
             phenomena: '',
             featureCollection: '',
-            newAlert:groupService.newAlert,
+            newAlert: groupService.newAlert,
             selectDeselectAllSensors() {
                 me.btnSelectDeseletClicked = !me.btnSelectDeseletClicked;
                 me.sensors.forEach(sensor => sensor.checked = me.btnSelectDeseletClicked);
             },
-            getSensors: function () {
+            getAllUsersSensors: function () {
                 return $http.get(config.sensorApiEndpoint + '/sensors/data')
                     .then(function success(response) {
-                        if(response.data == ''){
-                            me.sensors = '';
+                        if (response.data == '') {
+                            me.sensors = [];
                             return false;
                         }
-                        else{
+                        else {
                             me.sensors = response.data;
                             return true;
                         }
-                        
+
                     })
                     .catch(function (error) {
                         console.error("Error!", error);
                     });
             },
             getPhenomenas: function () {
-                $http.get(config.sensorApiEndpoint + '/phenomena/data')
+                return $http.get(config.sensorApiEndpoint + '/phenomena/data')
                     .then(function success(response) {
-                        me.phenomenas = response.data;
+                        if (response.data == '') {
+                            me.phenomenas = [];
+                        } else {
+                            me.phenomenas = response.data;
+                        }
+
+
                     })
                     .catch(function (error) {
                         console.error("Error!", error);
@@ -60,38 +66,52 @@ export default ['$http', 'config','sens.auth.service', 'sens.sensorGroup.service
                         console.error("Error!", error);
                     })
             },
-            saveSensors: function (sensorName, sensorType, phenomenaId) {
-                var data = { name: sensorName, type: sensorType, phenomenaId: phenomenaId };
-                return $http.post(config.sensorApiEndpoint + '/sensors/data', data)
+            saveAddedSensors(unitClicked) {
+                var checked = me.sensors.filter(sensor => sensor.checked == true).map(id => id.sensor_id);
+                return $http.post(config.sensorApiEndpoint + '/sensors/sensors_units', { params: checked, unit: unitClicked })
                     .then(function success(res) {
                         me.newAlert(res.data, 2000, "green");
-                        me.getSensors();
-                        return false;
                     })
                     .catch(function (error) {
-                        if(angular.isDefined(error)){
+                        if (angular.isDefined(error)) {
                             if (error.hasOwnProperty('errors')) {
                                 var gottenErrors = error.errors.map(msg => msg.msg)
                                 me.newAlert(gottenErrors, 2000, "red");
                             }
-                        }           
+                        }
+                    });
+            },
+            saveSensors: function (sensorName, sensorType, phenomenaId, unitClicked) {
+                var data = { name: sensorName, type: sensorType, phenomenaId: phenomenaId, unit: unitClicked };
+                return $http.post(config.sensorApiEndpoint + '/sensors/data', data)
+                    .then(function success(res) {
+                        me.newAlert(res.data, 2000, "green");
+                        return false;
+                    })
+                    .catch(function (error) {
+                        if (angular.isDefined(error)) {
+                            if (error.hasOwnProperty('errors')) {
+                                var gottenErrors = error.errors.map(msg => msg.msg)
+                                me.newAlert(gottenErrors, 2000, "red");
+                            }
+                        }
                         return true;
                     });
             },
-            saveData: function (sensorClicked, phenomenaId, measuredValue, time, wktGeom) {
-                var data = { sensor: sensorClicked, phenomena: phenomenaId, measuredValue: measuredValue, time: time, wktGeom: wktGeom }
+            saveData: function (sensorClicked, measuredValue, time, unitId) {
+                var data = { sensor: sensorClicked, measuredValue: measuredValue, time: time, unitId: unitId }
                 return $http.post(config.sensorApiEndpoint + '/observation/save', data)
                     .then(function success(res) {
                         me.newAlert(res.data, 2000, "green");
                         return false;
                     })
                     .catch(function (error) {
-                        if(angular.isDefined(error)){
+                        if (angular.isDefined(error)) {
                             if (error.hasOwnProperty('errors')) {
                                 var gottenErrors = error.errors.map(msg => msg.msg)
                                 me.newAlert(gottenErrors, 2000, "red");
                             }
-                        } 
+                        }
                         return true;
                     });
             },
@@ -104,15 +124,15 @@ export default ['$http', 'config','sens.auth.service', 'sens.sensorGroup.service
                             me.newAlert(res.data, 2000, "green");
                         })
                         .then(_ => {
-                            me.getSensors();
+                            me.getAllUsersSensors();
                         })
                         .catch(function (error) {
-                            if(angular.isDefined(error)){
+                            if (angular.isDefined(error)) {
                                 if (error.hasOwnProperty('errors')) {
                                     var gottenErrors = error.errors.map(msg => msg.msg)
                                     me.newAlert(gottenErrors, 2000, "red");
                                 }
-                            } 
+                            }
                         });
 
                 }

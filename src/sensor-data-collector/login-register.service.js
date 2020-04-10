@@ -1,5 +1,5 @@
-export default ['$http', 'sens.auth.service', 'config','sens.sensorGroup.service',
-    function ($http, authService, config, groupService) {
+export default ['$http', 'sens.auth.service', 'config',
+    function ($http, authService, config) {
         var me = this;
         angular.extend(me, {
             loggedInUser: '',
@@ -19,7 +19,7 @@ export default ['$http', 'sens.auth.service', 'config','sens.sensorGroup.service
                         return false;
                     })
                     .catch(function (error) {
-                        if(angular.isDefined(error)){
+                        if (angular.isDefined(error)) {
                             if (error.hasOwnProperty('errors')) {
                                 var gottenErrors = error.errors.map(msg => msg.msg)
                                 me.userAlert(gottenErrors, 2000, "red");
@@ -37,13 +37,13 @@ export default ['$http', 'sens.auth.service', 'config','sens.sensorGroup.service
                         authService.setRefreshToken(res.data.refreshToken);
                         me.loggedInUser = user.username;
                         me.userAlert(res.data.msg, 2000, "green");
-                        
+
                     })
                     .then(function () {
                         return false;
                     })
                     .catch(function (error) {
-                        if(angular.isDefined(error)){
+                        if (angular.isDefined(error)) {
                             if (error.hasOwnProperty('errors')) {
                                 var gottenErrors = error.errors.map(msg => msg.msg)
                                 me.userAlert(gottenErrors, 2000, "red");

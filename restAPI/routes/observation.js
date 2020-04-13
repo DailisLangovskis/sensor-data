@@ -24,12 +24,26 @@ async function addObservationDataHandler(req, res) {
     var insertObservation = 'INSERT INTO observations(sensor_id, time_stamp, observed_value, unit_id, units_pos_id) VALUES ($1,$2,$3,$4,$5)';
     try {
         await db.query(getUnitPos, [req.body.unitId])
-            .then(async function(res) {
+            .then(async function (res) {
                 await db.query(insertObservation, [req.body.sensor, req.body.time, req.body.measuredValue, req.body.unitId, res.rows[0].id])
             })
             .catch(e => console.log(e.stack))
-    } catch (e){
+    } catch (e) {
         console.log(e.stack)
     }
     res.status(201).send('Insert completed!');
 }
+router.get('/collectedData', async (req, res) => {
+    var getCollectedData = 'SELECT data.*, p.unit,p.phenomenon_name FROM observations as data\
+    INNER JOIN sensors as s\
+    ON data.sensor_id = s.sensor_id\
+    INNER JOIN phenomenons as p\
+    ON s.phenomena_id = p.id\
+    WHERE data.sensor_id = ($1) and data.unit_id = ($2) ORDER BY time_stamp ASC LIMIT 100';
+    try {
+        const { rows } = await db.query(getCollectedData, [req.query.sensor, req.query.unit])
+        res.status(201).send(rows)
+    } catch (e) {
+        console.log(e.stack)
+    }
+})

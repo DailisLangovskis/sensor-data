@@ -17,7 +17,7 @@ export default {
 
                 login() {
                     loginRegister.login($scope.logUsername, $scope.logPassword).then(function (response) {
-                        if (response == false) {
+                        if (!response) {
                             authService.loggedIn = true;
                             $scope.logUsername = '';
                             $scope.logPassword = '';
@@ -33,7 +33,7 @@ export default {
                     }
                     else {
                         loginRegister.registerUser($scope.name, $scope.lastname, $scope.email, $scope.username, $scope.password).then(function (response) {
-                            if (response == false) {
+                            if (!response) {
                                 $scope.name = '';
                                 $scope.lastname = '';
                                 $scope.email = '';

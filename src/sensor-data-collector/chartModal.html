@@ -1,0 +1,46 @@
+<div ng-controller="chartController">
+    <div class="modal" id="chart-dialog" ng-class="{'in': chartModalVisible}" tabindex="-1" role="dialog"
+        aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>
+                        <translate>Chart</translate>
+                    </h4>
+                    <button type="button" class="close" ng-click="chartModalVisible = false" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only" translate="">Close</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container text-right">
+                        <a id="save-as-image" download="chartImage.png" href="#" ng-click="saveAsImage()"
+                            class="btn btn-primary btn-sm" title="Save as Image">SAVE AS IMAGE</a>
+                        <div class="chart">
+                            <canvas id="sensor-data-chart"></canvas>
+                        </div>
+
+                        <div class="col mb-2 text-center">
+                            <div class="btn-group">
+                                <button class="btn btn-primary btn-sm" title="Show data in seconds"
+                                    ng-click="setXAxis('second')">SECOND</button>
+                                <button class="btn btn-primary btn-sm" title="Show data in minutes"
+                                    ng-click="setXAxis('minute')">MINUTE</button>
+                                <button class="btn btn-primary btn-sm" title="Show data in hours"
+                                    ng-click="setXAxis('hour')">HOUR</button>
+                                <button class="btn btn-primary btn-sm" title="Show data in days"
+                                    ng-click="setXAxis('day')">DAY</button>
+                                <button class="btn btn-primary btn-sm" title="Show data in months"
+                                    ng-click="setXAxis('month')">MONTH</button>
+                                    <button class="btn btn-primary btn-sm" title="Show data in quarters"
+                                    ng-click="setXAxis('quarter')">QUARTER</button>
+                                <button class="btn btn-primary btn-sm" title="Show data in years"
+                                    ng-click="setXAxis('year')">YEAR</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

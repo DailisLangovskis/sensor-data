@@ -6,8 +6,14 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
             sensors: [],
             phenomenas: [],
             phenomena: '',
+            sensorCollectedData: [],
             featureCollection: '',
             newAlert: groupService.newAlert,
+            // labels: [],
+            // data: [],
+            // series: [],
+            // options: {},
+            // datasetOverride: [],
             selectDeselectAllSensors() {
                 me.btnSelectDeseletClicked = !me.btnSelectDeseletClicked;
                 me.sensors.forEach(sensor => sensor.checked = me.btnSelectDeseletClicked);
@@ -115,6 +121,53 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
                         return true;
                     });
             },
+            dataRequest(sensorClicked, unitSelected) {
+                return $http.get(config.sensorApiEndpoint + '/observation/collectedData', { params: { sensor: sensorClicked, unit: unitSelected } })
+                    .then(function success(response) {
+                        return response.data;
+                    })
+                    //.then(function (response) {
+                    //     if (response == '') {
+                    //         return false
+                    //     } else {
+                    //         me.sensorCollectedData = me.sensorCollectedData.concat(response.filter(data => me.sensorCollectedData.filter(d => d.unit_id == data.unit_id && d.sensor_id == data.sensor_id && d.units_pos_id == data.units_pos.id).length == 0));
+                    //         return true
+                    //     }
+                    // })
+                    .catch(function (error) {
+                        if (angular.isDefined(error)) {
+                            if (error.hasOwnProperty('errors')) {
+                                var gottenErrors = error.errors.map(msg => msg.msg)
+                                me.newAlert(gottenErrors, 2000, "red");
+                            }
+                        }
+                        return true;
+                    });
+            },
+            // createChart(sensorClicked, unitSelected) {
+            //     let collectedData = me.sensorCollectedData.filter(d => d.sensor_id == sensorClicked && d.unit_id == unitSelected);
+            //     console.log(collectedData);
+            //     me.labels = collectedData.map(data => data.time_stamp);
+            //     console.log(me.labels);
+            //     me.series = ['Sensor' + collectedData[0].sensor_id + collectedData[0].unit];
+            //     me.data = collectedData.map(data => data.observed_value);
+            //     me.onClick = function (points, evt) {
+            //         console.log(points, evt);
+            //     };
+            //     me.datasetOverride = [{ yAxisID: 'y-axis-1' }];
+            //     me.options = {
+            //         scales: {
+            //             yAxes: [
+            //                 {
+            //                     id: 'y-axis-1',
+            //                     type: 'linear',
+            //                     display: true,
+            //                     position: 'left'
+            //                 }
+            //             ]
+            //         }
+            //     };
+            // },
             deleteSelectedSensors() {
                 var deleteAll = window.confirm("Do you really want to delete all selected sensors from the database?");
                 if (deleteAll) {

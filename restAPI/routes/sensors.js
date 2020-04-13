@@ -92,7 +92,9 @@ async function getPhenomenaDataHandler(req, res) {
         console.log(e.stack)
     }
 }
-router.post('/sensors_units', (req, res) => {
+router.post('/sensors_units',[
+    check('params').isLength({ min: 1 }).withMessage("There was no sensor selected!")
+], (req, res) => {
     var sensors = req.body.params
     var insertSensors = 'INSERT INTO sensors_units (sensor_id, unit_id) VALUES ($1, $2)';
     sensors.forEach(async sensor => {

@@ -52,7 +52,7 @@ export default {
                 },
                 saveSensor(sensorName, sensorType, phenomenaId, unitClicked) {
                     sensorService.saveSensors(sensorName, sensorType, phenomenaId, unitClicked).then(function (response) {
-                        if (response == false) {
+                        if (!response) {
                             $scope.addNewSensorTabExpanded = !$scope.addNewSensorTabExpanded;
                             $scope.sensorName = '';
                             $scope.sensorType = '';

@@ -51,7 +51,9 @@ async function deleteSensorsHandler(req, res) {
         console.log(e.stack)
     }
 }
-router.post('/units_groups', (req, res) => {
+router.post('/units_groups',[
+    check('params').isLength({ min: 1 }).withMessage("There was no unit selected!")
+], (req, res) => {
     var units = req.body.params
     var insertUnits = 'INSERT INTO units_groups (unit_id, group_id) VALUES ($1, $2)';
     units.forEach(async unit => {

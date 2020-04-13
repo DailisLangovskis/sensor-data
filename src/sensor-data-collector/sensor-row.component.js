@@ -34,7 +34,6 @@ export default {
             },
             saveData(sensorClicked, measuredValue, measurementTime, whichUnit) {
                 measurementTime = moment.moment(measurementTime).format("YYYY-MM-DD HH:mm:ssZ");
-                console.log(measurementTime);
                 sensorService.saveData(sensorClicked, measuredValue, measurementTime, whichUnit).then(function (response) {
                     if (!response) {
                         $scope.addSensorTabVisible = !$scope.addSensorTabVisible;

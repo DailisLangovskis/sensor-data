@@ -51,7 +51,7 @@ async function deleteSensorsHandler(req, res) {
         console.log(e.stack)
     }
 }
-router.post('/units_groups',[
+router.post('/units_groups', [
     check('params').isLength({ min: 1 }).withMessage("There was no unit selected!")
 ], (req, res) => {
     var units = req.body.params
@@ -68,7 +68,7 @@ router.post('/units_groups',[
 
 })
 router.post('/new', [
-    check('name', 'user').custom(async (name, user,res) => {
+    check('name', 'user').custom(async (name, user, res) => {
         return await db.query('SELECT unit_id FROM units WHERE name = $1 and user_id = $2', [name, user.req.user.id])
             .then(res => {
                 if (res.rows != '') {
@@ -95,8 +95,11 @@ router.post('/new', [
                         await db.query(addToGroup, [res.rows[0].unit_id, req.body.group])
                         return res;
                     })
-                    .then(async function(res){
+                    .then(async function (res) {
                         await db.query(addUnitsPos, [res.rows[0].unit_id, req.body.time, req.body.wktGeom])
+                    })
+                    .then(_ => {
+                        res.status(201).send("Insert completed!")
                     })
                     .catch(e => console.log(e.stack))
             })
@@ -104,6 +107,5 @@ router.post('/new', [
     } catch (e) {
         console.log(e.stack)
     }
-    res.status(201).send("Insert completed!")
 
 })

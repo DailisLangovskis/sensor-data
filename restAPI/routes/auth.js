@@ -19,9 +19,8 @@ router.post('/', [
                 if (res.rows == '') {
                     throw new Error("This user does not exist!")
                 }
-                return true
             })
-    }).withMessage("This user does not exist!")
+    })
 ]
     , async (req, res) => {
         const errors = validationResult(req)

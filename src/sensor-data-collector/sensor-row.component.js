@@ -63,7 +63,6 @@ export default {
             buildChart(sensorClicked, unitSelected, response) {
                 var collectedData = response.filter(data => data.sensor_id == sensorClicked && data.unit_id == unitSelected);
                 var labels = collectedData.map(data => data.time_stamp);
-                console.log(labels);
                 var values = collectedData.map(data => data.observed_value);
                 var chartTitle = collectedData[0].phenomenon_name + " " + collectedData[0].unit;
                 var ctx = document.querySelector("#sensor-data-chart").getContext('2d');
@@ -72,6 +71,7 @@ export default {
                     data: {
                         labels: labels, // Our labels
                         datasets: [{
+                            lineTension: 0, 
                             fillColor: 'rgba(0,0,0,0)',
                             label: chartTitle, // Name the series
                             data: values, // Our values

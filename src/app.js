@@ -126,7 +126,7 @@ module.value('config', {
         }
     },
     panelWidths: {
-        sensors: 600
+        'sensor-data-collector': 500
     },
     panelsEnabled: {
         language: false
@@ -149,10 +149,9 @@ module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service', 'h
         $scope.Core = Core;
         $scope.panelVisible = layoutService.panelVisible;
         layoutService.sidebarRight = false;
-        //layoutService.sidebarToggleable = false;
 
         layoutService.sidebarButtons = true;
-        // layoutService.sidebarRight = true;
+
         $scope.$on("scope_loaded", function (event, args) {
             if (args == 'Sidebar') {
                 var el = angular.element('<sens.index hs.draggable ng-if="Core.exists(\'sens.sensorDataCollectorModule\')" ng-show="panelVisible(\'sensor-data-collector\', this)"></sens.index>')[0];

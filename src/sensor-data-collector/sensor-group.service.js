@@ -110,7 +110,7 @@ export default ['$http', 'config',
                         })
                         .then(_ => {
                             me.selectedGroupUnits = me.selectedGroupUnits.filter(unit => unit.checked != true);
-                            if (me.selectedGroupUnits == '') {
+                            if (me.selectedGroupUnits.filter(u=> u.group_id != groupSelected)) {
                                 return true;
                             }
                             else {

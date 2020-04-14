@@ -24,19 +24,16 @@ router.post('/', [
                 if (res.rows != '') {
                     throw new Error("This email has been already registered!")
                 }
-                return true
             })
-    }).withMessage("This email has been already registered!"),
-
+    }),
     check('username').custom(async (username, res) => {
         return await db.query('SELECT username FROM system_users WHERE username = $1', [username])
             .then(res => {
                 if (res.rows != '') {
                     throw new Error("This username is taken!")
                 }
-                return true
             })
-    }).withMessage("This username is taken!"),
+    }),
     check('password').isLength({ min: 6, max: 30 })
         .withMessage('Password must be at least 6 chars long'),
 ],registerUserHandler)

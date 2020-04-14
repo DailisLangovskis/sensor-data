@@ -52,8 +52,25 @@ async function deleteSensorsHandler(req, res) {
     }
 }
 router.post('/units_groups', [
+    check('params.*', 'group').custom(async function (unit, group, res) {
+        return await db.query('SELECT ug.id, u.name FROM units_groups as ug\
+        INNER JOIN units as u\
+        ON ug.unit_id = u.unit_id\
+        WHERE ug.unit_id = $1 and ug.group_id = $2', [unit, group.req.body.group])
+            .then(res => {
+                if (res.rows != '') {
+                    var units = res.rows.map(u => u.name)
+                    throw new Error(units + " already exist in this group!");
+                }
+            })
+
+    }),
     check('params').isLength({ min: 1 }).withMessage("There was no unit selected!")
 ], (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
     var units = req.body.params
     var insertUnits = 'INSERT INTO units_groups (unit_id, group_id) VALUES ($1, $2)';
     units.forEach(async unit => {
@@ -74,9 +91,8 @@ router.post('/new', [
                 if (res.rows != '') {
                     throw new Error("This unit already exists!");
                 }
-                return true;
             })
-    }).withMessage("This unit already exists!"),
+    }),
     check('time').exists(),
     check('wktGeom').exists()
 ], async (req, res) => {

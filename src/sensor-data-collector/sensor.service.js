@@ -30,6 +30,21 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
                         console.error("Error!", error);
                     });
             },
+            addNewPhenomena(newPhenomenaName, newPhenomenaUnit){
+                var data = { name: newPhenomenaName, unit: newPhenomenaUnit};
+                return $http.post(config.sensorApiEndpoint + '/phenomena/new', data)
+                    .then(function success(response) {
+                        me.getPhenomenas();
+                    })
+                    .catch(function (error) {
+                        if (angular.isDefined(error)) {
+                            if (error.hasOwnProperty('errors')) {
+                                var gottenErrors = error.errors.map(msg => msg.msg)
+                                me.newAlert(gottenErrors, 5000, "red");
+                            }
+                        }
+                    });
+            },
             getPhenomenas: function () {
                 return $http.get(config.sensorApiEndpoint + '/phenomena/data')
                     .then(function success(response) {
@@ -77,7 +92,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
                         if (angular.isDefined(error)) {
                             if (error.hasOwnProperty('errors')) {
                                 var gottenErrors = error.errors.map(msg => msg.msg)
-                                me.newAlert(gottenErrors, 2000, "red");
+                                me.newAlert(gottenErrors, 5000, "red");
                             }
                         }
                     });

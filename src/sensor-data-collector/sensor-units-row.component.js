@@ -14,13 +14,23 @@ export default {
                 addNewSensorTabExpanded: false,
                 sensorsTabVisible: false,
                 existingSensorListVisible: false,
+                addNewPhenomenaTabExpanded: false,
                 sensorName: '',
                 sensorType: '',
                 phenomenaId: '',
+                newPhenomenaName: '',
+                newPhenomenaUnit: '',
                 addNewSensor() {
                     sensorService.getPhenomenas().then(_ => {
                         $scope.addNewSensorTabExpanded = !$scope.addNewSensorTabExpanded;
                         $scope.existingSensorListVisible = false
+                    })
+                },
+                addNewPhenomena(newPhenomenaName, newPhenomenaUnit) {
+                    sensorService.addNewPhenomena(newPhenomenaName, newPhenomenaUnit).then(_ => {
+                        $scope.addNewPhenomenaTabExpanded = !$scope.addNewPhenomenaTabExpanded;
+                        $scope.newPhenomenaName = '';
+                        $scope.newPhenomenaUnit = '';
                     })
                 },
                 showSensors(unitClicked) {
@@ -53,7 +63,7 @@ export default {
                 saveSensor(sensorName, sensorType, phenomenaId, unitClicked) {
                     sensorService.saveSensors(sensorName, sensorType, phenomenaId, unitClicked).then(function (response) {
                         if (!response) {
-                            $scope.addNewSensorTabExpanded = !$scope.addNewSensorTabExpanded;
+                            $scope.addSensorTabVisible = !$scope.addSensorTabVisible;
                             $scope.sensorName = '';
                             $scope.sensorType = '';
                             $scope.phenomenaId = '';
@@ -65,9 +75,9 @@ export default {
                         $scope.existingSensorListVisible = !$scope.existingSensorListVisible;
                     })
                 },
-                deleteSelectedSensors(unitClicked){
-                    unitService.deleteSelectedSensors(unitClicked).then(function(response){
-                        if(response){
+                deleteSelectedSensors(unitClicked) {
+                    unitService.deleteSelectedSensors(unitClicked).then(function (response) {
+                        if (response) {
                             $scope.sensorsTabVisible = false;
                         }
                     })
@@ -78,9 +88,12 @@ export default {
                 $scope.sensorsTabVisible = false;
                 $scope.addNewSensorTabExpanded = false;
                 $scope.existingSensorListVisible = false;
+                $scope.addNewPhenomenaTabExpanded = false;
                 $scope.sensorName = '';
                 $scope.sensorType = '';
                 $scope.phenomenaId = '';
+                $scope.newPhenomenaName = '';
+                $scope.newPhenomenaUnit = '';
                 unitService.btnSelectDeseletClicked = true;
                 unitService.unitsSensors = [];
                 unitService.featureCollection = '';

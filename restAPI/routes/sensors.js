@@ -18,9 +18,8 @@ router.post('/data', [
                 if (res.rows != '') {
                     throw new Error("This sensor already exists!");
                 }
-                return true;
             })
-    }).withMessage("This sensor already exists!"),
+    }),
     check('type').isLength({ min: 1, max: 20 })
         .withMessage('Sensor type be at less 20 chars long'),
     check('phenomenaId').isNumeric().withMessage("Given phenomena id is not a numeric value!"),
@@ -93,8 +92,26 @@ async function getPhenomenaDataHandler(req, res) {
     }
 }
 router.post('/sensors_units',[
+    check('params.*', 'unit').custom(async function (sensor, unit, res) {
+        return await db.query('SELECT su.id, s.sensor_name FROM sensors_units as su\
+        INNER JOIN sensors as s\
+        ON su.sensor_id = s.sensor_id\
+        WHERE su.sensor_id = $1 and su.unit_id = $2', [sensor, unit.req.body.unit])
+            .then(res => {
+                if (res.rows != '') {
+                    var sensors = res.rows.map(s => s.sensor_name)
+
+                    throw new Error(sensors + " already exist in this unit!");
+                }
+            })
+
+    }),
     check('params').isLength({ min: 1 }).withMessage("There was no sensor selected!")
 ], (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
     var sensors = req.body.params
     var insertSensors = 'INSERT INTO sensors_units (sensor_id, unit_id) VALUES ($1, $2)';
     sensors.forEach(async sensor => {

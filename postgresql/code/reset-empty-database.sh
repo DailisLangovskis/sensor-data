@@ -1,3 +1,4 @@
-rm -rf /var/lib/postgresql/data/*
+cd /var/lib/postgresql/
+rm -rf data/*
 
 echo "Database deleted!"

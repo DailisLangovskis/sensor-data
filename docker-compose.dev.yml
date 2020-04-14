@@ -59,7 +59,6 @@ services:
         volumes:
             - sensordb:/var/lib/postgresql/data
             - ./postgresql/code:/code
-            # - ./postgresql/dump:/docker-entrypoint-initdb.d/
         container_name: sensor-data-db 
         environment:
             POSTGRES_USER: ${POSTGRES_USER}

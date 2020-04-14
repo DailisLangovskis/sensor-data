@@ -13,8 +13,8 @@
     <div class="m-1" ng-show="groupsTabVisible">
         <sens.groups-row ng-repeat="group in groupService.groups" group="group"></sens.groups-row>
         <div class="row">
-            <div class="col m-1 text-right pr-2">
-                <div class="btn-group mr-1">
+            <div class="col m-1 text-left">
+                <div class="btn-group">
                     <button type="button" class=" btn btn-outline-secondary btn-sm" ng-click="selectDeselectAllGroups()"
                         translate>SELECT/DESELECT GROUPS</button>
                     <button class="btn btn-outline-danger btn-sm" ng-click="deleteSelectedGroups()"><i

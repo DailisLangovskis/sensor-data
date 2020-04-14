@@ -24,9 +24,8 @@ router.post('/data',[
                 if (res.rows != '') {
                     throw new Error("This group already exists!");
                 }
-                return true;
             })
-    }).withMessage("This group already exists!"),
+    })
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

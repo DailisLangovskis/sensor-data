@@ -9,7 +9,6 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
             unitSelected: '',
             allUnits: [],
             selectDeselectAllSensors(unitClicked) {
-                console.log(me.unitsSensors);
                 me.btnSelectDeseletClicked = !me.btnSelectDeseletClicked;
                 me.unitsSensors.forEach(sensor => {
                     if (sensor.unit_id == unitClicked) {
@@ -61,7 +60,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
                         if (angular.isDefined(error)) {
                             if (error.hasOwnProperty('errors')) {
                                 var gottenErrors = error.errors.map(msg => msg.msg)
-                                me.newAlert(gottenErrors, 2000, "red");
+                                me.newAlert(gottenErrors, 5000, "red");
                             }
                         }
                     });
@@ -93,7 +92,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
                         })
                         .then(_ => {
                             me.unitsSensors = me.unitsSensors.filter(unit => unit.checked != true);
-                            if (me.unitsSensors == '') {
+                            if (me.unitsSensors.filter(s=> s.unit_id != selectedUnit)) {
                                 return true;
                             }
                             else {

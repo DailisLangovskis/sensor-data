@@ -1,6 +1,5 @@
 const Router = require('express-promise-router');
 const db = require('../db');
-const bodyparser = require('body-parser');
 const { check, validationResult } = require('express-validator');
 // create a new express-promise-router
 // this has the same API as the normal express router except
@@ -8,7 +7,7 @@ const { check, validationResult } = require('express-validator');
 const router = new Router();
 // export our router to be mounted by the parent application
 module.exports = router
-router.use(bodyparser());
+//Get all units
 router.get('/data', async (req, res) => {
     var queryString = 'SELECT * FROM units WHERE user_id = ($1) ORDER BY name'
     try {
@@ -18,6 +17,7 @@ router.get('/data', async (req, res) => {
         console.log(e.stack)
     }
 })
+//Get all units sensors
 router.get('/sensors/:id', async (req, res) => {
     try {
         var queryString = 'SELECT s.sensor_name,s.sensor_id,s.sensor_type, u.unit_id FROM sensors_units as su\
@@ -31,6 +31,7 @@ router.get('/sensors/:id', async (req, res) => {
         console.log(e.stack)
     }
 })
+//Delete all selected units sensors
 router.post('/delete/sensors', [
     check('params').isLength({ min: 1 }).withMessage("There was no sensor selected!")
 ], deleteSensorsHandler)
@@ -51,6 +52,7 @@ async function deleteSensorsHandler(req, res) {
         console.log(e.stack)
     }
 }
+//Add selected units to specific group
 router.post('/units_groups', [
     check('params.*', 'group').custom(async function (unit, group, res) {
         return await db.query('SELECT ug.id, u.name FROM units_groups as ug\
@@ -84,6 +86,7 @@ router.post('/units_groups', [
     res.status(201).send("Insert completed!")
 
 })
+//Save new unit
 router.post('/new', [
     check('name', 'user').custom(async (name, user, res) => {
         return await db.query('SELECT unit_id FROM units WHERE name = $1 and user_id = $2', [name, user.req.user.id])

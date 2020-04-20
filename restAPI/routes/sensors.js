@@ -1,6 +1,5 @@
 const Router = require('express-promise-router');
 const db = require('../db');
-const bodyparser = require('body-parser');
 const { check, validationResult } = require('express-validator');
 // create a new express-promise-router
 // this has the same API as the normal express router except
@@ -8,7 +7,7 @@ const { check, validationResult } = require('express-validator');
 const router = new Router();
 // export our router to be mounted by the parent application
 module.exports = router
-router.use(bodyparser());
+//Save a new sensor to database 
 router.post('/data', [
     check('name').isLength({ min: 1, max: 20 })
         .withMessage('Must be at less 20 chars long'),
@@ -32,11 +31,12 @@ router.get('/data', async (req, res) => {
         console.log(e.stack)
     }
 })
+//Get sensors phenomena
 router.get('/phenomena/:id', getPhenomenaDataHandler)
-
-router.post('/delete', [
-    check('params').isLength({ min: 1 }).withMessage("There was no sensor selected!")
-], deleteSensorsHandler)
+//Delete sensors
+// router.post('/delete', [
+//     check('params').isLength({ min: 1 }).withMessage("There was no sensor selected!")
+// ], deleteSensorsHandler)
 
 
 async function addSensorDataHandler(req, res) {
@@ -48,36 +48,36 @@ async function addSensorDataHandler(req, res) {
     var addToUnit = 'INSERT INTO sensors_units (sensor_id, unit_id) VALUES ($1,$2)';
     try {
         await db.query(insertSensor, [req.body.name, req.body.type, req.body.phenomenaId, req.user.id])
-                .then(async _ => {
-                    await db.query('SELECT sensor_id FROM sensors WHERE sensor_name = ($1) and user_id = ($2)', [req.body.name, req.user.id])
-                        .then(async function (res) {
-                            await db.query(addToUnit, [res.rows[0].sensor_id, req.body.unit])
-                        })
-                        .catch(e => console.log(e.stack))
-                })
-                .catch(e => console.log(e.stack))
-        } catch (e) {
-            console.log(e.stack)
-        }
-        res.status(201).send("Insert completed!")
-}
-async function deleteSensorsHandler(req, res) {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() });
-    }
-    var id = req.body.params.join(',');
-    var deleteSensor = 'DELETE FROM sensors WHERE sensor_id IN (' + id + ')';
-    try {
-        await db.query(deleteSensor)
-            .then(_ => {
-                res.status(201).send('Sensors deleted');
+            .then(async _ => {
+                await db.query('SELECT sensor_id FROM sensors WHERE sensor_name = ($1) and user_id = ($2)', [req.body.name, req.user.id])
+                    .then(async function (res) {
+                        await db.query(addToUnit, [res.rows[0].sensor_id, req.body.unit])
+                    })
+                    .catch(e => console.log(e.stack))
             })
             .catch(e => console.log(e.stack))
     } catch (e) {
         console.log(e.stack)
     }
+    res.status(201).send("Insert completed!")
 }
+// async function deleteSensorsHandler(req, res) {
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//         return res.status(422).json({ errors: errors.array() });
+//     }
+//     var id = req.body.params.join(',');
+//     var deleteSensor = 'DELETE FROM sensors WHERE sensor_id IN (' + id + ')';
+//     try {
+//         await db.query(deleteSensor)
+//             .then(_ => {
+//                 res.status(201).send('Sensors deleted');
+//             })
+//             .catch(e => console.log(e.stack))
+//     } catch (e) {
+//         console.log(e.stack)
+//     }
+// }
 async function getPhenomenaDataHandler(req, res) {
     var id = req.params.id;
     var selectPhenomena = 'Select phenomenons.phenomenon_name,\
@@ -91,7 +91,8 @@ async function getPhenomenaDataHandler(req, res) {
         console.log(e.stack)
     }
 }
-router.post('/sensors_units',[
+//Save sentors inside selected unit
+router.post('/sensors_units', [
     check('params.*', 'unit').custom(async function (sensor, unit, res) {
         return await db.query('SELECT su.id, s.sensor_name FROM sensors_units as su\
         INNER JOIN sensors as s\

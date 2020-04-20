@@ -16,14 +16,16 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map', 'chart.js
             template: require('./partials/sidebar-btn.directive.html')
         };
     })
+    //directive for chart popup
     .directive('sens.chartDirective', function () {
         return {
-            template: require('./chartModal.html'),
+            template: require('./partials/chartModal.html'),
             link: function (scope) {
                 scope.chartModalVisible = true;
             }
         };
     })
+    //chart popup controller
     .controller('chartController', ['$scope', function ($scope) {
         angular.extend($scope, {
             saveAsImage() {
@@ -83,11 +85,12 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map', 'chart.js
     .component('sens.groupsRow', groupsRowComponent)
 
     .component('sens.unitsRow', unitsRowComponent)
-
+    // authorization header intercepting service, for updating access token from refresh token
     .service("sens.authInterceptor", ['sens.auth.service', '$q', '$window', '$injector', 'config',
         function (authService, $q, $window, $injector, config) {
             var inFlightAuthRequest = null;
             return {
+                //provide autorization header for all requests
                 request: function (config) {
                     config.headers = config.headers || {};
                     if (authService.getToken()) {
@@ -95,12 +98,13 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map', 'chart.js
                     }
                     return config;
                 },
+                //Check if user session is still active
                 responseError: function (response) {
-                    // if (response.config.url == config.sensorApiEndpoint + '/auth/token') {
-                    //     authService.clearAllToken();
-                    //     authService.returnToLogin();
-                    //     return;
-                    //} else {
+                    if (response.config.url == config.sensorApiEndpoint + '/auth/token') {
+                        authService.clearAllToken();
+                        authService.returnToLogin();
+                        return;
+                    } else {
                     switch (response.status) {
                         case 401:
                             authService.clearToken();
@@ -111,6 +115,7 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map', 'chart.js
                             }
                             inFlightAuthRequest.then(function (res) {
                                 inFlightAuthRequest = null
+                                if(res === undefined) return;
                                 authService.setToken(res.data.accessToken);
                                 $injector.get('$http')(response.config).then(function (resp) {
                                     deffered.resolve(resp);
@@ -120,12 +125,14 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map', 'chart.js
 
                             }, function (error) {
                                 inFlightAuthRequest = null;
+                                $window.alert("Please relog into the site!");
                                 deffered.reject();
                                 authService.clearAllToken();
                                 authService.returnToLogin();
-                                $window.alert("Please relog into the site!");
+                                
                                 return;
                             });
+                            $window.alert("Please relog into the site!");
                             return deffered.promise;
                             break;
                         default:
@@ -133,7 +140,7 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map', 'chart.js
                             break;
                     }
                     return response || $q.when(response);
-                    //};
+                    };
                 }
             }
         }])

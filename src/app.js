@@ -13,15 +13,15 @@ import 'draw.module';
 import View from 'ol/View';
 import { transform, transformExtent } from 'ol/proj';
 import { Style, Icon, Stroke, Fill, Circle, Text } from 'ol/style';
-import BingMaps from 'ol/source/BingMaps';
 import Feature from 'ol/Feature';
-
+import {OSM} from 'ol/source';
+import {Tile} from 'ol/layer';
 import VectorLayer from 'ol/layer/Vector';
 import { Vector as VectorSource } from 'ol/source';
 import { Polygon, LineString, GeometryType, Point } from 'ol/geom';
 import './sensor-data-collector/sensor-data-collector.module';
 
-
+//Hslayers main module components
 var module = angular.module('hs', [
     'hs.sidebar',
     'hs.draw',
@@ -53,6 +53,7 @@ function getHostname() {
     var domain = urlArr[2];
     return urlArr[0] + "//" + domain;
 };
+
 var count = 10;
 var features = new Array(count);
 var e = 4500000;
@@ -72,23 +73,14 @@ import bookMarkIcon from 'images/mrkr-bookmark.png';
 module.value('config', {
     proxyPrefix: "/proxy/",
     default_layers: [
-        // new Tile({
-        //     source: new OSM(),
-        //     title: "Open Street layer",
-        //     base: true,
-        //     visible:false,
-        //     removable: false,
-        //     editor: { editable: false },
-        // }),
-        // new Tile({
-        //     title: 'Aerial imagery',
-        //     source: new BingMaps({
-        //       key: 'Agm4srKgjuV675yk_5UBC_rEcOhEM0riLN3krcbD-Z9rgg6qGO6PTxlcYWRDAqm2',
-        //       imagerySet: 'AerialWithLabels'
-        //     }),
-        //     base: true,
-        //     visible: true
-        //   }), 
+        new Tile({
+            source: new OSM(),
+            title: "Open Street layer",
+            base: true,
+            visible:true,
+            removable: false,
+            editor: { editable: false },
+        }),
         new VectorLayer({
             title: 'Test',
             style: new Style({

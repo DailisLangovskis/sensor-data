@@ -15,21 +15,17 @@ const router = new Router()
 // export our router to be mounted by the parent application
 const auth_middleware = require('./auth_middleware')
 module.exports = router
-const postLimiter = rateLimit({
-    windowMs: 1 * 60 * 1000,
-    max: 100,
-});
 const timeSeries = rateLimit({
     windowMs: 1 * 60 * 1000,
     max: 1000,
 });
-
+//check if User is authentificated using middleware 
 var auth_token = auth_middleware.authentificateToken
-router.use('/groups', [auth_token,postLimiter], groups)
-router.use('/units', [auth_token,postLimiter], units)
-router.use('/sensors', [auth_token,postLimiter], sensors)
-router.use('/phenomena', [auth_token,postLimiter], phenomena)
-router.use('/observation', [auth_token,postLimiter], observation)
-router.use('/features', [auth_token,postLimiter], features)
+router.use('/groups', [auth_token], groups)
+router.use('/units', [auth_token], units)
+router.use('/sensors', [auth_token], sensors)
+router.use('/phenomena', [auth_token], phenomena)
+router.use('/observation', [auth_token,timeSeries], observation)
+router.use('/features', [auth_token], features)
 router.use('/registerUser', registerUser)
 router.use('/auth', auth)

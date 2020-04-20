@@ -1,6 +1,5 @@
 const Router = require('express-promise-router');
 const db = require('../db');
-const bodyparser = require('body-parser');
 const { check, validationResult } = require('express-validator');
 // create a new express-promise-router
 // this has the same API as the normal express router except
@@ -8,7 +7,7 @@ const { check, validationResult } = require('express-validator');
 const router = new Router();
 // export our router to be mounted by the parent application
 module.exports = router
-router.use(bodyparser());
+//Get phenomenas from database
 router.get('/data', async (req, res) => {
     try {
         const { rows } = await db.query('SELECT phenomenon_name,unit,id FROM phenomenons')
@@ -17,6 +16,7 @@ router.get('/data', async (req, res) => {
         console.log(e.stack)
     }
 })
+//Save phenomenas to database
 router.post('/new', [
     check('name').custom(async function (name) {
         return await db.query('SELECT phenomenon_name FROM phenomenons WHERE phenomenon_name = $1', [name])

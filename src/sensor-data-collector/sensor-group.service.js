@@ -54,7 +54,7 @@ export default ['$http', 'config',
                         console.error("Error!", error);
                     });
             },
-            saveGroups: function (groupName) {
+            saveGroup: function (groupName) {
                 var data = { name: groupName };
                 return $http.post(config.sensorApiEndpoint + '/groups/data', data)
                     .then(function success(res) {
@@ -110,7 +110,7 @@ export default ['$http', 'config',
                         })
                         .then(_ => {
                             me.selectedGroupUnits = me.selectedGroupUnits.filter(unit => unit.checked != true);
-                            if (me.selectedGroupUnits.filter(u=> u.group_id != groupSelected)) {
+                            if (me.selectedGroupUnits.filter(u => u.group_id != groupSelected)) {
                                 return true;
                             }
                             else {
@@ -128,6 +128,7 @@ export default ['$http', 'config',
 
                 }
             },
+            //custom alert box
             newAlert(msg, timer, background) {
                 document.getElementById('alert').innerHTML = '<b>' + msg + '</b>';
                 document.getElementById('alert').style.backgroundColor = background;

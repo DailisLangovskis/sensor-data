@@ -1,6 +1,5 @@
 const Router = require('express-promise-router');
 const db = require('../db');
-const bodyparser = require('body-parser');
 const { check, validationResult } = require('express-validator');
 // create a new express-promise-router
 // this has the same API as the normal express router except
@@ -8,7 +7,7 @@ const { check, validationResult } = require('express-validator');
 const router = new Router();
 // export our router to be mounted by the parent application
 module.exports = router
-router.use(bodyparser());
+//Save sensor measurement to database
 router.post('/save', [
     check('sensor').isNumeric(),
     check('measuredValue').isNumeric().withMessage("Measured value must be a numeric value!").exists(),
@@ -39,6 +38,7 @@ async function addObservationDataHandler(req, res) {
     }
 
 }
+//Get sensor measurement from database
 router.get('/collectedData', async (req, res) => {
     var getCollectedData = 'SELECT data.*, p.unit,p.phenomenon_name FROM observations as data\
     INNER JOIN sensors as s\

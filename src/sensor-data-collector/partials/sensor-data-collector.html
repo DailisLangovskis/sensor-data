@@ -3,7 +3,7 @@
     </div>
     <div class="row m-1">
         <span style="text-align: left; padding: 5px;"><strong>Hello
-                {{loginRegisterService.loggedInUser}}!</strong></span>
+                {{authService.getUsername()}}!</strong></span>
         <div class="col text-right pr-0">
             <button type="button" class="mt-1 mb-1 pt-1 pb-1 btn btn-danger btn-sm" ng-click="logout()"
                 translate>Exit</button>

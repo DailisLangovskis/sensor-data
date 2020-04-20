@@ -1,6 +1,5 @@
 const Router = require('express-promise-router')
 const db = require('../db')
-const bodyparser = require('body-parser')
 const bcrypt = require('bcryptjs')
 const { check, validationResult } = require('express-validator')
 // create a new express-promise-router
@@ -9,8 +8,8 @@ const { check, validationResult } = require('express-validator')
 const router = new Router()
 // export our router to be mounted by the parent application
 module.exports = router
-router.use(bodyparser())
 //check data to be valid
+//Create a new user
 router.post('/', [
     check('name').isLength({ min: 1, max: 20 })
         .withMessage('Name must be less 20 chars long'),

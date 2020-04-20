@@ -2,15 +2,7 @@ export default ['$http', 'sens.auth.service', 'config',
     function ($http, authService, config) {
         var me = this;
         angular.extend(me, {
-            loggedInUser: '',
-            checkIfUserLoggedIn: function () {
-                if (authService.loggedIn) {
-                    me.loggedInUser = authService.getUsername();
-
-                } else {
-                    me.loggedInUser = '';
-                }
-            },
+            //New user register request
             registerUser: function (name, lastname, email, username, password) {
                 var user = { name: name, lastname: lastname, email: email, username: username, password: password };
                 return $http.post(config.sensorApiEndpoint + '/registerUser', user)
@@ -28,6 +20,7 @@ export default ['$http', 'sens.auth.service', 'config',
                         return true;
                     });
             },
+            //Login request
             login: function (username, password) {
                 var user = { username: username, password: password };
                 return $http.post(config.sensorApiEndpoint + '/auth', user)
@@ -52,6 +45,7 @@ export default ['$http', 'sens.auth.service', 'config',
                         return true;
                     });
             },
+            //Custom alert message
             userAlert(msg, timer, background) {
                 document.getElementById('alert-user').innerHTML = '<b>' + msg + '</b>';
                 document.getElementById('alert-user').style.backgroundColor = background;
@@ -59,6 +53,5 @@ export default ['$http', 'sens.auth.service', 'config',
                 setTimeout(function () { document.getElementById('alert-user').innerHTML = ''; }, timer)
             },
         })
-        me.checkIfUserLoggedIn();
     }
 ]

@@ -1,6 +1,6 @@
 const Router = require('express-promise-router')
 const db = require('../db')
-const bodyparser = require('body-parser')
+
 const bcrypt = require('bcryptjs')
 const { check, validationResult } = require('express-validator')
 const jwt = require('jsonwebtoken')
@@ -10,8 +10,8 @@ const jwt = require('jsonwebtoken')
 const router = new Router()
 // export our router to be mounted by the parent application
 module.exports = router
-router.use(bodyparser())
 let refreshTokens = []
+//Create new user route
 router.post('/', [
     check('username').custom(async (username, res) => {
         return await db.query('SELECT username FROM system_users WHERE username = $1', [username])
@@ -34,7 +34,7 @@ router.post('/', [
                 var user = rows[0];
                 if (await bcrypt.compare(req.body.password, user.password)) {
                     const accessToken = generateAccessToken(user)
-                    const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '300d' })
+                    const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '3h' })
                     refreshTokens.push(refreshToken)
                     res.json({ username: user.username, accessToken: accessToken, refreshToken: refreshToken, msg: 'Successful login!' })
                 }
@@ -46,9 +46,10 @@ router.post('/', [
             }
         } catch (e) {
             console.log(e.stack)
-        }
+        } 
 
     })
+    //updating access token using refresh token route
 router.post('/token', (req, res) => {
     const refreshToken = req.body.refreshToken
     if (refreshToken == null) {throw new Error('Please login to proceed!')}
@@ -61,8 +62,9 @@ router.post('/token', (req, res) => {
 })
 
 function generateAccessToken(user) {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '300d' })
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5h' })
 }
+//deleting all refresh tokens
 router.post('/delete', (req, res) => {
     refreshTokens = refreshTokens.filter(token => token !== req.body.refreshToken)
     res.sendStatus(204)

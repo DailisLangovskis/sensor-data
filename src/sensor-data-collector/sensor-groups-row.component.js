@@ -1,7 +1,5 @@
 import moment from 'moment';
-import { toStringHDMS, createStringXY } from 'ol/coordinate';
-import { transform, transformExtent } from 'ol/proj';
-import { WKT } from 'ol/format';
+import {toLonLat} from 'ol/proj';
 export default {
     template: require('./partials/groups-row.html'),
     bindings: {
@@ -11,7 +9,6 @@ export default {
     controller: ['$scope', 'sens.sensorGroup.service', 'sens.sensorUnit.service', 'hs.map.service', 'hs.query.baseService', function ($scope, groupService, unitService, HsMap, queryBaseService) {
         angular.extend($scope, {
             location: '',
-            featureGeomWKT: '',
             time: new Date(),
             unitService,
             groupService,
@@ -22,18 +19,12 @@ export default {
             description: '',
             addNewUnitTabExpanded: false,
             existingUnitListVisible: false,
-
+            getAllUnitLocations:unitService.getAllUnitLocations,
 
             getLocationFromMap() {
                 var queryFeature = queryBaseService.queryLayer.getSource().getFeatures();
-                var formatWKT = new WKT();
-                $scope.featureGeomWKT = formatWKT.writeFeature(queryFeature[0]).toString();
                 var coords = queryFeature[0].getGeometry().flatCoordinates;
-                var map = HsMap.map;
-                var epsg4326Coordinate = transform(coords,
-                    map.getView().getProjection(), 'EPSG:4326'
-                );
-                $scope.location = createStringXY(7)(epsg4326Coordinate)
+                $scope.location = toLonLat(coords);
             },
             showUnits(groupClicked) {
                 $scope.addUnitTabVisible = false
@@ -54,6 +45,7 @@ export default {
 
             },
             getAllUsersUnits() {
+                $scope.time = new Date();
                 $scope.addNewUnitTabExpanded = false;
                 unitService.getAllUsersUnits().then(function (response) {
                     if (!response) {
@@ -71,11 +63,10 @@ export default {
             },
             saveUnit(unitName, description, time, groupClicked) {
                 time = moment.moment(time).format("YYYY-MM-DD HH:mm:ssZ");
-                unitService.saveUnit(unitName, description, time, $scope.featureGeomWKT, groupClicked).then(function (response) {
+                unitService.saveUnit(unitName, description, time, $scope.location, groupClicked).then(function (response) {
                     if (!response) {
                         $scope.addNewUnitTabExpanded = !$scope.addNewUnitTabExpanded;
                         $scope.location = '';
-                        $scope.featureGeomWKT = '';
                         $scope.unitName = '';
                         $scope.description = '';
                         $scope.time = new Date();
@@ -93,7 +84,6 @@ export default {
         });
         $scope.$on('logout', function () {
             $scope.location = '';
-            $scope.featureGeomWKT = '';
             $scope.unitsTabVisible = false;
             $scope.addUnitTabVisible = false;
             $scope.unitName = '';

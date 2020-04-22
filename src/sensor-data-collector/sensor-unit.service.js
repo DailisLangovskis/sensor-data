@@ -1,5 +1,10 @@
-export default ['$http', 'config', 'sens.sensorGroup.service',
-    function ($http, config, groupService) {
+import VectorLayer from 'ol/layer/Vector';
+import { Vector as VectorSource } from 'ol/source';
+import GeoJSON from 'ol/format/GeoJSON';
+import { Style, Icon, Stroke, Fill, Circle, Text } from 'ol/style';
+import authService from './auth.service';
+export default ['$http', 'config', 'sens.sensorGroup.service', 'hs.map.service', 'sens.auth.service',
+    function ($http, config, groupService, OlMap, authService) {
         var me = this;
         angular.extend(me, {
             btnSelectDeseletClicked: false,
@@ -33,6 +38,35 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
                         console.error("Error!", error);
                     })
             },
+            getAllUnitLocations() {
+                const source = new VectorSource({
+                    format: new GeoJSON(),
+                    url: function () {
+                        let username = authService.getUsername();
+                        return 'http://localhost/geoserver/sensor-data-collector/ows?service=WFS&' +
+                            'version=1.0.0&request=GetFeature&typeName=sensor-data-collector%3Aunits_positions&' +
+                            'maxFeatures=50000&outputFormat=json'
+                            //&PROPERTYNAME=user_name&CQL_FILTER=user_name=%27username%27
+                    }
+                })
+                me.unitLayer = new VectorLayer({
+                    title: 'Unit positions layer',
+                    source: source,
+                    style: new Style({
+                        image: new Circle({
+                            radius: 10,
+                            fill: new Fill({
+                                color: '#ff0000'
+                            })
+                        })
+                    }),
+                    show_in_manager: true,
+                    visible: true
+                });
+                OlMap.loaded().then(map => {
+                    map.addLayer(me.unitLayer)
+                });
+            },
             getAllUsersUnits() {
                 return $http.get(config.sensorApiEndpoint + '/units/data')
                     .then(function success(response) {
@@ -65,8 +99,8 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
                         }
                     });
             },
-            saveUnit(unitName, description, time, wktGeom, groupClicked) {
-                var data = { name: unitName, description: description, time: time, wktGeom: wktGeom, group: groupClicked };
+            saveUnit(unitName, description, time, location, groupClicked) {
+                var data = { name: unitName, description: description, time: time, location: location, group: groupClicked };
                 return $http.post(config.sensorApiEndpoint + '/units/new', data)
                     .then(function success(res) {
                         me.newAlert(res.data, 2000, "green");
@@ -92,7 +126,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
                         })
                         .then(_ => {
                             me.unitsSensors = me.unitsSensors.filter(unit => unit.checked != true);
-                            if (me.unitsSensors.filter(s=> s.unit_id != selectedUnit)) {
+                            if (me.unitsSensors.filter(s => s.unit_id != selectedUnit)) {
                                 return true;
                             }
                             else {

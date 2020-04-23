@@ -16,6 +16,7 @@ router.post('/save', [
 ], addObservationDataHandler)
 
 async function addObservationDataHandler(req, res) {
+    console.log(req.body)
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
@@ -45,7 +46,7 @@ router.get('/collectedData', async (req, res) => {
     ON data.sensor_id = s.sensor_id\
     INNER JOIN phenomenons as p\
     ON s.phenomena_id = p.id\
-    WHERE data.sensor_id = ($1) and data.unit_id = ($2) ORDER BY time_stamp ASC LIMIT 100';
+    WHERE data.sensor_id = ($1) and data.unit_id = ($2) ORDER BY time_stamp DESC LIMIT 500';
     try {
         const { rows } = await db.query(getCollectedData, [req.query.sensor, req.query.unit])
         res.status(201).send(rows)

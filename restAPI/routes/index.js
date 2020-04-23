@@ -18,11 +18,11 @@ const cors = require('cors')({
   },
   credentials: true
 })
-//Limits requests per minute to 100
-const limiter = rateLimit({
-  windowMs: 1 * 60 * 1000,
-  max: 100,
-});
+// //Limits requests per minute to 100
+// const limiter = rateLimit({
+//   windowMs: 1 * 60 * 1000,
+//   max: 100,
+// });
   //Access request body as json
 const jsonParser = bodyparser.json()
 // Implements created functions to API, and adds API routes
@@ -34,7 +34,7 @@ module.exports = app => {
   app.use(compression())
   //Helmet helps you secure your Express apps by setting various HTTP headers.
   app.use(helmet())
-  app.use(limiter)
+  // app.use(limiter)
   app.use('/api', api)
   app.use((req, res) => {
     res.status(404)

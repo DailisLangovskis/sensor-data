@@ -42,12 +42,11 @@ export default ['$http', 'config', 'sens.sensorGroup.service', 'hs.map.service',
                 const source = new VectorSource({
                     format: new GeoJSON(),
                     url: function () {
-                        let username = authService.getUsername();
-                        return 'http://localhost/geoserver/sensor-data-collector/ows?service=WFS&' +
-                            'version=1.0.0&request=GetFeature&typeName=sensor-data-collector%3Aunits_positions&' +
-                            'maxFeatures=50000&outputFormat=json'
+                        return "http://localhost/geoserver/sensor-data-collector/ows?service=WFS&" +
+                            "version=1.0.0&request=GetFeature&typeName=sensor-data-collector%3Aunits_positions&" +
+                            "maxFeatures=50000&outputFormat=json"
                             //&PROPERTYNAME=user_name&CQL_FILTER=user_name=%27username%27
-                    }
+                    },
                 })
                 me.unitLayer = new VectorLayer({
                     title: 'Unit positions layer',

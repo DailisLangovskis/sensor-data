@@ -17,7 +17,7 @@ const auth_middleware = require('./auth_middleware')
 module.exports = router
 const timeSeries = rateLimit({
     windowMs: 1 * 60 * 1000,
-    max: 1000,
+    max: 100000,
 });
 //check if User is authentificated using middleware 
 var auth_token = auth_middleware.authentificateToken

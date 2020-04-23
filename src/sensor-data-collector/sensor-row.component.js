@@ -71,9 +71,13 @@ export default {
                     data: {
                         labels: labels, // Our labels
                         datasets: [{
-                            lineTension: 0, 
-                            fillColor: 'rgba(0,0,0,0)',
                             label: chartTitle, // Name the series
+                            lineTension: 0.1,
+                            pointRadius: 2,
+                            pointHowerRadius: 5,
+                            borderCapStyle: 'butt',
+                            borderDashOffset: 0.0,
+                            fillColor: 'rgba(0,0,0,0)',
                             data: values, // Our values
                             backgroundColor: [ // Specify custom colors
                                 'rgba(220, 99, 99, 0.2)'
@@ -81,36 +85,71 @@ export default {
                             borderColor: [ // Add custom color borders
                                 'rgba(220,99,99,0.7)'
                             ],
-                            pointBackgroundColor: 'black'
+                            pointBackgroundColor: 'green'
                         }]
                     },
                     options: {
                         legend: {
-                            display: false
+                            display: true
                         },
                         responsive: true, // Instruct chart js to respond nicely.
                         maintainAspectRatio: true, // Add to prevent default behavior of full-width/height 
                         scales: {
                             xAxes: [{
-
+                                scaleLabel: {
+                                    display: true,
+                                    labelString:"Date"
+                                },
+                                ticks:{
+                                    maxRotation: 0
+                                },
+                                distribution: 'linear',
                                 type: "time",
-                                distribution: 'series',
-                                display: true,
                                 time: {
-                                unit: 'hour',
-                                }
+                                    unit: 'second',
+                                    displayFormats: {
+                                        second: 'hh:mm:ss',
+                                        minute: 'hh:mm',
+                                        hour: 'hhA',
+                                        day: 'MM-DD-YYYY',
+                                        month: 'MM-YYYY',
+                                        quarter: 'YYYY-[Q]Q',
+                                        year: 'YYYY'
+                                    },
+                                },
+                                
                             }],
                             yAxes: [{
                                 scaleLabel: {
                                     display: true,
                                     labelString: chartTitle,
-                                    ticks: {
-                                        beginAtZero: false
-                                    }
+                                },
+                                ticks: {
+                                    beginAtZero: true,
                                 }
                             }]
                         },
-                    }
+                            plugins: {
+                                zoom: {
+                                    pan: {
+                                        enabled: true,
+                                        mode: "x",
+                                        speed: 100,
+                                        threshold: 100
+                                    },
+                                    // Container for zoom options
+                                    zoom: {
+                                        enabled: true,
+                                        drag: false,
+                                        mode: "x",
+                                        limits: {
+                                            max: 10,
+                                            min: 0.5
+                                        }
+                                    }
+                                }
+                        }
+                    },
                 });
                 return myChart;
             }

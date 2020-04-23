@@ -10,6 +10,7 @@ import sensorGroupService from './sensor-group.service';
 import sensorUnitService from './sensor-unit.service';
 import 'angular-chart.js';
 import 'chart.js';
+import 'chartjs-plugin-zoom';
 angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map', 'chart.js'])
     .directive('sens.sensorDataCollector.sidebarBtn', function () {
         return {

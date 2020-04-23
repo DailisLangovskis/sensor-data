@@ -54,21 +54,21 @@ function getHostname() {
     return urlArr[0] + "//" + domain;
 };
 
-var count = 10;
-var features = new Array(count);
-var e = 4500000;
-for (var i = 0; i < count; ++i) {
-    var coordinates = [2 * e * Math.random() - e, 2 * e * Math.random() - e];
-    features[i] = new Feature({
-        geometry: new Point(coordinates),
-        name: 'random' + [i]
-    });
-}
-var bookmarkSource = new VectorSource({
-    features: features
-});
+// var count = 10;
+// var features = new Array(count);
+// var e = 4500000;
+// for (var i = 0; i < count; ++i) {
+//     var coordinates = [2 * e * Math.random() - e, 2 * e * Math.random() - e];
+//     features[i] = new Feature({
+//         geometry: new Point(coordinates),
+//         name: 'random' + [i]
+//     });
+// }
+// var bookmarkSource = new VectorSource({
+//     features: features
+// });
 
-import bookMarkIcon from 'images/mrkr-bookmark.png';
+// import bookMarkIcon from 'images/mrkr-bookmark.png';
 
 module.value('config', {
     proxyPrefix: "/proxy/",
@@ -81,26 +81,26 @@ module.value('config', {
         //     removable: false,
         //     editor: { editable: false },
         // }),
-        new VectorLayer({
-            title: 'Test',
-            style: new Style({
-                fill: new Fill({
-                    color: 'rgba(255, 128, 123, 0.2)'
-                }),
-                stroke: new Stroke({
-                    color: '#e49905',
-                    width: 2
-                }),
-                image: new Icon({
-                    src: bookMarkIcon,
-                    crossOrigin: 'anonymous',
-                    anchor: [0.5, 1]
-                })
-            }),
-            source: bookmarkSource,
-            declutter: true,
-            cluster: true
-        })
+        // new VectorLayer({
+        //     title: 'Test',
+        //     style: new Style({
+        //         fill: new Fill({
+        //             color: 'rgba(255, 128, 123, 0.2)'
+        //         }),
+        //         stroke: new Stroke({
+        //             color: '#e49905',
+        //             width: 2
+        //         }),
+        //         image: new Icon({
+        //             src: bookMarkIcon,
+        //             crossOrigin: 'anonymous',
+        //             anchor: [0.5, 1]
+        //         })
+        //     }),
+        //     source: bookmarkSource,
+        //     declutter: true,
+        //     cluster: true
+        // })
     ],
     project_name: 'erra/map',
     default_view: new View({

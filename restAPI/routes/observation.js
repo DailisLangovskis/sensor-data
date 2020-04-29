@@ -14,9 +14,10 @@ router.post('/save', [
     check('time').exists(),
     check('unitId').isNumeric(),
 ], addObservationDataHandler)
+//Get sensor measurement from database
+router.get('/collectedData', dataRequestHandler)
 
 async function addObservationDataHandler(req, res) {
-    console.log(req.body)
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
@@ -39,8 +40,8 @@ async function addObservationDataHandler(req, res) {
     }
 
 }
-//Get sensor measurement from database
-router.get('/collectedData', async (req, res) => {
+
+async function dataRequestHandler(req, res) {
     var getCollectedData = 'SELECT data.*, p.unit,p.phenomenon_name FROM observations as data\
     INNER JOIN sensors as s\
     ON data.sensor_id = s.sensor_id\
@@ -53,4 +54,4 @@ router.get('/collectedData', async (req, res) => {
     } catch (e) {
         console.log(e.stack)
     }
-})
+}

@@ -23,21 +23,32 @@ router.post('/data', [
         .withMessage('Sensor type be at less 20 chars long'),
     check('phenomenaId').isNumeric().withMessage("Given phenomena id is not a numeric value!"),
 ], addSensorDataHandler)
-router.get('/data', async (req, res) => {
-    try {
-        const { rows } = await db.query('SELECT sensor_name,sensor_id,sensor_type FROM sensors WHERE user_id = ($1)', [req.user.id])
-        res.status(201).send(rows)
-    } catch (e) {
-        console.log(e.stack)
-    }
-})
+router.get('/data', getAllUserSensorsHandler)
 //Get sensors phenomena
 router.get('/phenomena/:id', getPhenomenaDataHandler)
+//Save sensors inside selected unit
+router.post('/sensors_units', [
+    check('params.*', 'unit').custom(async function (sensor, unit, res) {
+        return await db.query('SELECT su.id, s.sensor_name FROM sensors_units as su\
+        INNER JOIN sensors as s\
+        ON su.sensor_id = s.sensor_id\
+        WHERE su.sensor_id = $1 and su.unit_id = $2', [sensor, unit.req.body.unit])
+            .then(res => {
+                if (res.rows != '') {
+                    var sensors = res.rows.map(s => s.sensor_name)
+
+                    throw new Error(sensors + " already exist in this unit!");
+                }
+            })
+
+    }),
+    check('params').isLength({ min: 1 }).withMessage("There was no sensor selected!")
+], saveAddedSensorsHandler)
+
 //Delete sensors
 // router.post('/delete', [
 //     check('params').isLength({ min: 1 }).withMessage("There was no sensor selected!")
 // ], deleteSensorsHandler)
-
 
 async function addSensorDataHandler(req, res) {
     const errors = validationResult(req);
@@ -60,6 +71,14 @@ async function addSensorDataHandler(req, res) {
         console.log(e.stack)
     }
     res.status(201).send("Insert completed!")
+}
+async function getAllUserSensorsHandler(req, res) {
+    try {
+        const { rows } = await db.query('SELECT sensor_name,sensor_id,sensor_type FROM sensors WHERE user_id = ($1)', [req.user.id])
+        res.status(201).send(rows)
+    } catch (e) {
+        console.log(e.stack)
+    }
 }
 // async function deleteSensorsHandler(req, res) {
 //     const errors = validationResult(req);
@@ -91,24 +110,7 @@ async function getPhenomenaDataHandler(req, res) {
         console.log(e.stack)
     }
 }
-//Save sentors inside selected unit
-router.post('/sensors_units', [
-    check('params.*', 'unit').custom(async function (sensor, unit, res) {
-        return await db.query('SELECT su.id, s.sensor_name FROM sensors_units as su\
-        INNER JOIN sensors as s\
-        ON su.sensor_id = s.sensor_id\
-        WHERE su.sensor_id = $1 and su.unit_id = $2', [sensor, unit.req.body.unit])
-            .then(res => {
-                if (res.rows != '') {
-                    var sensors = res.rows.map(s => s.sensor_name)
-
-                    throw new Error(sensors + " already exist in this unit!");
-                }
-            })
-
-    }),
-    check('params').isLength({ min: 1 }).withMessage("There was no sensor selected!")
-], (req, res) => {
+function saveAddedSensorsHandler(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
@@ -124,5 +126,4 @@ router.post('/sensors_units', [
         }
     })
     res.status(201).send("Insert completed!")
-
-})
+}

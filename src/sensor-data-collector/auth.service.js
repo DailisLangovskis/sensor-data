@@ -53,11 +53,11 @@ export default ['$window', '$injector', 'config',
             //logout user from the system
             logout: function () {
                 $injector.get('$http').post(config.sensorApiEndpoint + '/auth/delete', { refreshToken: me.getRefreshToken() })
-                    .then(function success(res) {
+                    .then(function success() {
                         me.clearAllToken();
                         me.loggedIn = false;
                     })
-                    .catch(function (error) {
+                    .catch(function failed(error) {
                         console.log(error);
                     });
             },

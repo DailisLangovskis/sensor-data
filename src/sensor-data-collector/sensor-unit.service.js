@@ -34,7 +34,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service', 'hs.map.service',
                             return true
                         }
                     })
-                    .catch(function (error) {
+                    .catch(function failed(error) {
                         console.error("Error!", error);
                     })
             },
@@ -42,10 +42,11 @@ export default ['$http', 'config', 'sens.sensorGroup.service', 'hs.map.service',
                 const source = new VectorSource({
                     format: new GeoJSON(),
                     url: function () {
-                        return "http://localhost/geoserver/sensor-data-collector/ows?service=WFS&" +
-                            "version=1.0.0&request=GetFeature&typeName=sensor-data-collector%3Aunits_positions&" +
-                            "maxFeatures=50000&outputFormat=json"
-                            //&PROPERTYNAME=user_name&CQL_FILTER=user_name=%27username%27
+                        const username = authService.getUsername()
+                        return `http://localhost/geoserver/sensor-data-collector/ows?service=WFS&` +
+                            `version=1.0.0&request=GetFeature&typeName=sensor-data-collector%3Aunits_positions&` +
+                            `maxFeatures=50000&outputFormat=json`
+                            //&PROPERTYNAME=user_name&CQL_FILTER=${encodeURIComponent("user_name="+username+"")}
                     },
                 })
                 me.unitLayer = new VectorLayer({
@@ -66,7 +67,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service', 'hs.map.service',
                     map.addLayer(me.unitLayer)
                 });
             },
-            getAllUsersUnits() {
+            getAllUserUnits() {
                 return $http.get(config.sensorApiEndpoint + '/units/data')
                     .then(function success(response) {
                         return response.data;
@@ -79,7 +80,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service', 'hs.map.service',
                             return true
                         }
                     })
-                    .catch(function (error) {
+                    .catch(function failed(error) {
                         console.error("Error!", error);
                     })
             },
@@ -89,7 +90,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service', 'hs.map.service',
                     .then(function success(res) {
                         me.newAlert(res.data, 2000, "green");
                     })
-                    .catch(function (error) {
+                    .catch(function failed(error) {
                         if (angular.isDefined(error)) {
                             if (error.hasOwnProperty('errors')) {
                                 var gottenErrors = error.errors.map(msg => msg.msg)
@@ -105,7 +106,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service', 'hs.map.service',
                         me.newAlert(res.data, 2000, "green");
                         return false;
                     })
-                    .catch(function (error) {
+                    .catch(function failed(error) {
                         if (angular.isDefined(error)) {
                             if (error.hasOwnProperty('errors')) {
                                 var gottenErrors = error.errors.map(msg => msg.msg)
@@ -132,7 +133,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service', 'hs.map.service',
                                 return false;
                             }
                         })
-                        .catch(function (error) {
+                        .catch(function failed(error) {
                             if (angular.isDefined(error)) {
                                 if (error.hasOwnProperty('errors')) {
                                     var gottenErrors = error.errors.map(msg => msg.msg)

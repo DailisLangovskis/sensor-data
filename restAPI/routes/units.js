@@ -8,7 +8,45 @@ const router = new Router()
 // export our router to be mounted by the parent application
 module.exports = router
 //Get all units
-router.get('/data', async (req, res) => {
+router.get('/data', getAllUserUnitsHandler)
+//Get all units sensors
+router.get('/sensors/:id', showUnitSensorsHandler)
+//Delete all selected units sensors
+router.post('/delete/sensors', [
+    check('params').isLength({ min: 1 }).withMessage("There was no sensor selected!")
+], deleteSensorsHandler)
+//Add selected units to specific group
+router.post('/units_groups', [
+    check('params.*', 'group').custom(async function (unit, group, res) {
+        return await db.query('SELECT ug.id, u.name FROM units_groups as ug\
+        INNER JOIN units as u\
+        ON ug.unit_id = u.unit_id\
+        WHERE ug.unit_id = $1 and ug.group_id = $2', [unit, group.req.body.group])
+            .then(res => {
+                if (res.rows != '') {
+                    var units = res.rows.map(u => u.name)
+                    throw new Error(units + " already exist in this group!")
+                }
+            })
+
+    }),
+    check('params').isLength({ min: 1 }).withMessage("There was no unit selected!")
+], saveAddedUnitsHandler)
+//Save new unit
+router.post('/new', [
+    check('name', 'user').custom(async (name, user, res) => {
+        return await db.query('SELECT unit_id FROM units WHERE name = $1 and user_id = $2', [name, user.req.user.id])
+            .then(res => {
+                if (res.rows != '') {
+                    throw new Error("This unit already exists!")
+                }
+            })
+    }),
+    check('time').exists(),
+    check('location').exists()
+], saveUnitHandler)
+
+async function getAllUserUnitsHandler(req, res) {
     var queryString = 'SELECT * FROM units WHERE user_id = ($1) ORDER BY name'
     try {
         const { rows } = await db.query(queryString, [req.user.id])
@@ -16,9 +54,9 @@ router.get('/data', async (req, res) => {
     } catch (e) {
         console.log(e.stack)
     }
-})
-//Get all units sensors
-router.get('/sensors/:id', async (req, res) => {
+}
+
+async function showUnitSensorsHandler(req, res) {
     try {
         var queryString = 'SELECT s.sensor_name,s.sensor_id,s.sensor_type, u.unit_id FROM sensors_units as su\
         INNER JOIN sensors as s\
@@ -30,11 +68,8 @@ router.get('/sensors/:id', async (req, res) => {
     } catch (e) {
         console.log(e.stack)
     }
-})
-//Delete all selected units sensors
-router.post('/delete/sensors', [
-    check('params').isLength({ min: 1 }).withMessage("There was no sensor selected!")
-], deleteSensorsHandler)
+}
+
 async function deleteSensorsHandler(req, res) {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -52,23 +87,8 @@ async function deleteSensorsHandler(req, res) {
         console.log(e.stack)
     }
 }
-//Add selected units to specific group
-router.post('/units_groups', [
-    check('params.*', 'group').custom(async function (unit, group, res) {
-        return await db.query('SELECT ug.id, u.name FROM units_groups as ug\
-        INNER JOIN units as u\
-        ON ug.unit_id = u.unit_id\
-        WHERE ug.unit_id = $1 and ug.group_id = $2', [unit, group.req.body.group])
-            .then(res => {
-                if (res.rows != '') {
-                    var units = res.rows.map(u => u.name)
-                    throw new Error(units + " already exist in this group!")
-                }
-            })
 
-    }),
-    check('params').isLength({ min: 1 }).withMessage("There was no unit selected!")
-], (req, res) => {
+function saveAddedUnitsHandler(req, res) {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() })
@@ -85,20 +105,9 @@ router.post('/units_groups', [
     })
     res.status(201).send("Insert completed!")
 
-})
-//Save new unit
-router.post('/new', [
-    check('name', 'user').custom(async (name, user, res) => {
-        return await db.query('SELECT unit_id FROM units WHERE name = $1 and user_id = $2', [name, user.req.user.id])
-            .then(res => {
-                if (res.rows != '') {
-                    throw new Error("This unit already exists!")
-                }
-            })
-    }),
-    check('time').exists(),
-    check('location').exists()
-], async (req, res) => {
+}
+
+async function saveUnitHandler(req, res) {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() })
@@ -116,7 +125,7 @@ router.post('/new', [
                         return res
                     })
                     .then(async function (res) {
-                        await db.query(addUnitsPos, [res.rows[0].unit_id, res.rows[0].name, req.body.time, coords[0], coords[1],req.user.username])
+                        await db.query(addUnitsPos, [res.rows[0].unit_id, res.rows[0].name, req.body.time, coords[0], coords[1], req.user.username])
                     })
                     .then(_ => {
                         res.status(201).send("Insert completed!")
@@ -128,4 +137,4 @@ router.post('/new', [
         console.log(e.stack)
     }
 
-})
+}

@@ -10,7 +10,7 @@ const rateLimit = require('express-rate-limit')
 // Sets allowed connection ip addreses
 const cors = require('cors')({
   origin: function (origin, callback) {
-    if (["http://localhost:8082", "http://0.0.0.0:8082","http://localhost/sensor-data".indexOf(origin) !== -1 || typeof origin == 'undefined']) {
+    if (["http://localhost:8082", "http://0.0.0.0:8082", "http://localhost/sensor-data".indexOf(origin) !== -1 || typeof origin == 'undefined']) {
       callback(null, true)
     } else {
       callback(new Error('Not allowed by CORS'))
@@ -23,7 +23,7 @@ const cors = require('cors')({
 //   windowMs: 1 * 60 * 1000,
 //   max: 100,
 // });
-  //Access request body as json
+//Access request body as json
 const jsonParser = bodyparser.json()
 // Implements created functions to API, and adds API routes
 module.exports = app => {

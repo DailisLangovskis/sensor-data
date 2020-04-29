@@ -33,7 +33,7 @@ export default ['$http', 'config',
                             return true;
                         }
                     })
-                    .catch(function (error) {
+                    .catch(function failed(error) {
                         console.error("Error!", error);
                     })
             },
@@ -50,7 +50,7 @@ export default ['$http', 'config',
                         }
 
                     })
-                    .catch(function (error) {
+                    .catch(function failed(error) {
                         console.error("Error!", error);
                     });
             },
@@ -62,7 +62,7 @@ export default ['$http', 'config',
                         me.getGroups();
                         return false;
                     })
-                    .catch(function (error) {
+                    .catch(function failed(error) {
                         if (angular.isDefined(error)) {
                             if (error.hasOwnProperty('errors')) {
                                 var gottenErrors = error.errors.map(msg => msg.msg)
@@ -89,7 +89,7 @@ export default ['$http', 'config',
                                 return false;
                             }
                         })
-                        .catch(function (error) {
+                        .catch(function failed(error) {
                             if (angular.isDefined(error)) {
                                 if (error.hasOwnProperty('errors')) {
                                     var gottenErrors = error.errors.map(msg => msg.msg)
@@ -117,7 +117,7 @@ export default ['$http', 'config',
                                 return false;
                             }
                         })
-                        .catch(function (error) {
+                        .catch(function failed(error) {
                             if (angular.isDefined(error)) {
                                 if (error.hasOwnProperty('errors')) {
                                     var gottenErrors = error.errors.map(msg => msg.msg)

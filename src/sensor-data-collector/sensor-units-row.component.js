@@ -49,9 +49,9 @@ export default {
                         })
                     }
                 },
-                getAllUsersSensors() {
+                getAllUserSensors() {
                     $scope.addNewSensorTabExpanded = false;
-                    sensorService.getAllUsersSensors().then(function (response) {
+                    sensorService.getAllUserSensors().then(function (response) {
                         if (!response) {
                             window.alert("There where no sensors found for this user!");
                         }

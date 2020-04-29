@@ -13,7 +13,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
                 me.btnSelectDeseletClicked = !me.btnSelectDeseletClicked;
                 me.sensors.forEach(sensor => sensor.checked = me.btnSelectDeseletClicked);
             },
-            getAllUsersSensors: function () {
+            getAllUserSensors: function () {
                 return $http.get(config.sensorApiEndpoint + '/sensors/data')
                     .then(function success(response) {
                         if (response.data == '') {
@@ -26,7 +26,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
                         }
 
                     })
-                    .catch(function (error) {
+                    .catch(function failed(error) {
                         console.error("Error!", error);
                     });
             },
@@ -36,7 +36,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
                     .then(function success(response) {
                         me.getPhenomenas();
                     })
-                    .catch(function (error) {
+                    .catch(function failed(error) {
                         if (angular.isDefined(error)) {
                             if (error.hasOwnProperty('errors')) {
                                 var gottenErrors = error.errors.map(msg => msg.msg)
@@ -56,7 +56,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
 
 
                     })
-                    .catch(function (error) {
+                    .catch(function failed(error) {
                         console.error("Error!", error);
                     });
             },
@@ -67,7 +67,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
                     }).then(function (response) {
                         me.phenomena = response;
                     })
-                    .catch(function (error) {
+                    .catch(function failed(error) {
                         console.error("Error!", error);
                     })
             },
@@ -78,7 +78,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
                     }).then(function (response) {
                         me.featureCollection = response;
                     })
-                    .catch(function (error) {
+                    .catch(function failed(error) {
                         console.error("Error!", error);
                     })
             },
@@ -88,7 +88,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
                     .then(function success(res) {
                         me.newAlert(res.data, 2000, "green");
                     })
-                    .catch(function (error) {
+                    .catch(function failed(error) {
                         if (angular.isDefined(error)) {
                             if (error.hasOwnProperty('errors')) {
                                 var gottenErrors = error.errors.map(msg => msg.msg)
@@ -104,7 +104,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
                         me.newAlert(res.data, 2000, "green");
                         return false;
                     })
-                    .catch(function (error) {
+                    .catch(function failed(error) {
                         if (angular.isDefined(error)) {
                             if (error.hasOwnProperty('errors')) {
                                 var gottenErrors = error.errors.map(msg => msg.msg)
@@ -121,7 +121,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
                         me.newAlert(res.data, 2000, "green");
                         return false;
                     })
-                    .catch(function (error) {
+                    .catch(function failed(error) {
                         if (angular.isDefined(error)) {
                             if (error.hasOwnProperty('errors')) {
                                 var gottenErrors = error.errors.map(msg => msg.msg)
@@ -136,7 +136,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
                     .then(function success(response) {
                         return response.data;
                     })
-                    .catch(function (error) {
+                    .catch(function failed(error) {
                         if (angular.isDefined(error)) {
                             if (error.hasOwnProperty('errors')) {
                                 var gottenErrors = error.errors.map(msg => msg.msg)
@@ -155,9 +155,9 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
                             me.newAlert(res.data, 2000, "green");
                         })
                         .then(_ => {
-                            me.getAllUsersSensors();
+                            me.getAllUserSensors();
                         })
-                        .catch(function (error) {
+                        .catch(function failed(error) {
                             if (angular.isDefined(error)) {
                                 if (error.hasOwnProperty('errors')) {
                                     var gottenErrors = error.errors.map(msg => msg.msg)

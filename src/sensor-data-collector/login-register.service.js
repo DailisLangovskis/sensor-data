@@ -10,7 +10,7 @@ export default ['$http', 'sens.auth.service', 'config',
                         me.userAlert(res.data, 2000, "green");
                         return false;
                     })
-                    .catch(function (error) {
+                    .catch(function failed(error) {
                         if (angular.isDefined(error)) {
                             if (error.hasOwnProperty('errors')) {
                                 var gottenErrors = error.errors.map(msg => msg.msg)
@@ -35,7 +35,7 @@ export default ['$http', 'sens.auth.service', 'config',
                     .then(function () {
                         return false;
                     })
-                    .catch(function (error) {
+                    .catch(function failed(error) {
                         if (angular.isDefined(error)) {
                             if (error.hasOwnProperty('errors')) {
                                 var gottenErrors = error.errors.map(msg => msg.msg)

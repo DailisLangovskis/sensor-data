@@ -8,14 +8,7 @@ const router = new Router();
 // export our router to be mounted by the parent application
 module.exports = router
 //Get phenomenas from database
-router.get('/data', async (req, res) => {
-    try {
-        const { rows } = await db.query('SELECT phenomenon_name,unit,id FROM phenomenons')
-        res.status(201).send(rows)
-    } catch (e) {
-        console.log(e.stack)
-    }
-})
+router.get('/data', getPhenomenasHandler)
 //Save phenomenas to database
 router.post('/new', [
     check('name').custom(async function (name) {
@@ -27,7 +20,18 @@ router.post('/new', [
             })
 
     })
-], async (req, res) => {
+], addNewPhenomenaHandler)
+
+async function getPhenomenasHandler(req, res) {
+    try {
+        const { rows } = await db.query('SELECT phenomenon_name,unit,id FROM phenomenons')
+        res.status(201).send(rows)
+    } catch (e) {
+        console.log(e.stack)
+    }
+}
+
+async function addNewPhenomenaHandler(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
@@ -38,4 +42,4 @@ router.post('/new', [
     } catch (e) {
         console.log(e.stack)
     }
-})
+}

@@ -8,17 +8,10 @@ const router = new Router();
 // export our router to be mounted by the parent application
 module.exports = router
 //Get groups from database
-router.get('/data', async (req, res) => {
-    try {
-        const { rows } = await db.query('SELECT group_name, group_id FROM groups where user_id = ($1)', [req.user.id])
-        res.status(201).send(rows)
-    } catch (e){
-        console.log(e.stack)
-    }
-})
+router.get('/data', getGroupsHandler)
 //Save group to database
-router.post('/data',[
-    check('name', 'user').custom(async (name, user,res) => {
+router.post('/data', [
+    check('name', 'user').custom(async (name, user, res) => {
         return await db.query('SELECT group_id FROM groups WHERE group_name = $1 and user_id = $2', [name, user.req.user.id])
             .then(res => {
                 if (res.rows != '') {
@@ -26,7 +19,27 @@ router.post('/data',[
                 }
             })
     })
-], async (req, res) => {
+], saveGroupHandler)
+//Get selected group units from database
+router.get('/units/:id', getGroupUnitsHandler)
+//Delete groups from database
+router.post('/delete', [
+    check('params').isLength({ min: 1 }).withMessage("There was no group selected!")
+], deleteGroupsHandler)
+//Delete selected group units from database
+router.post('/delete/units', [
+    check('params').isLength({ min: 1 }).withMessage("There was no unit selected!")
+], deleteUnitsHandler)
+
+async function getGroupsHandler(req, res) {
+    try {
+        const { rows } = await db.query('SELECT group_name, group_id FROM groups where user_id = ($1)', [req.user.id])
+        res.status(201).send(rows)
+    } catch (e) {
+        console.log(e.stack)
+    }
+}
+async function saveGroupHandler(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
@@ -41,9 +54,9 @@ router.post('/data',[
     } catch (e) {
         console.log(e.stack)
     }
-})
-//Get selected group units from database
-router.get('/units/:id', async (req, res) => {
+}
+
+async function getGroupUnitsHandler(req, res) {
     try {
         var queryString = 'SELECT u.*, g.group_id FROM units_groups as ug\
         INNER JOIN units as u\
@@ -52,14 +65,11 @@ router.get('/units/:id', async (req, res) => {
         ON ug.group_id= g.group_id WHERE ug.group_id = ($1)'
         const { rows } = await db.query(queryString, [req.params.id])
         res.status(201).send(rows)
-    } catch (e){
+    } catch (e) {
         console.log(e.stack)
     }
-})
-//Delete groups from database
-router.post('/delete', [
-    check('params').isLength({ min: 1 }).withMessage("There was no group selected!")
-], deleteGroupsHandler)
+}
+
 async function deleteGroupsHandler(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -77,10 +87,7 @@ async function deleteGroupsHandler(req, res) {
         console.log(e.stack)
     }
 }
-//Delete selected group units from database
-router.post('/delete/units', [
-    check('params').isLength({ min: 1 }).withMessage("There was no unit selected!")
-], deleteUnitsHandler)
+
 async function deleteUnitsHandler(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

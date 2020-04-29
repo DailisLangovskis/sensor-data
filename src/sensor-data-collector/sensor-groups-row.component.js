@@ -44,10 +44,10 @@ export default {
                 }
 
             },
-            getAllUsersUnits() {
+            getAllUserUnits() {
                 $scope.time = new Date();
                 $scope.addNewUnitTabExpanded = false;
-                unitService.getAllUsersUnits().then(function (response) {
+                unitService.getAllUserUnits().then(function (response) {
                     if (!response) {
                         window.alert("There where no units found for this user!");
                     }

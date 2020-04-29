@@ -21,51 +21,55 @@ router.post('/', [
                 }
             })
     })
-]
-    , async (req, res) => {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            return res.status(422).json({ errors: errors.array() })
-        }
-        var getUser = 'SELECT  * FROM system_users WHERE (username) = ($1)';
+], loginHandler)
+//updating access token using refresh token route
+router.post('/token', refreshTokenHandler)
+//deleting all refresh tokens
+router.post('/delete', logoutHandler)
+
+async function loginHandler(req, res) {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() })
+    }
+    var getUser = 'SELECT  * FROM system_users WHERE (username) = ($1)';
+    try {
+        const { rows } = await db.query(getUser, [req.body.username])
         try {
-            const { rows } = await db.query(getUser, [req.body.username])
-            try {
-                var user = rows[0];
-                if (await bcrypt.compare(req.body.password, user.password)) {
-                    const accessToken = generateAccessToken(user)
-                    const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '3h' })
-                    refreshTokens.push(refreshToken)
-                    res.json({ username: user.username, accessToken: accessToken, refreshToken: refreshToken, msg: 'Successful login!' })
-                }
-                else {
-                    res.status(404).send({ errors: [{ msg: 'Username or password does not exist!' }] })
-                }
-            } catch (e) {
-                res.status(500).send()
+            var user = rows[0];
+            if (await bcrypt.compare(req.body.password, user.password)) {
+                const accessToken = generateAccessToken(user)
+                const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '3h' })
+                refreshTokens.push(refreshToken)
+                res.json({ username: user.username, accessToken: accessToken, refreshToken: refreshToken, msg: 'Successful login!' })
+            }
+            else {
+                res.status(404).send({ errors: [{ msg: 'Username or password does not exist!' }] })
             }
         } catch (e) {
-            console.log(e.stack)
-        } 
+            res.status(500).send()
+        }
+    } catch (e) {
+        console.log(e.stack)
+    }
 
-    })
-    //updating access token using refresh token route
-router.post('/token', (req, res) => {
+}
+async function refreshTokenHandler(req, res) {
     const refreshToken = req.body.refreshToken
-    if (refreshToken == null) {throw new Error('Please login to proceed!')}
+    if (refreshToken == null) { throw new Error('Please login to proceed!') }
     if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403)
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
         if (err) return res.status(403).send('Please login to proceed!')
         const accessToken = generateAccessToken({ name: user.name })
         res.json({ accessToken: accessToken })
     })
-})
+}
 
 function generateAccessToken(user) {
     return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5h' })
 }
-//deleting all refresh tokens
-router.post('/delete', (req, res) => {
+
+async function logoutHandler(req, res) {
     refreshTokens = refreshTokens.filter(token => token !== req.body.refreshToken)
     res.sendStatus(204)
-})
+}

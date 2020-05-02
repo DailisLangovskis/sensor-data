@@ -11,7 +11,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service', 'hs.map.service',
             unitsSensors: [],
             featureCollection: '',
             newAlert: groupService.newAlert,
-            unitSelected: '',
+            unitClicked: '',
             allUnits: [],
             selectDeselectAllSensors(unitClicked) {
                 me.btnSelectDeseletClicked = !me.btnSelectDeseletClicked;
@@ -21,9 +21,9 @@ export default ['$http', 'config', 'sens.sensorGroup.service', 'hs.map.service',
                     }
                 });
             },
-            showUnitSensors(unitSelected) {
-                me.unitSelected = unitSelected;
-                return $http.get(config.sensorApiEndpoint + '/units/sensors/' + unitSelected)
+            showUnitSensors(unitClicked) {
+                me.unitClicked = unitClicked;
+                return $http.get(config.sensorApiEndpoint + '/units/sensors/' + unitClicked)
                     .then(function success(response) {
                         return response.data;
                     }).then(function (response) {
@@ -116,17 +116,17 @@ export default ['$http', 'config', 'sens.sensorGroup.service', 'hs.map.service',
                         return true;
                     });
             },
-            deleteSelectedSensors(selectedUnit) {
+            deleteSelectedSensors(unitClicked) {
                 var deleteAll = window.confirm("Do you really want to delete all selected sensors from the database?");
                 if (deleteAll) {
                     var checked = me.unitsSensors.filter(sensor => sensor.checked == true).map(id => id.sensor_id);
-                    return $http.post(config.sensorApiEndpoint + '/units/delete/sensors', { params: checked, unit: selectedUnit })
+                    return $http.post(config.sensorApiEndpoint + '/units/delete/sensors', { params: checked, unit: unitClicked })
                         .then(function success(res) {
                             me.newAlert(res.data, 2000, "green");
                         })
                         .then(_ => {
                             me.unitsSensors = me.unitsSensors.filter(unit => unit.checked != true);
-                            if (me.unitsSensors.filter(s => s.unit_id != selectedUnit)) {
+                            if (me.unitsSensors.filter(s => s.unit_id != unitClicked)) {
                                 return true;
                             }
                             else {

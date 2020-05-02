@@ -5,7 +5,7 @@ export default ['$http', 'config',
             btnSelectDeselectClicked: false,
             groups: [],
             selectedGroupUnits: [],
-            groupSelected: '',
+            groupClicked: '',
 
             selectDeselectAllGroups() {
                 me.btnSelectDeselectClicked = !me.btnSelectDeselectClicked;
@@ -20,9 +20,9 @@ export default ['$http', 'config',
                 });
             },
 
-            getGroupUnits(groupSelected) {
-                me.groupSelected = groupSelected;
-                return $http.get(config.sensorApiEndpoint + '/groups/units/' + groupSelected)
+            getGroupUnits(groupClicked) {
+                me.groupClicked = groupClicked;
+                return $http.get(config.sensorApiEndpoint + '/groups/units/' + groupClicked)
                     .then(function success(response) {
                         return response.data;
                     }).then(function (response) {
@@ -100,17 +100,17 @@ export default ['$http', 'config',
 
                 }
             },
-            deleteSelectedUnits(groupSelected) {
+            deleteSelectedUnits(groupClicked) {
                 var deleteAll = window.confirm("Do you really want to delete all selected units from the group?");
                 if (deleteAll) {
                     var checked = me.selectedGroupUnits.filter(unit => unit.checked == true).map(id => id.unit_id);
-                    return $http.post(config.sensorApiEndpoint + '/groups/delete/units', { params: checked, group: groupSelected })
+                    return $http.post(config.sensorApiEndpoint + '/groups/delete/units', { params: checked, group: groupClicked })
                         .then(function success(res) {
                             me.newAlert(res.data, 2000, "green");
                         })
                         .then(_ => {
                             me.selectedGroupUnits = me.selectedGroupUnits.filter(unit => unit.checked != true);
-                            if (me.selectedGroupUnits.filter(u => u.group_id != groupSelected)) {
+                            if (me.selectedGroupUnits.filter(u => u.group_id != groupClicked)) {
                                 return true;
                             }
                             else {

@@ -33,7 +33,7 @@ export default {
                         $scope.newPhenomenaUnit = '';
                     })
                 },
-                showSensors(unitClicked) {
+                showUnitSensors(unitClicked) {
                     $scope.addSensorTabVisible = false;
                     if ($scope.sensorsTabVisible) {
                         $scope.sensorsTabVisible = !$scope.sensorsTabVisible;

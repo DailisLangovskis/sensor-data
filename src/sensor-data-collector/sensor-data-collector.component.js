@@ -13,6 +13,7 @@ export default {
                 //show users available groups
                 showGroups() {
                     $scope.addGroupTabVisible = false;
+                    $scope.groupName = '';
                     if ($scope.groupsTabVisible) {
                         $scope.groupsTabVisible = !$scope.groupsTabVisible;
                     }

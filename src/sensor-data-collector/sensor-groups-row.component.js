@@ -1,5 +1,5 @@
 import moment from 'moment';
-import {toLonLat} from 'ol/proj';
+import { toLonLat } from 'ol/proj';
 export default {
     template: require('./partials/groups-row.html'),
     bindings: {
@@ -19,7 +19,7 @@ export default {
             description: '',
             addNewUnitTabExpanded: false,
             existingUnitListVisible: false,
-            getAllUnitLocations:unitService.getAllUnitLocations,
+            getAllUnitLocations: unitService.getAllUnitLocations,
 
             getLocationFromMap() {
                 var queryFeature = queryBaseService.queryLayer.getSource().getFeatures();
@@ -27,6 +27,10 @@ export default {
                 $scope.location = toLonLat(coords);
             },
             showUnits(groupClicked) {
+                $scope.unitName = '';
+                $scope.description = '';
+                $scope.location = '';
+                $scope.time = new Date();
                 $scope.addUnitTabVisible = false
                 if ($scope.unitsTabVisible) {
                     $scope.unitsTabVisible = !$scope.unitsTabVisible;
@@ -45,6 +49,10 @@ export default {
 
             },
             getAllUserUnits() {
+                $scope.unitName = '';
+                $scope.description = '';
+                $scope.location = '';
+                $scope.time = new Date();
                 $scope.time = new Date();
                 $scope.addNewUnitTabExpanded = false;
                 unitService.getAllUserUnits().then(function (response) {
@@ -74,9 +82,9 @@ export default {
 
                 })
             },
-            deleteSelectedUnits(groupClicked){
-                groupService.deleteSelectedUnits(groupClicked).then(function(response){
-                    if(response){
+            deleteSelectedUnits(groupClicked) {
+                groupService.deleteSelectedUnits(groupClicked).then(function (response) {
+                    if (response) {
                         $scope.unitsTabVisible = false;
                     }
                 })

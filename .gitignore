@@ -6,6 +6,6 @@ tmp
 static.zip
 launch.json
 .env
+.env_prod
 .vscode
 postgresql/dump/schema.sql
-postgresql/dump/data.sql

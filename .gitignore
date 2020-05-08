@@ -9,3 +9,4 @@ launch.json
 .env_prod
 .vscode
 postgresql/dump/schema.sql
+data_dir

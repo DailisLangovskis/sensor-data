@@ -134,7 +134,6 @@ module.value('config', {
     allowAddExternalDatasets: true,
     sensorApiEndpoint: process.env.REST_API_URL
 });
-console.log(process.env.REST_API_URL)
 module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service', 'hs.query.baseService',
     function ($scope, Core, $compile, layoutService, queryBaseService) {
         queryBaseService.nonQueryablePanels.push('sensor-data-collector');

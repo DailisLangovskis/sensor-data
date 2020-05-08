@@ -6,7 +6,7 @@ services:
         container_name: sensor-data-ui
         build:           
             context: .
-            dockerfile: Dockerfile
+            dockerfile: docker/Dockerfile
         image: sensor-data-ui:latest
         env_file:
             - .env  
@@ -66,12 +66,28 @@ services:
             POSTGRES_DB: ${POSTGRES_DB}
             POSTGRES_PORT: $POSTGRES_PORT}
         restart: always
-
+    geoserver:
+        build:
+            context: geoserver/docker
+            dockerfile: Dockerfile
+        volumes:
+            - ./geoserver/data_dir:/opt/geoserver/data_dir
+            - ./geoserver/docker/code:/geoserver_code
+            - ./geoserver:/geoserver_tmp
+        restart: on-failure
+        ports:
+            - ${GS_PORT}:${GS_PORT}
+        environment:
+            - GS_VERSION=2.13.0
+        env_file:
+            - geoserver/docker/.env
+        depends_on:
+            - sensor-data-db
     reverse-proxy:
         container_name: reverse-proxy
         build:           
             context: .
-            dockerfile: Dockerfile.nginx
+            dockerfile: docker/Dockerfile.nginx
         image: reverse-proxy:latest
         env_file:
              - .env

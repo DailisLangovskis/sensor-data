@@ -1,17 +1,80 @@
-version: '2.1'
+version: '3.3'
 
 services:
-    sensor-data:
-        container_name: sensor-data
-        build:
-            context: .
-            dockerfile: Dockerfile.prod
-        image: sensor-data:latest
-        environment:
-            NODE_ENV: production
-            PROXY_PORT: 8085
-            HTTP_PORT: 8082
-        ports: #Forwarded from host to docker container
-            - 8082:8082 # main application
-            - 8085:8085 # proxy service
 
+    sensor-data:
+        container_name: sensor-data-ui
+        build:           
+            context: .
+            dockerfile: docker/Dockerfile
+        image: sensor-data-ui:latest
+        env_file:
+            - .env_prod  
+        ports: #Forwarded from host to docker container
+            - ${HTTP_PORT}:${HTTP_PORT} # main application
+        depends_on:
+            - reverse-proxy
+            - rest-api
+        volumes:
+            - "./src:/code/src"
+            - "./static:/code/static"
+            - "./package.json:/code/package.json"
+        command: > 
+            npm run dev-server
+    sensor-data-proxy:
+        container_name: sensor-data-proxy
+        image: sensor-data-ui:latest
+        env_file:
+            - .env
+        ports: #Forwarded from host to docker container
+             - ${PROXY_PORT}:${PROXY_PORT} # proxy service
+        command: >
+            npm run proxy
+    rest-api:
+        container_name: rest-api
+        build:
+            context: ./restAPI
+            dockerfile: Dockerfile
+        image: rest-api:latest
+        
+        env_file:
+            - .env
+        ports:
+            - ${API_PORT}:${API_PORT} # rest api service
+        depends_on:
+            - sensor-data-db
+        volumes:
+            - "./restAPI:/code/restAPI"
+        command: >
+            npm run serve-api
+    sensor-data-db:
+        container_name: sensor-data-db
+        build:           
+            context: ./postgresql
+            dockerfile: Dockerfile
+        image: sensor-data-db:latest
+        volumes:
+            - sensordb:/var/lib/postgresql/data
+            - ./postgresql/code:/code
+        container_name: sensor-data-db 
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_DB: ${POSTGRES_DB}
+            POSTGRES_PORT: $POSTGRES_PORT}
+        restart: always
+
+    reverse-proxy:
+        container_name: reverse-proxy
+        build:           
+            context: .
+            dockerfile: Dockerfile.nginx
+        image: reverse-proxy:latest
+        env_file:
+             - .env
+        volumes:
+            - ./nginx.conf:/etc/nginx/sites-available/default.conf
+        ports:
+            - ${NGINX_PORT}:80
+volumes: 
+    sensordb:

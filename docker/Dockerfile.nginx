@@ -1,4 +1,6 @@
 FROM nginx:alpine
 
+RUN apk --update add nodejs npm curl
+
 COPY nginx.conf /etc/nginx/sites-available/sensordata
 

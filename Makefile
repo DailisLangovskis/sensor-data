@@ -10,8 +10,11 @@ start-dev:
 start-prod:
 	docker-compose -f docker-compose.prod.yml up
 
-build-npm-link-hsl:
-	docker-compose -f docker-compose.dev.yml build --no-cache && npm link hslayers-ng
-
 clear-database:
 	docker-compose -f docker-compose.dev.yml run --rm --no-deps sensor-data-db bash /code/reset-empty-database.sh
+
+add-user:
+	docker exec reverse-proxy bash add_user.sh
+
+auth:
+	docker exec reverse-proxy bash auth_user.sh

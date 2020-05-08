@@ -45,9 +45,8 @@ export default ['$http', 'config', 'sens.sensorGroup.service', 'hs.map.service',
                         const username = authService.getUsername()
                         return `http://localhost/geoserver/sensor-data-collector/ows?service=WFS&` +
                             `version=1.0.0&request=GetFeature&typeName=sensor-data-collector%3Aunits_positions&` +
-                            `maxFeatures=50000&outputFormat=json`
-                            //&PROPERTYNAME=user_name&CQL_FILTER=${encodeURIComponent("user_name="+username+"")}
-                    },
+                            `maxFeatures=50000&outputFormat=json&CQL_FILTER=${encodeURIComponent("user_name='"+username+"'")}`
+                     },
                 })
                 me.unitLayer = new VectorLayer({
                     title: 'Unit positions layer',
@@ -63,6 +62,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service', 'hs.map.service',
                     show_in_manager: true,
                     visible: true
                 });
+                me.unitLayer.set('hoveredKeys',['unit_name', 'user_name', 'unit_id', 'longitude', 'latitude']);
                 OlMap.loaded().then(map => {
                     map.addLayer(me.unitLayer)
                 });

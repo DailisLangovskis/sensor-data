@@ -73,14 +73,14 @@ function getHostname() {
 module.value('config', {
     proxyPrefix: "/proxy/",
     default_layers: [
-        new Tile({
-            source: new OSM(),
-            title: "Open Street layer",
-            base: true,
-            visible:true,
-            removable: false,
-            editor: { editable: false },
-        }),
+        // new Tile({
+        //     source: new OSM(),
+        //     title: "Open Street layer",
+        //     base: true,
+        //     visible:true,
+        //     removable: false,
+        //     editor: { editable: false },
+        // }),
         // new VectorLayer({
         //     title: 'Test',
         //     style: new Style({
@@ -132,9 +132,9 @@ module.value('config', {
         user: 'kynsperk' //Needed for MapLogOT
     },
     allowAddExternalDatasets: true,
-    sensorApiEndpoint: 'http://localhost:3000/api'
+    sensorApiEndpoint: process.env.REST_API_URL
 });
-
+console.log(process.env.REST_API_URL)
 module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service', 'hs.query.baseService',
     function ($scope, Core, $compile, layoutService, queryBaseService) {
         queryBaseService.nonQueryablePanels.push('sensor-data-collector');

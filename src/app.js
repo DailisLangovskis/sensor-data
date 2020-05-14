@@ -12,13 +12,9 @@ import 'sidebar.module';
 import 'draw.module';
 import View from 'ol/View';
 import { transform, transformExtent } from 'ol/proj';
-import { Style, Icon, Stroke, Fill, Circle, Text } from 'ol/style';
-import Feature from 'ol/Feature';
 import { OSM } from 'ol/source';
 import { Tile } from 'ol/layer';
-import VectorLayer from 'ol/layer/Vector';
-import { Vector as VectorSource } from 'ol/source';
-import { Polygon, LineString, GeometryType, Point } from 'ol/geom';
+
 import './sensor-data-collector/sensor-data-collector.module';
 
 //Hslayers main module components
@@ -54,22 +50,6 @@ function getHostname() {
     return urlArr[0] + "//" + domain;
 };
 
-// var count = 10;
-// var features = new Array(count);
-// var e = 4500000;
-// for (var i = 0; i < count; ++i) {
-//     var coordinates = [2 * e * Math.random() - e, 2 * e * Math.random() - e];
-//     features[i] = new Feature({
-//         geometry: new Point(coordinates),
-//         name: 'random' + [i]
-//     });
-// }
-// var bookmarkSource = new VectorSource({
-//     features: features
-// });
-
-// import bookMarkIcon from 'images/mrkr-bookmark.png';
-
 module.value('config', {
     proxyPrefix: "/proxy/",
     default_layers: [
@@ -80,27 +60,7 @@ module.value('config', {
             visible:true,
             removable: false,
             editor: { editable: false },
-        }),
-        // new VectorLayer({
-        //     title: 'Test',
-        //     style: new Style({
-        //         fill: new Fill({
-        //             color: 'rgba(255, 128, 123, 0.2)'
-        //         }),
-        //         stroke: new Stroke({
-        //             color: '#e49905',
-        //             width: 2
-        //         }),
-        //         image: new Icon({
-        //             src: bookMarkIcon,
-        //             crossOrigin: 'anonymous',
-        //             anchor: [0.5, 1]
-        //         })
-        //     }),
-        //     source: bookmarkSource,
-        //     declutter: true,
-        //     cluster: true
-        // })
+        })
     ],
     project_name: 'erra/map',
     default_view: new View({
@@ -148,10 +108,6 @@ module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service', 'h
                 var el = angular.element('<sens.index hs.draggable ng-if="Core.exists(\'sens.sensorDataCollectorModule\')" ng-show="panelVisible(\'sensor-data-collector\', this)"></sens.index>')[0];
                 layoutService.panelListElement.appendChild(el);
                 $compile(el)($scope);
-                // var toolbar_button = angular.element('<sens.sensor-data-collector.sidebar-btn>')[0];
-                // layoutService.sidebarListElement.appendChild(toolbar_button);
-                // $compile(toolbar_button)(event.targetScope);
-
             }
         });
         sidebarService.buttons.push({ panel: 'sensor-data-collector', module: 'sens.sensorDataCollectorModule', order: -1, title: gettext('Sensor data collector'), description: gettext('Collect sensor data'), icon: 'icon-analytics-piechart' });

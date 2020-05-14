@@ -10,3 +10,4 @@ launch.json
 .vscode
 postgresql/dump/schema.sql
 data_dir
+config.js

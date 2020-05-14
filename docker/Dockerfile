@@ -9,6 +9,7 @@ RUN mkdir /code
 WORKDIR /code
 
 COPY ./src /code/src
+COPY ./config.js /code
 COPY package.json /code
 
 RUN npm install

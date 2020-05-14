@@ -16,6 +16,7 @@ services:
             - reverse-proxy
             - rest-api
         volumes:
+            - "./config.js:/code/config.js"
             - "./src:/code/src"
             - "./static:/code/static"
             - "./node_modules:/code/node_modules"

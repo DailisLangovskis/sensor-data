@@ -14,7 +14,7 @@ import View from 'ol/View';
 import { transform, transformExtent } from 'ol/proj';
 import { OSM } from 'ol/source';
 import { Tile } from 'ol/layer';
-
+import { REST_API_URL } from '../config';
 import './sensor-data-collector/sensor-data-collector.module';
 
 //Hslayers main module components
@@ -53,14 +53,14 @@ function getHostname() {
 module.value('config', {
     proxyPrefix: "/proxy/",
     default_layers: [
-        new Tile({
-            source: new OSM(),
-            title: "Open Street layer",
-            base: true,
-            visible:true,
-            removable: false,
-            editor: { editable: false },
-        })
+        // new Tile({
+        //     source: new OSM(),
+        //     title: "Open Street layer",
+        //     base: true,
+        //     visible:true,
+        //     removable: false,
+        //     editor: { editable: false },
+        // })
     ],
     project_name: 'erra/map',
     default_view: new View({
@@ -92,7 +92,7 @@ module.value('config', {
         user: 'kynsperk' //Needed for MapLogOT
     },
     allowAddExternalDatasets: true,
-    sensorApiEndpoint: process.env.REST_API_URL
+    sensorApiEndpoint: REST_API_URL
 });
 module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service', 'hs.query.baseService', 'hs.sidebar.service', 'gettext',
     function ($scope, Core, $compile, layoutService, queryBaseService, sidebarService, gettext) {

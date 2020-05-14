@@ -14,8 +14,8 @@ import View from 'ol/View';
 import { transform, transformExtent } from 'ol/proj';
 import { Style, Icon, Stroke, Fill, Circle, Text } from 'ol/style';
 import Feature from 'ol/Feature';
-import {OSM} from 'ol/source';
-import {Tile} from 'ol/layer';
+import { OSM } from 'ol/source';
+import { Tile } from 'ol/layer';
 import VectorLayer from 'ol/layer/Vector';
 import { Vector as VectorSource } from 'ol/source';
 import { Polygon, LineString, GeometryType, Point } from 'ol/geom';
@@ -73,14 +73,14 @@ function getHostname() {
 module.value('config', {
     proxyPrefix: "/proxy/",
     default_layers: [
-        // new Tile({
-        //     source: new OSM(),
-        //     title: "Open Street layer",
-        //     base: true,
-        //     visible:true,
-        //     removable: false,
-        //     editor: { editable: false },
-        // }),
+        new Tile({
+            source: new OSM(),
+            title: "Open Street layer",
+            base: true,
+            visible:true,
+            removable: false,
+            editor: { editable: false },
+        }),
         // new VectorLayer({
         //     title: 'Test',
         //     style: new Style({
@@ -134,8 +134,8 @@ module.value('config', {
     allowAddExternalDatasets: true,
     sensorApiEndpoint: process.env.REST_API_URL
 });
-module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service', 'hs.query.baseService',
-    function ($scope, Core, $compile, layoutService, queryBaseService) {
+module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service', 'hs.query.baseService', 'hs.sidebar.service', 'gettext',
+    function ($scope, Core, $compile, layoutService, queryBaseService, sidebarService, gettext) {
         queryBaseService.nonQueryablePanels.push('sensor-data-collector');
         $scope.Core = Core;
         $scope.panelVisible = layoutService.panelVisible;
@@ -148,11 +148,13 @@ module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service', 'h
                 var el = angular.element('<sens.index hs.draggable ng-if="Core.exists(\'sens.sensorDataCollectorModule\')" ng-show="panelVisible(\'sensor-data-collector\', this)"></sens.index>')[0];
                 layoutService.panelListElement.appendChild(el);
                 $compile(el)($scope);
-                var toolbar_button = angular.element('<sens.sensor-data-collector.sidebar-btn>')[0];
-                layoutService.sidebarListElement.appendChild(toolbar_button);
-                $compile(toolbar_button)(event.targetScope);
+                // var toolbar_button = angular.element('<sens.sensor-data-collector.sidebar-btn>')[0];
+                // layoutService.sidebarListElement.appendChild(toolbar_button);
+                // $compile(toolbar_button)(event.targetScope);
+
             }
-        })
+        });
+        sidebarService.buttons.push({ panel: 'sensor-data-collector', module: 'sens.sensorDataCollectorModule', order: -1, title: gettext('Sensor data collector'), description: gettext('Collect sensor data'), icon: 'icon-analytics-piechart' });
     }
 ]);
 

@@ -53,14 +53,14 @@ function getHostname() {
 module.value('config', {
     proxyPrefix: "/proxy/",
     default_layers: [
-        // new Tile({
-        //     source: new OSM(),
-        //     title: "Open Street layer",
-        //     base: true,
-        //     visible:true,
-        //     removable: false,
-        //     editor: { editable: false },
-        // })
+        new Tile({
+            source: new OSM(),
+            title: "Open Street layer",
+            base: true,
+            visible:true,
+            removable: false,
+            editor: { editable: false },
+        })
     ],
     project_name: 'erra/map',
     default_view: new View({

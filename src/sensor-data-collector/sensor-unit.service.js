@@ -43,7 +43,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service', 'hs.map.service',
                     format: new GeoJSON(),
                     url: function () {
                         const username = authService.getUsername()
-                        return `http://localhost/geoserver/sensor-data-collector/ows?service=WFS&` +
+                        return `/sensor-proxy/http://localhost/geoserver/sensor-data-collector/ows?service=WFS&` +
                             `version=1.0.0&request=GetFeature&typeName=sensor-data-collector%3Aunits_positions&` +
                             `maxFeatures=50000&outputFormat=json&CQL_FILTER=${encodeURIComponent("user_name='"+username+"'")}`
                      },

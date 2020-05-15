@@ -60,7 +60,7 @@ module.value('config', {
             visible:true,
             removable: false,
             editor: { editable: false },
-        })
+        }),
     ],
     project_name: 'erra/map',
     default_view: new View({

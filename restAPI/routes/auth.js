@@ -39,7 +39,7 @@ async function loginHandler(req, res) {
             var user = rows[0];
             if (await bcrypt.compare(req.body.password, user.password)) {
                 const accessToken = generateAccessToken(user)
-                const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '3h' })
+                const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET)
                 refreshTokens.push(refreshToken)
                 res.json({ username: user.username, accessToken: accessToken, refreshToken: refreshToken, msg: 'Successful login!' })
             }

@@ -68,17 +68,17 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', 'HsMapService',
                     map.addLayer(me.unitLayer)
                 });
             },
-            getAllUserUnits() {
-                return $http.get(config.sensorApiEndpoint + '/units/data')
+            getAllUsableUnits(groupClicked) {
+                return $http.get(config.sensorApiEndpoint + '/units/data/' + groupClicked)
                     .then(function success(response) {
                         return response.data;
                     }).then(function (response) {
                         if (response == '') {
                             me.allUnits = [];
-                            return false
+                            return true
                         } else {
                             me.allUnits = response;
-                            return true
+                            return false
                         }
                     })
                     .catch(function failed(error) {
@@ -118,7 +118,7 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', 'HsMapService',
                     });
             },
             deleteSelectedSensors(unitClicked) {
-                var deleteAll = window.confirm("Do you really want to delete all selected sensors from the database?");
+                var deleteAll = window.confirm("Do you really want to delete all selected sensors from the sensor unit?");
                 if (deleteAll) {
                     var checked = me.unitsSensors.filter(sensor => sensor.checked == true).map(id => id.sensor_id);
                     return $http.post(config.sensorApiEndpoint + '/units/delete/sensors', { params: checked, unit: unitClicked })
@@ -128,10 +128,10 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', 'HsMapService',
                         .then(_ => {
                             me.unitsSensors = me.unitsSensors.filter(unit => unit.checked != true);
                             if (me.unitsSensors.filter(s => s.unit_id != unitClicked)) {
-                                return true;
+                                return false;
                             }
                             else {
-                                return false;
+                                return true;
                             }
                         })
                         .catch(function failed(error) {

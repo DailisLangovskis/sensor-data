@@ -8,7 +8,7 @@ const router = new Router()
 // export our router to be mounted by the parent application
 module.exports = router
 //Get all units
-router.get('/data', getAllUserUnitsHandler)
+router.get('/data/:id', getAllUsableUnitsHandler)
 //Get all units sensors
 router.get('/sensors/:id', showUnitSensorsHandler)
 //Delete all selected units sensors
@@ -46,10 +46,17 @@ router.post('/new', [
     check('location').exists()
 ], saveUnitHandler)
 
-async function getAllUserUnitsHandler(req, res) {
-    var queryString = 'SELECT * FROM units WHERE user_id = ($1) ORDER BY name'
+async function getAllUsableUnitsHandler(req, res) {
+    var id = req.params.id;
+    var queryString = 'SELECT * FROM units WHERE user_id = ($1)\
+    EXCEPT \
+    SELECT u.* FROM units_groups as ug\
+        INNER JOIN units as u\
+        ON ug.unit_id = u.unit_id \
+        INNER JOIN groups as g \
+        ON ug.group_id= g.group_id WHERE ug.group_id = ($2)';
     try {
-        const { rows } = await db.query(queryString, [req.user.id])
+        const { rows } = await db.query(queryString, [req.user.id, id])
         res.status(201).send(rows)
     } catch (e) {
         console.log(e.stack)

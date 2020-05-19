@@ -23,7 +23,7 @@ router.post('/data', [
         .withMessage('Sensor type be at less 20 chars long'),
     check('phenomenaId').isNumeric().withMessage("Given phenomena id is not a numeric value!"),
 ], addSensorDataHandler)
-router.get('/data', getAllUserSensorsHandler)
+router.get('/data/:id', getAllUsableSensorsHandler)
 //Get sensors phenomena
 router.get('/phenomena/:id', getPhenomenaDataHandler)
 //Save sensors inside selected unit
@@ -72,9 +72,16 @@ async function addSensorDataHandler(req, res) {
     }
     res.status(201).send("Insert completed!")
 }
-async function getAllUserSensorsHandler(req, res) {
+async function getAllUsableSensorsHandler(req, res) {
+    var id = req.params.id;
     try {
-        const { rows } = await db.query('SELECT sensor_name,sensor_id,sensor_type FROM sensors WHERE user_id = ($1)', [req.user.id])
+        const { rows } = await db.query('SELECT sensor_name,sensor_id,sensor_type FROM sensors WHERE user_id = ($1) \
+        EXCEPT \
+        SELECT s.sensor_name,s.sensor_id,s.sensor_type FROM sensors_units as su\
+        INNER JOIN sensors as s\
+        ON su.sensor_id = s.sensor_id \
+        INNER JOIN units as u\
+        ON su.unit_id = u.unit_id where su.unit_id = ($2)', [req.user.id, id])
         res.status(201).send(rows)
     } catch (e) {
         console.log(e.stack)

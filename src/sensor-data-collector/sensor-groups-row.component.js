@@ -17,21 +17,13 @@ export default {
             addUnitTabVisible: false,
             unitName: '',
             description: '',
-            addNewUnitTabExpanded: false,
             existingUnitListVisible: false,
-            getAllUnitLocations: unitService.getAllUnitLocations,
-
-
             getLocationFromMap() {
                 var queryFeature = queryBaseService.queryLayer.getSource().getFeatures();
                 var coords = queryFeature[0].getGeometry().flatCoordinates;
                 $scope.location = toLonLat(coords);
             },
             showUnits(groupClicked) {
-                $scope.unitName = '';
-                $scope.description = '';
-                $scope.location = '';
-                $scope.time = moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ");
                 $scope.addUnitTabVisible = false
                 if ($scope.unitsTabVisible) {
                     $scope.unitsTabVisible = !$scope.unitsTabVisible;
@@ -42,53 +34,61 @@ export default {
                             window.alert("No units found for this group!")
                         }
                         else {
-                            $scope.unitsTabVisible = !$scope.unitsTabVisible;
+                            $scope.unitsTabVisible = true;
                         }
 
                     })
                 }
 
             },
-            addUnitForm(){
-                $scope.addNewUnitTabExpanded = !$scope.addNewUnitTabExpanded; 
-                $scope.existingUnitListVisible = false;
-                $scope.time = moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ");
+            addNewUnits(groupClicked){
+                if($scope.addUnitTabVisible){
+                    $scope.addUnitTabVisible = !$scope.addUnitTabVisible;
+                    $scope.existingUnitListVisible = false; 
+                }
+                else {
+                    $scope.getAllUsableUnits(groupClicked);
+                        $scope.unitsTabVisible = false;
+                        $scope.time = moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ");
+                        $scope.addUnitTabVisible = true;
+                    
+
+                }
+                     
+                
             },
-            getAllUserUnits() {
-                $scope.unitName = '';
-                $scope.description = '';
-                $scope.location = '';
-                $scope.time = moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ");
-                $scope.addNewUnitTabExpanded = false;
-                unitService.getAllUserUnits().then(function (response) {
-                    if (!response) {
-                        window.alert("There where no units found for this user!");
-                    }
+            getAllUsableUnits(groupClicked) {
+                unitService.getAllUnitLocations(),
+                unitService.getAllUsableUnits(groupClicked).then(function (response) {
+                    if (response) return;
                     else {
-                        $scope.existingUnitListVisible = !$scope.existingUnitListVisible;
+                        $scope.existingUnitListVisible = true;
                     }
                 })
             },
             saveAddedUnits(groupClicked) {
                 unitService.saveAddedUnits(groupClicked).then(_ => {
-                    $scope.existingUnitListVisible = !$scope.existingUnitListVisible;
+                    $scope.unitsTabVisible = false;
+                    $scope.showUnits(groupClicked);
+                    $scope.existingUnitListVisible = false;
                 })
             },
             saveUnit(unitName, description, time, groupClicked) {
                 unitService.saveUnit(unitName, description, time, $scope.location, groupClicked).then(function (response) {
                     if (!response) {
-                        $scope.addNewUnitTabExpanded = !$scope.addNewUnitTabExpanded;
                         $scope.location = '';
                         $scope.unitName = '';
                         $scope.description = '';
                         $scope.time = moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ")
                     }
-
                 })
             },
             deleteSelectedUnits(groupClicked) {
                 groupService.deleteSelectedUnits(groupClicked).then(function (response) {
                     if (response) {
+                        $scope.unitsTabVisible = false;
+                        $scope.showUnits(groupClicked);
+                    } else {
                         $scope.unitsTabVisible = false;
                     }
                 })
@@ -100,7 +100,6 @@ export default {
             $scope.addUnitTabVisible = false;
             $scope.unitName = '';
             $scope.description = '';
-            $scope.addNewUnitTabExpanded = false;
             $scope.existingUnitListVisible = false;
         });
         $scope.$on('mapClicked', function(){

@@ -13,16 +13,16 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service',
                 me.btnSelectDeseletClicked = !me.btnSelectDeseletClicked;
                 me.sensors.forEach(sensor => sensor.checked = me.btnSelectDeseletClicked);
             },
-            getAllUserSensors: function () {
-                return $http.get(config.sensorApiEndpoint + '/sensors/data')
+            getAllUsableSensors: function (unitClicked) {
+                return $http.get(config.sensorApiEndpoint + '/sensors/data/' + unitClicked)
                     .then(function success(response) {
                         if (response.data == '') {
                             me.sensors = [];
-                            return false;
+                            return true;
                         }
                         else {
                             me.sensors = response.data;
-                            return true;
+                            return false;
                         }
 
                     })
@@ -148,28 +148,28 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service',
                         return true;
                     });
             },
-            deleteSelectedSensors() {
-                var deleteAll = window.confirm("Do you really want to delete all selected sensors from the database?");
-                if (deleteAll) {
-                    var checked = me.sensors.filter(sensor => sensor.checked == true).map(id => id.sensor_id);
-                    $http.post(config.sensorApiEndpoint + '/sensors/delete', { params: checked })
-                        .then(function success(res) {
-                            me.newAlert(res.data, 2000, "green");
-                        })
-                        .then(_ => {
-                            me.getAllUserSensors();
-                        })
-                        .catch(function failed(error) {
-                            if (angular.isDefined(error)) {
-                                if (error.hasOwnProperty('errors')) {
-                                    var gottenErrors = error.errors.map(msg => msg.msg)
-                                    me.newAlert(gottenErrors, 2000, "red");
-                                }
-                            }
-                        });
+            // deleteSelectedSensors() {
+            //     var deleteAll = window.confirm("Do you really want to delete all selected sensors from the database?");
+            //     if (deleteAll) {
+            //         var checked = me.sensors.filter(sensor => sensor.checked == true).map(id => id.sensor_id);
+            //         $http.post(config.sensorApiEndpoint + '/sensors/delete', { params: checked })
+            //             .then(function success(res) {
+            //                 me.newAlert(res.data, 2000, "green");
+            //             })
+            //             .then(_ => {
+            //                 me.getAllUserSensors();
+            //             })
+            //             .catch(function failed(error) {
+            //                 if (angular.isDefined(error)) {
+            //                     if (error.hasOwnProperty('errors')) {
+            //                         var gottenErrors = error.errors.map(msg => msg.msg)
+            //                         me.newAlert(gottenErrors, 2000, "red");
+            //                     }
+            //                 }
+            //             });
 
-                }
-            },
+            //     }
+            // },
         })
     }
 ]

@@ -11,24 +11,15 @@
         </div>
         <div class="col-4 pr-0 text-right">
             <div class="btn-group">
-                <button class="btn btn-light btn-sm" title="Add new sensor"
-                    ng-click="addSensorTabVisible = !addSensorTabVisible; sensorsTabVisible = false"
+                <button class="btn btn-light btn-sm" title="Add new sensors" ng-click="addNewSensor($ctrl.unit.unit_id)"
                     style="color: rgb(0, 255, 0);"><i class="icon-calcplus"></i></button>
             </div>
         </div>
     </li>
     <div ng-show="addSensorTabVisible">
-        <div class="row">
-            <div class="col m-1 p-1 text-center">
-                <div class="btn-group">
-                    <button class="btn btn-outline-success btn-sm" ng-click="addNewSensor()">ADD
-                        NEW SENSOR</button>
-                    <button class="btn btn-outline-success btn-sm" ng-click="getAllUserSensors()">SELECT FROM
-                        LIST</button>
-                </div>
-            </div>
-        </div>
-        <div ng-show="addNewSensorTabExpanded">
+        <div class="m-1 p-1" style="text-align: center; background-color: rgba(115, 219, 160, 0.4); width: 100%;">Add
+            new sensor to sensor unit</div>
+        <div>
             <form name="newSensorForm" ng-submit="saveSensor(sensorName, sensorType, phenomenaId, $ctrl.unit.unit_id)"
                 role="form">
                 <div class="row pl-2 pr-2">
@@ -40,7 +31,8 @@
                     </div>
                     <div class="input-group m-1">
                         <button class="btn btn-outline-success btn-sm" title="Add new phenomena" type="button"
-                        ng-click="addNewPhenomenaTabExpanded = !addNewPhenomenaTabExpanded;"><i class="icon-calcplus"></i></button>
+                            ng-click="addNewPhenomenaTabExpanded = !addNewPhenomenaTabExpanded;"><i
+                                class="icon-calcplus"></i></button>
                         <select class="form-control"
                             ng-options="option.id as option.phenomenon_name for option in sensorService.phenomenas track by option.id"
                             ng-model="phenomenaId" required>
@@ -57,49 +49,55 @@
                     </div>
                 </div>
             </form>
-        </div>
-        <div ng-show="addNewPhenomenaTabExpanded">
-            <form name="newPhenomenaForm" ng-submit="addNewPhenomena(newPhenomenaName, newPhenomenaUnit)"
-                role="form">
-                <div class="row pl-2 pr-2">
-                    <div class="input-group m-1">
-                        <input class="form-control" placeholder="Phenomena name" ng-model="newPhenomenaName"
-                            required></input>
+            <div ng-show="addNewPhenomenaTabExpanded">
+                <form name="newPhenomenaForm" ng-submit="addNewPhenomena(newPhenomenaName, newPhenomenaUnit)"
+                    role="form">
+                    <div class="row pl-2 pr-2">
+                        <div class="input-group m-1">
+                            <input class="form-control" placeholder="Phenomena name" ng-model="newPhenomenaName"
+                                required></input>
+                        </div>
+                        <div class="input-group m-1">
+                            <input class="form-control" placeholder="Phenomena unit" ng-model="newPhenomenaUnit"
+                                required></input>
+                        </div>
                     </div>
-                    <div class="input-group m-1">
-                        <input class="form-control" placeholder="Phenomena unit" ng-model="newPhenomenaUnit"
-                            required></input>
+                    <div class="row">
+                        <div class="col-6 mb-2 text-left">
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary btn-sm"
+                                    ng-disabled="newPhenomenaForm.$invalid"><i class="icon-save-floppy"></i></button>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </form>
+            </div>
+            <div ng-show="existingSensorListVisible">
+                <div class="m-1 p-1"
+                    style="text-align: center; background-color: rgba(115, 219, 160, 0.4); width: 100%;">
+                    Add
+                    existing sensor from available sensor list</div>
+
+                <li class="row" ng-repeat="sensor in sensorService.sensors">
+                    <div class="col-7 m-1">
+                        <div class="input-group mt-2 mb-2">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" ng-model="sensor.checked" />
+                                <label class="form-check-label" style="color: rgb(136, 109, 85);">Sensor:
+                                    {{sensor.sensor_name}}</label>
+                            </div>
+                        </div>
+                    </div>
+                </li>
                 <div class="row">
-                    <div class="col-6 mb-2 text-left">
+                    <div class="col-6 m-1 text-left">
                         <div class="btn-group">
-                            <button type="submit" class="btn btn-primary btn-sm"
-                                ng-disabled="newPhenomenaForm.$invalid"><i class="icon-save-floppy"></i></button>
+                            <button class="btn btn-primary btn-sm" ng-click="saveAddedSensors($ctrl.unit.unit_id)"><i
+                                    class="icon-save-floppy"></i></button>
                         </div>
                     </div>
                 </div>
-            </form>
-        </div>
-        <div ng-show="existingSensorListVisible">
-            <li class="row" ng-repeat="sensor in sensorService.sensors">
-                <div class="col-7 m-1">
-                    <div class="input-group mt-2 mb-2">
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" ng-model="sensor.checked" />
-                            <label class="form-check-label" style="color: rgb(136, 109, 85);">Sensor:
-                                {{sensor.sensor_name}}</label>
-                        </div>
-                    </div>
-                </div>
-            </li>
-            <div class="row">
-                <div class="col-6 mb-2 text-left">
-                    <div class="btn-group">
-                        <button class="btn btn-primary btn-sm" ng-click="saveAddedSensors($ctrl.unit.unit_id)"><i
-                                class="icon-save-floppy"></i></button>
-                    </div>
-                </div>
+                <hr style="margin:1px; height:1px;border:none;color:rgb(0, 0, 0);background-color: rgb(0, 0, 0);">
             </div>
         </div>
     </div>

@@ -49,7 +49,6 @@ module.exports = {
       // or commented with /**@ngInject */
       {
         test: /\.js$/,
-        exclude: /node_modules/,
         use: [
           {
             loader: 'babel-loader',

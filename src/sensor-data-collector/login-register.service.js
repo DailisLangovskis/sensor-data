@@ -1,4 +1,4 @@
-export default ['$http', 'sens.auth.service', 'config',
+export default ['$http', 'sens.auth.service', 'HsConfig',
     function ($http, authService, config) {
         var me = this;
         angular.extend(me, {

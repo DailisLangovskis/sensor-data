@@ -87,7 +87,7 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map', 'chart.js
 
     .component('sens.unitsRow', unitsRowComponent)
     // authorization header intercepting service, for updating access token from refresh token
-    .service("sens.authInterceptor", ['sens.auth.service', '$q', '$window', '$injector', 'config',
+    .service("sens.authInterceptor", ['sens.auth.service', '$q', '$window', '$injector', 'HsConfig',
         function (authService, $q, $window, $injector, config) {
             var inFlightAuthRequest = null;
             return {

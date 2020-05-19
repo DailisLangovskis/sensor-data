@@ -1,4 +1,4 @@
-export default ['$http', 'config', 'sens.sensorGroup.service',
+export default ['$http', 'HsConfig', 'sens.sensorGroup.service',
     function ($http, config, groupService) {
         var me = this;
         angular.extend(me, {
@@ -35,6 +35,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
                 return $http.post(config.sensorApiEndpoint + '/phenomena/new', data)
                     .then(function success(response) {
                         me.getPhenomenas();
+                        return false;
                     })
                     .catch(function failed(error) {
                         if (angular.isDefined(error)) {
@@ -43,6 +44,7 @@ export default ['$http', 'config', 'sens.sensorGroup.service',
                                 me.newAlert(gottenErrors, 5000, "red");
                             }
                         }
+                        return true;
                     });
             },
             getPhenomenas: function () {

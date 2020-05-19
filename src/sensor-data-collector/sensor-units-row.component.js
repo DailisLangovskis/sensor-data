@@ -27,10 +27,12 @@ export default {
                     })
                 },
                 addNewPhenomena(newPhenomenaName, newPhenomenaUnit) {
-                    sensorService.addNewPhenomena(newPhenomenaName, newPhenomenaUnit).then(_ => {
-                        $scope.addNewPhenomenaTabExpanded = !$scope.addNewPhenomenaTabExpanded;
-                        $scope.newPhenomenaName = '';
-                        $scope.newPhenomenaUnit = '';
+                    sensorService.addNewPhenomena(newPhenomenaName, newPhenomenaUnit).then(function(response) {
+                        if(!response){
+                            $scope.addNewPhenomenaTabExpanded = !$scope.addNewPhenomenaTabExpanded;
+                            $scope.newPhenomenaName = '';
+                            $scope.newPhenomenaUnit = '';
+                        }
                     })
                 },
                 showUnitSensors(unitClicked) {

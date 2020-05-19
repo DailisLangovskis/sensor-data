@@ -34,14 +34,15 @@ var module = angular.module('hs', [
     'sens.sensorDataCollectorModule'
 ]);
 
-module.directive('hs', ['config', 'Core', 'hs.layout.service', function (config, Core, layoutService) {
+module.directive('hs', function (HsCore, HsLayoutService) {
+    'ngInject';
     return {
-        template: Core.hslayersNgTemplate,
+        template: HsCore.hslayersNgTemplate,
         link: function (scope, element) {
-            layoutService.fullScreenMap(element, Core);
+            HsLayoutService.fullScreenMap(element, HsCore);
         }
     };
-}]);
+});
 
 function getHostname() {
     var url = window.location.href
@@ -50,14 +51,14 @@ function getHostname() {
     return urlArr[0] + "//" + domain;
 };
 
-module.value('config', {
+module.value('HsConfig', {
     proxyPrefix: "/proxy/",
     default_layers: [
         new Tile({
             source: new OSM(),
             title: "Open Street layer",
             base: true,
-            visible:true,
+            visible: true,
             removable: false,
             editor: { editable: false },
         }),
@@ -94,23 +95,23 @@ module.value('config', {
     allowAddExternalDatasets: true,
     sensorApiEndpoint: REST_API_URL
 });
-module.controller('Main', ['$scope', 'Core', '$compile', 'hs.layout.service', 'hs.query.baseService', 'hs.sidebar.service', 'gettext',
-    function ($scope, Core, $compile, layoutService, queryBaseService, sidebarService, gettext) {
-        queryBaseService.nonQueryablePanels.push('sensor-data-collector');
-        $scope.Core = Core;
-        $scope.panelVisible = layoutService.panelVisible;
-        layoutService.sidebarRight = false;
+module.controller('Main', function ($scope, HsCore, $compile, HsLayoutService, HsQueryBaseService, HsSidebarService, gettext) {
+    'ngInject';
+    HsQueryBaseService.nonQueryablePanels.push('sensor-data-collector');
+    $scope.Core = HsCore;
+    $scope.panelVisible = HsLayoutService.panelVisible;
+    HsLayoutService.sidebarRight = false;
 
-        layoutService.sidebarButtons = true;
+    HsLayoutService.sidebarButtons = true;
 
-        $scope.$on("scope_loaded", function (event, args) {
-            if (args == 'Sidebar') {
-                var el = angular.element('<sens.index hs.draggable ng-if="Core.exists(\'sens.sensorDataCollectorModule\')" ng-show="panelVisible(\'sensor-data-collector\', this)"></sens.index>')[0];
-                layoutService.panelListElement.appendChild(el);
-                $compile(el)($scope);
-            }
-        });
-        sidebarService.buttons.push({ panel: 'sensor-data-collector', module: 'sens.sensorDataCollectorModule', order: -1, title: gettext('Sensor data collector'), description: gettext('Collect sensor data'), icon: 'icon-analytics-piechart' });
-    }
-]);
+    $scope.$on("scope_loaded", function (event, args) {
+        if (args == 'Sidebar') {
+            var el = angular.element('<sens.index hs.draggable ng-if="Core.exists(\'sens.sensorDataCollectorModule\')" ng-show="panelVisible(\'sensor-data-collector\', this)"></sens.index>')[0];
+            HsLayoutService.panelListElement.appendChild(el);
+            $compile(el)($scope);
+        }
+    });
+    HsSidebarService.buttons.push({ panel: 'sensor-data-collector', module: 'sens.sensorDataCollectorModule', order: -1, title: gettext('Sensor data collector'), description: gettext('Collect sensor data'), icon: 'icon-analytics-piechart' });
+}
+);
 

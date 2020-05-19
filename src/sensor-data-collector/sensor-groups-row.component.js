@@ -6,7 +6,7 @@ export default {
         group: '=',
 
     },
-    controller: ['$scope', 'sens.sensorGroup.service', 'sens.sensorUnit.service', 'hs.map.service', 'hs.query.baseService', function ($scope, groupService, unitService, HsMap, queryBaseService) {
+    controller: ['$scope', 'sens.sensorGroup.service', 'sens.sensorUnit.service', 'HsMapService', 'HsQueryBaseService', function ($scope, groupService, unitService, HsMap, queryBaseService) {
         angular.extend($scope, {
             location: '',
             time: moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ"),

@@ -1,4 +1,4 @@
-export default ['$http', 'config',
+export default ['$http', 'HsConfig',
     function ($http, config) {
         var me = this;
         angular.extend(me, {

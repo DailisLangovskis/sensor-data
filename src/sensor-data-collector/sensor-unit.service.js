@@ -3,7 +3,7 @@ import { Vector as VectorSource } from 'ol/source';
 import GeoJSON from 'ol/format/GeoJSON';
 import { Style, Icon, Stroke, Fill, Circle, Text } from 'ol/style';
 import { PROXY, DOMAIN } from '../../config';
-export default ['$http', 'config', 'sens.sensorGroup.service', 'hs.map.service', 'sens.auth.service',
+export default ['$http', 'HsConfig', 'sens.sensorGroup.service', 'HsMapService', 'sens.auth.service',
     function ($http, config, groupService, OlMap, authService) {
         var me = this;
         angular.extend(me, {

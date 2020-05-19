@@ -6,7 +6,7 @@ export default {
         unit: '=',
 
     },
-    controller: ['$scope', 'sens.sensor.service', 'hs.layout.service', '$compile', function ($scope, sensorService, layoutService, $compile) {
+    controller: ['$scope', 'sens.sensor.service', 'HsLayoutService', '$compile', function ($scope, sensorService, layoutService, $compile) {
         angular.extend($scope, {
             sensorService,
             phenomena: '',

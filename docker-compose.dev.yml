@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
 
-    sensor-data:
+    sensor-data-ui:
         container_name: sensor-data-ui
         build:           
             context: .
@@ -18,8 +18,6 @@ services:
         volumes:
             - "./config.js:/code/config.js"
             - "./src:/code/src"
-            - "./static:/code/static"
-            - "./node_modules:/code/node_modules"
             - "./package.json:/code/package.json"
             #Execute npm link in hslayers-ng repo and then npm link hslayers-ng in this repo
             - "${HSLPATH}:/code/node_modules/hslayers-ng" 

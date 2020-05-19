@@ -1,20 +1,17 @@
 FROM node:10.16-alpine
 
-RUN apk add --no-cache git
-RUN npm i pm2 -g
-
-ARG LAYMAN_GS_HOST
-ARG LAYMAN_GS_PORT
+RUN apk --update add --no-cache git openssh nodejs npm make
 
 RUN mkdir /code
+
+COPY ./src /code/src
+COPY ./config.js /code
+COPY package.json /code
+
 WORKDIR /code
 
-ADD src /code/src
-ADD package.json /code
-
-RUN npm i
+RUN npm install
 RUN node node_modules/hslayers-ng/scripts/bootstrap-isolate.js
-RUN node node_modules/webpack/bin/webpack.js --config src/webpack.prod.js --progress
+RUN node node_modules/webpack/bin/webpack --config ./src/webpack.prod.js
 
-ENTRYPOINT ["pm2", "--no-daemon", "start", "/code/src/ecosystem.config.js"]
 

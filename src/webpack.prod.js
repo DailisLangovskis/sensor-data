@@ -22,13 +22,10 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 module.exports = merge(common, {
   mode: 'production',
-  // devtool: 'source-map',
+  devtool: false,
   output: {
     // Add a chunkhash to file name so it will not be cached by browsers when content changed
     filename: '[name].[hash].bundle.js'
-  },
-  resolve: {
-    symlinks: true
   },
   plugins: [
     // Extract CSS into separated css files
@@ -56,14 +53,13 @@ module.exports = merge(common, {
       // JS minifier/uglifier
       new TerserPlugin({
         parallel: true,
-        // sourceMap: true,
         // Remove comments as well
-        terserOptions: { output: { comments: false } }
+        terserOptions: {output: {comments: false}}
       }),
       // CSS minifier
       new OptimizeCSSAssetsPlugin({
         cssProcessorPluginOptions: {
-          preset: ['default', { discardComments: { removeAll: true } }]
+          preset: ['default', {discardComments: {removeAll: true}}]
         }
       })
     ]
@@ -77,10 +73,10 @@ module.exports = merge(common, {
           'style-loader',
           {
             loader: MiniCssExtractPlugin.loader,
-            options: { publicPath: '' }
+            options: {publicPath: ''}
           },
           'css-loader'
-        ],
+        ]
       },
       {
         test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
@@ -113,13 +109,13 @@ module.exports = merge(common, {
       // AngularJS templates are cached using cache template
       {
         test: /\.html$/,
-         exclude: path.resolve(__dirname, './index.html'),
+        exclude: path.resolve(__dirname, './index.html'),
         use: [
           'ng-cache-loader?prefix=[dir]/[dir]',
           'extract-loader',
           {
             loader: 'html-loader',
-            options: { minimize: true }
+            options: {minimize: true}
           }
         ]
       }

@@ -2,25 +2,25 @@ version: '3.3'
 
 services:
 
-    sensor-data:
+    sensor-data-ui:
         container_name: sensor-data-ui
         build:           
             context: .
-            dockerfile: docker/Dockerfile
+            dockerfile: docker/Dockerfile.prod
         image: sensor-data-ui:latest
         env_file:
-            - .env_prod  
+            - .env  
         ports: #Forwarded from host to docker container
-            - ${HTTP_PORT}:${HTTP_PORT} # main application
+            - ${HTTP_PORT}:${HTTP_PORT} #node node_modules/webpack/bin/webpack --config ./src/webpack.dev.js main application
         depends_on:
             - reverse-proxy
             - rest-api
         volumes:
+            - "./config.js:/code/config.js"
             - "./src:/code/src"
-            - "./static:/code/static"
             - "./package.json:/code/package.json"
         command: > 
-            npm run dev-server
+            npm run web
     sensor-data-proxy:
         container_name: sensor-data-proxy
         image: sensor-data-ui:latest
@@ -38,7 +38,7 @@ services:
         image: rest-api:latest
         
         env_file:
-            - .env
+            - .env_prod
         ports:
             - ${API_PORT}:${API_PORT} # rest api service
         depends_on:
@@ -63,12 +63,28 @@ services:
             POSTGRES_DB: ${POSTGRES_DB}
             POSTGRES_PORT: $POSTGRES_PORT}
         restart: always
-
+    geoserver:
+        build:
+            context: geoserver/docker
+            dockerfile: Dockerfile
+        volumes:
+            - ./geoserver/data_dir:/opt/geoserver/data_dir
+            - ./geoserver/docker/code:/geoserver_code
+            - ./geoserver:/geoserver_tmp
+        restart: on-failure
+        ports:
+            - ${GS_PORT}:${GS_PORT}
+        environment:
+            - GS_VERSION=2.13.0
+        env_file:
+            - geoserver/docker/.env
+        depends_on:
+            - sensor-data-db
     reverse-proxy:
         container_name: reverse-proxy
         build:           
             context: .
-            dockerfile: Dockerfile.nginx
+            dockerfile: docker/Dockerfile.nginx
         image: reverse-proxy:latest
         env_file:
              - .env

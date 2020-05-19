@@ -39,6 +39,8 @@
                         <input class="form-control" placeholder="Sensor type" ng-model="sensorType" required></input>
                     </div>
                     <div class="input-group m-1">
+                        <button class="btn btn-outline-success btn-sm" title="Add new phenomena" type="button"
+                        ng-click="addNewPhenomenaTabExpanded = !addNewPhenomenaTabExpanded;"><i class="icon-calcplus"></i></button>
                         <select class="form-control"
                             ng-options="option.id as option.phenomenon_name for option in sensorService.phenomenas track by option.id"
                             ng-model="phenomenaId" required>
@@ -55,14 +57,6 @@
                     </div>
                 </div>
             </form>
-        </div>
-        <div class="row">
-            <div class="col m-1 p-1 text-center">
-                <div class="btn-group">
-                    <button class="btn btn-outline-success btn-sm"
-                    ng-click="addNewPhenomenaTabExpanded = !addNewPhenomenaTabExpanded;">ADD NEW PHENOMENA</button>
-                </div>
-            </div>
         </div>
         <div ng-show="addNewPhenomenaTabExpanded">
             <form name="newPhenomenaForm" ng-submit="addNewPhenomena(newPhenomenaName, newPhenomenaUnit)"

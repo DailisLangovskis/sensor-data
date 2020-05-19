@@ -26,7 +26,8 @@
     <div class="row">
         <div class="col m-1 p-1 text-center">
             <div class="btn-group">
-                <button class="btn btn-outline-success btn-sm" ng-click="addGroupTabVisible = !addGroupTabVisible; groupName = ''">ADD
+                <button class="btn btn-outline-success btn-sm"
+                    ng-click="addGroupTabVisible = !addGroupTabVisible; groupName = ''">ADD
                     SENSOR GROUP</button>
                 <button class="btn btn-outline-primary btn-sm" ng-click="showGroups()">SHOW GROUPS</button>
             </div>
@@ -46,19 +47,23 @@
             </div>
         </div>
     </div> -->
-    <div class="row">
-        <div class="input-group m-1 pl-2 pr-2" ng-show="addGroupTabVisible">
-            <div class="input-group m-1">
-                <input class="form-control" placeholder="Group name" ng-model="groupName"></input>
+    <form name="newGroupForm" ng-submit="saveGroup(groupName)" role="form">
+        <div ng-show="addGroupTabVisible">
+            <div class="row">
+                <div class="input-group m-1 pl-2 pr-2">
+                    <div class="input-group m-1">
+                        <input class="form-control" placeholder="Group name" ng-model="groupName" required></input>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6 mb-2 text-left">
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary btn-sm" ng-disabled="newGroupForm.$invalid"><i
+                                class="icon-save-floppy"></i></button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="row" ng-show="groupName">
-        <div class="col-6 mb-2 text-left">
-            <div class="btn-group">
-                <button class="btn btn-primary btn-sm" ng-click="saveGroup(groupName)"><i
-                        class="icon-save-floppy"></i></button>
-            </div>
-        </div>
-    </div>
+    </form>
 </div>

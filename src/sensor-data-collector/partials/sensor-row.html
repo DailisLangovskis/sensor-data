@@ -4,15 +4,13 @@
             <div class="input-group">
                 <div class="form-check">
                     <input type="checkbox" class="form-check-input" ng-model="$ctrl.sensor.checked" />
-                    <label class="form-check-label "
-                        style="color: rgb(121, 209, 38);">{{$ctrl.sensor.sensor_name}}</label>
+                    <label class="form-check-label " ng-click="addData($ctrl.sensor)"
+                        style="color: rgb(238, 82, 43); cursor: pointer;">{{$ctrl.sensor.sensor_name}}</label>
                 </div>
             </div>
         </div>
         <div class="col-3 pr-0 text-right">
             <div class="btn-group">
-                <button class="btn btn-outline-secondary btn-sm" title="Add new measurement"
-                    ng-click="addData($ctrl.sensor)"><i class="icon-calcplus"></i></button>
                 <button class="btn btn-outline-primary btn-sm" title="Search for measurement data"
                     ng-click="dataRequest($ctrl.sensor.sensor_id, $ctrl.unit.unit_id)"><i
                         class="icon-analytics-piechart"></i></button>
@@ -20,33 +18,34 @@
         </div>
     </li>
     <div ng-show="addSensorTabVisible">
-        <div class="row">
-            <div class="input-group m-1">
-                <input class="form-control" placeholder="sensor type" ng-model="sensorType" readonly></input>
-            </div>
-            <div class="input-group m-1">
-                <input class="form-control" placeholder="Phenomena" ng-model="phenomena[0].phenomenon_name"
-                    readonly></input>
-            </div>
-            <div class="input-group m-1">
-                <input class="form-control" placeholder="measured value" ng-model="measuredValue"></input>
-                <div class="input-group-append">
-                    <span class="input-group-text">{{phenomena[0].unit}}</span>
+        <form name="newMeasurementForm" ng-submit="saveData($ctrl.sensor.sensor_id, measuredValue, measurementTime, $ctrl.unit.unit_id)" role="form">
+            <div class="row">
+                <div class="input-group m-1">
+                    <input class="form-control" placeholder="sensor type" ng-model="sensorType" readonly></input>
+                </div>
+                <div class="input-group m-1">
+                    <input class="form-control" placeholder="Phenomena" ng-model="phenomena[0].phenomenon_name"
+                        readonly></input>
+                </div>
+                <div class="input-group m-1">
+                    <input class="form-control" placeholder="measured value" ng-model="measuredValue" required></input>
+                    <div class="input-group-append">
+                        <span class="input-group-text">{{phenomena[0].unit}}</span>
+                    </div>
+                </div>
+                <div class="input-group m-1 p-1">
+                    <input class="form-control" placeholder="measurement time" ng-model="measurementTime"></input>
                 </div>
             </div>
-            <div class="input-group m-1 p-1">
-                <input class="form-control" type="datetime-local" ng-model="measurementTime"></input>
-            </div>
-        </div>
-        <div class="row" ng-show="phenomena && measuredValue && measurementTime">
-            <div class="col-6 mb-2 text-left">
-                <div class="btn-group">
-                    <button class="btn btn-primary btn-sm" title="Save measured data"
-                        ng-click="saveData($ctrl.sensor.sensor_id, measuredValue, measurementTime, $ctrl.unit.unit_id)"><i
-                            class="icon-save-floppy"></i></button>
+            <div class="row">
+                <div class="col-6 mb-2 text-left">
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary btn-sm" ng-disabled="newMeasurementForm.$invalid"><i
+                                class="icon-save-floppy"></i></button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </form>
         <hr style="margin:1px; height:1px;border:none;color:rgb(0, 0, 0);background-color: rgb(0, 0, 0);">
     </div>
 </div>

@@ -9,7 +9,7 @@ export default {
     controller: ['$scope', 'sens.sensorGroup.service', 'sens.sensorUnit.service', 'hs.map.service', 'hs.query.baseService', function ($scope, groupService, unitService, HsMap, queryBaseService) {
         angular.extend($scope, {
             location: '',
-            time: new Date(),
+            time: moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ"),
             unitService,
             groupService,
             selectDeselectAllUnits: groupService.selectDeselectAllUnits,
@@ -21,6 +21,7 @@ export default {
             existingUnitListVisible: false,
             getAllUnitLocations: unitService.getAllUnitLocations,
 
+
             getLocationFromMap() {
                 var queryFeature = queryBaseService.queryLayer.getSource().getFeatures();
                 var coords = queryFeature[0].getGeometry().flatCoordinates;
@@ -30,7 +31,7 @@ export default {
                 $scope.unitName = '';
                 $scope.description = '';
                 $scope.location = '';
-                $scope.time = new Date();
+                $scope.time = moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ");
                 $scope.addUnitTabVisible = false
                 if ($scope.unitsTabVisible) {
                     $scope.unitsTabVisible = !$scope.unitsTabVisible;
@@ -48,12 +49,16 @@ export default {
                 }
 
             },
+            addUnitForm(){
+                $scope.addNewUnitTabExpanded = !$scope.addNewUnitTabExpanded; 
+                $scope.existingUnitListVisible = false;
+                $scope.time = moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ");
+            },
             getAllUserUnits() {
                 $scope.unitName = '';
                 $scope.description = '';
                 $scope.location = '';
-                $scope.time = new Date();
-                $scope.time = new Date();
+                $scope.time = moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ");
                 $scope.addNewUnitTabExpanded = false;
                 unitService.getAllUserUnits().then(function (response) {
                     if (!response) {
@@ -70,14 +75,13 @@ export default {
                 })
             },
             saveUnit(unitName, description, time, groupClicked) {
-                time = moment.moment(time).format("YYYY-MM-DD HH:mm:ssZ");
                 unitService.saveUnit(unitName, description, time, $scope.location, groupClicked).then(function (response) {
                     if (!response) {
                         $scope.addNewUnitTabExpanded = !$scope.addNewUnitTabExpanded;
                         $scope.location = '';
                         $scope.unitName = '';
                         $scope.description = '';
-                        $scope.time = new Date();
+                        $scope.time = moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ")
                     }
 
                 })
@@ -98,6 +102,10 @@ export default {
             $scope.description = '';
             $scope.addNewUnitTabExpanded = false;
             $scope.existingUnitListVisible = false;
+        });
+        $scope.$on('mapClicked', function(){
+            $scope.getLocationFromMap();
         })
+
     }]
 };

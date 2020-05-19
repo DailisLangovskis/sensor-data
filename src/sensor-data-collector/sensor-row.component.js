@@ -12,7 +12,7 @@ export default {
             phenomena: '',
             sensorType: '',
             measuredValue: '',
-            measurementTime: '',
+            measurementTime: moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ"),
             addSensorTabVisible: false,
             showChart: false,
             labels: [],
@@ -29,16 +29,15 @@ export default {
                         sensorService.newAlert(error, 2000, "red");;
                     })
                 $scope.sensorType = sensorClicked.sensor_type;
-                $scope.measurementTime = new Date();
+                $scope.measurementTime = moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ");
                 $scope.addSensorTabVisible = !$scope.addSensorTabVisible;
             },
             saveData(sensorClicked, measuredValue, measurementTime, whichUnit) {
-                measurementTime = moment.moment(measurementTime).format("YYYY-MM-DD HH:mm:ssZ");
                 sensorService.saveData(sensorClicked, measuredValue, measurementTime, whichUnit).then(function (response) {
                     if (!response) {
                         $scope.addSensorTabVisible = !$scope.addSensorTabVisible;
                         $scope.measuredValue = '';
-                        $scope.measurementTime = new Date();
+                        $scope.measurementTime = moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ");
                     }
                 })
             },
@@ -158,7 +157,7 @@ export default {
             $scope.phenomena = '';
             $scope.sensorType = '';
             $scope.measuredValue = '';
-            $scope.measurementTime = new Date();
+            $scope.measurementTime = moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ");
             $scope.addSensorTabVisible = false;
             sensorService.btnSelectDeseletClicked = true;
             sensorService.sensors = [];

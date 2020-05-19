@@ -3,7 +3,7 @@
         <div class="input-group mt-2">
             <div class="form-check">
                 <input type="checkbox" class="form-check-input" ng-model="$ctrl.group.checked" />
-                <label class="form-check-label">Group: {{$ctrl.group.group_name}}</label>
+                <label class="form-check-label" style="cursor: pointer;" ng-click="showUnits($ctrl.group.group_id)">Group: {{$ctrl.group.group_name}}</label>
             </div>
         </div>
     </div>
@@ -12,8 +12,6 @@
             <button class="btn btn-light btn-sm" title="Add new sensor unit"
                 ng-click="addUnitTabVisible = !addUnitTabVisible; unitsTabVisible = false"><i
                     class="icon-calcplus"></i></button>
-            <button class="btn btn-light btn-sm" title="Show existing units"
-                ng-click="showUnits($ctrl.group.group_id)"><i class="icon-search"></i></button>
         </div>
     </div>
 </li>
@@ -21,66 +19,64 @@
     <div class="row">
         <div class="col m-1 p-1 text-center">
             <div class="btn-group">
-                <button class="btn btn-outline-success btn-sm"
-                    ng-click="addNewUnitTabExpanded = !addNewUnitTabExpanded; existingUnitListVisible = false">ADD
+                <button class="btn btn-outline-success btn-sm" ng-click="addUnitForm()">ADD
                     NEW UNIT</button>
                 <button class="btn btn-outline-success btn-sm" ng-click="getAllUserUnits()">SELECT FROM LIST</button>
-                <button class="btn btn-outline-success btn-sm" title="get all unit locations" ng-click="getAllUnitLocations()"><i class="icon-map"></i></button>
+                <button class="btn btn-outline-success btn-sm" title="get all unit locations"
+                    ng-click="getAllUnitLocations()"><i class="icon-map"></i></button>
             </div>
         </div>
     </div>
     <div ng-show="addNewUnitTabExpanded">
-        <div class="row pl-2 pr-2">
-            <div class="input-group m-1">
-                <input class="form-control" placeholder="Unit name" ng-model="unitName"></input>
-            </div>
-            <div class="input-group m-1">
-                <input class="form-control" placeholder="description" ng-model="description"></input>
-            </div>
-            <div class="input-group m-1 p-1">
-                <input class="form-control" type="datetime-local" ng-model="time"></input>
-            </div>
-            <div class="input-group m-1">
-                <span style="text-align: center; background-color: rgba(115, 219, 160, 0.4);">Click on the map and press
-                    map
-                    button to set location</span>
-                <div class="input-group-prepend m-1">
-                    <button class="btn btn-outline-primary btn-sm" title="Get Location"
-                        ng-click="getLocationFromMap()"><i class="icon-map"></i></button>
+        <form name="newUnitForm" ng-submit="saveUnit(unitName, description, time, $ctrl.group.group_id)" role="form">
+            <div class="row pl-2 pr-2">
+                <div class="input-group m-1">
+                    <input class="form-control" placeholder="Unit name" ng-model="unitName" required></input>
                 </div>
-                <input class="form-control" placeholder="location" ng-model="location" readonly></input>
-            </div>
-        </div>
-        <div class="row" ng-show="unitName && description && location && time">
-            <div class="col-6 mb-2 pt-1 text-left">
-                <div class="btn-group">
-                    <button class="btn btn-primary btn-sm"
-                        ng-click="saveUnit(unitName, description,time, $ctrl.group.group_id)"><i
-                            class="icon-save-floppy"></i></button>
+                <div class="input-group m-1">
+                    <input class="form-control" placeholder="description" ng-model="description"></input>
+                </div>
+                <div class="input-group m-1">
+                    <input class="form-control" placeholder="Time created" ng-model="time" readonly></input>
+                </div>
+                <div class="m-1 p-1"
+                    style="text-align: center; background-color: rgba(115, 219, 160, 0.4); width: 100%;">Click on the
+                    map to set location</div>
+                <div class="input-group m-1">
+                    <input class="form-control" placeholder="location" ng-model="location" readonly required></input>
                 </div>
             </div>
-        </div>
-    </div>
-    <div ng-show="existingUnitListVisible">
-        <li class="row" ng-repeat="unit in unitService.allUnits">
-            <div class="col-7 m-1">
-                <div class="input-group mt-2 mb-2">
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" ng-model="unit.checked" />
-                        <label class="form-check-label" style="color: rgb(136, 109, 85);">Unit: {{unit.name}}</label>
+            <div class="row">
+                <div class="col-6 mb-2 pt-1 text-left">
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary btn-sm" ng-disabled="newUnitForm.$invalid"><i
+                                class="icon-save-floppy"></i></button>
                     </div>
                 </div>
             </div>
-        </li>
-        <div class="row">
-            <div class="col-6 mb-2 text-left">
-                <div class="btn-group">
-                    <button class="btn btn-primary btn-sm" ng-click="saveAddedUnits($ctrl.group.group_id)"><i
-                            class="icon-save-floppy"></i></button>
+        </form>
+    </div>
+</div>
+<div ng-show="existingUnitListVisible">
+    <li class="row" ng-repeat="unit in unitService.allUnits">
+        <div class="col-7 m-1">
+            <div class="input-group mt-2 mb-2">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" ng-model="unit.checked" />
+                    <label class="form-check-label" style="color: rgb(136, 109, 85);">Unit: {{unit.name}}</label>
                 </div>
             </div>
         </div>
+    </li>
+    <div class="row">
+        <div class="col-6 mb-2 text-left">
+            <div class="btn-group">
+                <button class="btn btn-primary btn-sm" ng-click="saveAddedUnits($ctrl.group.group_id)"><i
+                        class="icon-save-floppy"></i></button>
+            </div>
+        </div>
     </div>
+</div>
 </div>
 <div ng-show="unitsTabVisible">
     <sens.units-row ng-repeat="unit in groupService.selectedGroupUnits | filter: $ctrl.group.group_id" unit="unit">

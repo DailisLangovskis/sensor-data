@@ -44,10 +44,10 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', 'HsMapService',
                     url: function () {
                         const username = authService.getUsername()
                         console.log(DOMAIN);
-                        return PROXY + DOMAIN +`/geoserver/sensor-data-collector/ows?service=WFS&` +
+                        return PROXY + DOMAIN + `/geoserver/sensor-data-collector/ows?service=WFS&` +
                             `version=1.0.0&request=GetFeature&typeName=sensor-data-collector%3Aunits_positions&` +
-                            `maxFeatures=50000&outputFormat=json&CQL_FILTER=${encodeURIComponent("user_name='"+username+"'")}`
-                     },
+                            `maxFeatures=50000&outputFormat=json&CQL_FILTER=${encodeURIComponent("user_name='" + username + "'")}`
+                    },
                 })
                 me.unitLayer = new VectorLayer({
                     title: 'Unit positions layer',
@@ -63,8 +63,13 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', 'HsMapService',
                     show_in_manager: true,
                     visible: true
                 });
-                me.unitLayer.set('hoveredKeys',['unit_name', 'user_name', 'unit_id', 'longitude', 'latitude']);
+                me.unitLayer.set('hoveredKeys', ['unit_name', 'user_name', 'unit_id', 'longitude', 'latitude']);
                 OlMap.loaded().then(map => {
+                    map.getLayers().forEach((lyr) => {
+                        if (lyr.get('title') == me.unitLayer.get('title')) {
+                            map.removeLayer(lyr);
+                        }
+                    });
                     map.addLayer(me.unitLayer)
                 });
             },

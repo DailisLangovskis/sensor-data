@@ -105,7 +105,7 @@ module.controller('Main', function ($scope, HsCore, $compile, HsLayoutService, H
     HsLayoutService.sidebarButtons = true;
 
     $scope.$on("scope_loaded", function (event, args) {
-        if (args == 'Sidebar') {
+        if (args == 'Sidebar' && document.getElementsByTagName('sens.sensorDataCollectorModule').length == 0) {
             var el = angular.element('<sens.index hs.draggable ng-if="Core.exists(\'sens.sensorDataCollectorModule\')" ng-show="panelVisible(\'sensor-data-collector\', this)"></sens.index>')[0];
             HsLayoutService.panelListElement.appendChild(el);
             $compile(el)($scope);

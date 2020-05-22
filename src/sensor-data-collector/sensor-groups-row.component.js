@@ -6,13 +6,12 @@ export default {
         group: '=',
 
     },
-    controller: ['$scope', 'sens.sensorGroup.service', 'sens.sensorUnit.service', 'HsMapService', 'HsQueryBaseService', function ($scope, groupService, unitService, HsMap, queryBaseService) {
+    controller: ['$scope', 'sens.sensorGroup.service', 'sens.sensorUnit.service', 'HsQueryBaseService', function ($scope, groupService, unitService, queryBaseService) {
         angular.extend($scope, {
             location: '',
             time: moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ"),
             unitService,
             groupService,
-            selectDeselectAllUnits: groupService.selectDeselectAllUnits,
             unitsTabVisible: false,
             addUnitTabVisible: false,
             unitName: '',
@@ -24,13 +23,18 @@ export default {
                 $scope.location = toLonLat(coords);
             },
             showUnits(groupClicked) {
+                $scope.existingUnitListVisible = false;
+                $scope.unitName = '';
+                $scope.description = '';
+                $scope.location = '';
+                $scope.time = moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ");
                 $scope.addUnitTabVisible = false
                 if ($scope.unitsTabVisible) {
                     $scope.unitsTabVisible = !$scope.unitsTabVisible;
                 }
                 else {
                     groupService.getGroupUnits(groupClicked).then(function (response) {
-                        if (!response) {
+                        if (response) {
                             window.alert("No units found for this group!")
                         }
                         else {
@@ -41,36 +45,32 @@ export default {
                 }
 
             },
-            addNewUnits(groupClicked){
-                if($scope.addUnitTabVisible){
+            addNewUnits(groupClicked) {
+                if ($scope.addUnitTabVisible) {
                     $scope.addUnitTabVisible = !$scope.addUnitTabVisible;
-                    $scope.existingUnitListVisible = false; 
+                    $scope.existingUnitListVisible = false;
                 }
                 else {
                     $scope.getAllUsableUnits(groupClicked);
-                        $scope.unitsTabVisible = false;
-                        $scope.time = moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ");
-                        $scope.addUnitTabVisible = true;
-                    
-
+                    $scope.unitsTabVisible = false;
+                    $scope.time = moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ");
+                    $scope.addUnitTabVisible = true;
                 }
-                     
-                
+
             },
             getAllUsableUnits(groupClicked) {
                 unitService.getAllUnitLocations(),
-                unitService.getAllUsableUnits(groupClicked).then(function (response) {
-                    if (response) return;
-                    else {
-                        $scope.existingUnitListVisible = true;
-                    }
-                })
+                    unitService.getAllUsableUnits(groupClicked).then(function (response) {
+                        if (response) return;
+                        else {
+                            $scope.existingUnitListVisible = true;
+                        }
+                    })
             },
             saveAddedUnits(groupClicked) {
                 unitService.saveAddedUnits(groupClicked).then(_ => {
                     $scope.unitsTabVisible = false;
                     $scope.showUnits(groupClicked);
-                    $scope.existingUnitListVisible = false;
                 })
             },
             saveUnit(unitName, description, time, groupClicked) {
@@ -83,16 +83,10 @@ export default {
                     }
                 })
             },
-            deleteSelectedUnits(groupClicked) {
-                groupService.deleteSelectedUnits(groupClicked).then(function (response) {
-                    if (response) {
-                        $scope.unitsTabVisible = false;
-                        $scope.showUnits(groupClicked);
-                    } else {
-                        $scope.unitsTabVisible = false;
-                    }
-                })
-            }
+            checkGroup(groupChecked) {
+                groupChecked.checked = !groupChecked.checked;
+                groupService.selectAllUnits(groupChecked);
+            },
         });
         $scope.$on('logout', function () {
             $scope.location = '';
@@ -102,7 +96,7 @@ export default {
             $scope.description = '';
             $scope.existingUnitListVisible = false;
         });
-        $scope.$on('mapClicked', function(){
+        $scope.$on('mapClicked', function () {
             $scope.getLocationFromMap();
         })
 

@@ -76,11 +76,12 @@ async function deleteGroupsHandler(req, res) {
         return res.status(422).json({ errors: errors.array() });
     }
     var id = req.body.params.join(',');
+    console.log(id);
     var deleteGroups = 'DELETE FROM groups WHERE group_id IN (' + id + ')';
     try {
         await db.query(deleteGroups)
             .then(_ => {
-                res.status(201).send('Groups deleted');
+                res.status(201).send();
             })
             .catch(e => console.log(e.stack))
     } catch (e) {
@@ -94,14 +95,15 @@ async function deleteUnitsHandler(req, res) {
         return res.status(422).json({ errors: errors.array() });
     }
     var id = req.body.params.join(',');
+    var groups = req.body.groups;
     var deleteUnits = 'DELETE FROM units_groups WHERE unit_id IN (' + id + ') and group_id = ($1)';
-    try {
-        await db.query(deleteUnits, [req.body.group])
-            .then(_ => {
-                res.status(201).send('Units deleted');
-            })
-            .catch(e => console.log(e.stack))
-    } catch (e) {
-        console.log(e.stack)
-    }
+    groups.forEach(async group => {
+        try {
+            await db.query(deleteUnits, [group])
+                .catch(e => console.log(e.stack))
+        } catch (e) {
+            console.log(e.stack)
+        }
+        res.status(201).send();
+    })
 }

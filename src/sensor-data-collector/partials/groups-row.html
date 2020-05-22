@@ -2,7 +2,7 @@
     <div class="col-7 m-1">
         <div class="input-group mt-2">
             <div class="form-check">
-                <input type="checkbox" class="form-check-input" ng-model="$ctrl.group.checked" />
+                <input type="checkbox" class="form-check-input" ng-model="$ctrl.group.checked" ng-click="checkGroup($ctrl.group)"/>
                 <label class="form-check-label" style="cursor: pointer;"
                     ng-click="showUnits($ctrl.group.group_id)">Group: {{$ctrl.group.group_name}}</label>
             </div>
@@ -17,16 +17,6 @@
 </li>
 
 <div ng-show="addUnitTabVisible">
-    <!-- <div class="row">
-        <div class="col-8">
-            <div class="m-1 p-1" style="text-align: center; background-color: rgba(115, 219, 160, 0.4); width: 100%;">
-                Get unit positions layer</div>
-        </div>
-        <div class="col-3 m-1 text-right">
-            <button class="btn btn-outline-success btn-sm" title="get all unit locations"
-                ng-click="getAllUnitLocations()"><i class="icon-map"></i></button>
-        </div>
-    </div> -->
     <div class="m-1 p-1" style="text-align: center; background-color: rgba(115, 219, 160, 0.4); width: 100%;">Add
         new sensor unit to sensor group</div>
     <div>
@@ -58,7 +48,7 @@
             </div>
         </form>
     </div>
-    <div ng-show="existingUnitListVisible">
+    <div style="overflow: auto;" ng-show="existingUnitListVisible">
         <div class="m-1 p-1" style="text-align: center; background-color: rgba(115, 219, 160, 0.4); width: 100%;">
             Add
             existing sensor unit from available unit list</div>
@@ -75,25 +65,14 @@
         <div class="row">
             <div class="col-6 mb-2 text-left">
                 <div class="btn-group">
-                    <button class="btn btn-primary btn-sm" type="button" ng-click="saveAddedUnits($ctrl.group.group_id)"><i
-                            class="icon-save-floppy"></i></button>
+                    <button class="btn btn-primary btn-sm" type="button"
+                        ng-click="saveAddedUnits($ctrl.group.group_id)"><i class="icon-save-floppy"></i></button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <div ng-show="unitsTabVisible">
-    <sens.units-row ng-repeat="unit in groupService.selectedGroupUnits | filter: $ctrl.group.group_id" unit="unit">
+    <sens.units-row ng-repeat="unit in groupService.selectedGroupUnits | filter: $ctrl.group.group_id" unit="unit" group="$ctrl.group">
     </sens.units-row>
-    <div class="row">
-        <div class="col m-1 pl-3 text-left">
-            <div class="btn-group">
-                <button type="button" class=" btn btn-outline-secondary btn-sm"
-                    ng-click="selectDeselectAllUnits($ctrl.group.group_id)" translate>SELECT/DESELECT UNITS</button>
-                <button class="btn btn-outline-danger btn-sm" ng-click="deleteSelectedUnits($ctrl.group.group_id)"><i
-                        class="icon-trash"></i></button>
-            </div>
-        </div>
-    </div>
 </div>
-<hr style="margin:1px; height:1px;border:none;color:rgb(0, 0, 0);background-color: rgb(0, 0, 0);">

@@ -5,36 +5,39 @@ export default ['$http', 'HsConfig',
             btnSelectDeselectClicked: false,
             groups: [],
             selectedGroupUnits: [],
-            groupClicked: '',
-
             selectDeselectAllGroups() {
                 me.btnSelectDeselectClicked = !me.btnSelectDeselectClicked;
-                me.groups.forEach(group => group.checked = me.btnSelectDeselectClicked);
+                me.groups.forEach(function (group) {
+                    group.checked = me.btnSelectDeselectClicked;
+                    me.selectAllUnits(group);
+                })
             },
-            selectDeselectAllUnits(groupClicked) {
-                me.btnSelectDeselectClicked = !me.btnSelectDeselectClicked;
-                me.selectedGroupUnits.forEach(unit => {
-                    if (unit.group_id == groupClicked) {
-                        unit.checked = me.btnSelectDeselectClicked
-                    }
-                });
+            selectAllUnits(group) {
+                if (me.selectedGroupUnits == 0) return;
+                else {
+                    me.selectedGroupUnits.forEach(unit => {
+                        if (unit.group_id == group.group_id) {
+                            unit.checked = group.checked;
+                        }
+                    });
+                }
             },
-
             getGroupUnits(groupClicked) {
-                me.groupClicked = groupClicked;
                 return $http.get(config.sensorApiEndpoint + '/groups/units/' + groupClicked)
                     .then(function success(response) {
                         return response.data;
                     }).then(function (response) {
                         if (response == '') {
-                            return false;
+                            return true;
                         } else {
                             me.selectedGroupUnits = me.selectedGroupUnits.concat(response.filter(data => me.selectedGroupUnits.filter(gu => gu.group_id == data.group_id && gu.unit_id == data.unit_id).length == 0));
-                            return true;
+                            me.selectedGroupUnits.forEach(u => u.checked = false);
+                            return false;
                         }
                     })
                     .catch(function failed(error) {
                         console.error("Error!", error);
+                        return true;
                     })
             },
             getGroups() {
@@ -42,16 +45,18 @@ export default ['$http', 'HsConfig',
                     .then(function success(response) {
                         if (response.data == '') {
                             me.groups = [];
-                            return false;
+                            return true;
                         }
                         else {
                             me.groups = response.data;
-                            return true;
+                            me.groups.forEach(g => g.checked = false);
+                            return false;
                         }
 
                     })
                     .catch(function failed(error) {
                         console.error("Error!", error);
+                        return true;
                     });
             },
             saveGroup: function (groupName) {
@@ -73,60 +78,45 @@ export default ['$http', 'HsConfig',
                     });
             },
             deleteSelectedGroups() {
-                var deleteAll = window.confirm("Do you really want to delete all selected groups from the database?");
-                if (deleteAll) {
-                    var checked = me.groups.filter(group => group.checked == true).map(id => id.group_id);
-                    return $http.post(config.sensorApiEndpoint + '/groups/delete', { params: checked })
-                        .then(function success(res) {
-                            me.newAlert(res.data, 2000, "green");
-                        })
-                        .then(_ => {
-                            me.groups = me.groups.filter(group => group.checked != true);
-                            if (me.groups == '') {
-                                return true;
+                var checked = me.groups.filter(group => group.checked == true).map(id => id.group_id);
+                return $http.post(config.sensorApiEndpoint + '/groups/delete', { params: checked })
+                    .then(_ => {
+                        me.groups = me.groups.filter(group => group.checked != true);
+                        checked = [];
+                        if (me.groups == '') {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
+                    })
+                    .catch(function failed(error) {
+                        if (angular.isDefined(error)) {
+                            if (error.hasOwnProperty('errors')) {
+                                var gottenErrors = error.errors.map(msg => msg.msg)
+                                me.newAlert(gottenErrors, 2000, "red");
                             }
-                            else {
-                                return false;
-                            }
-                        })
-                        .catch(function failed(error) {
-                            if (angular.isDefined(error)) {
-                                if (error.hasOwnProperty('errors')) {
-                                    var gottenErrors = error.errors.map(msg => msg.msg)
-                                    me.newAlert(gottenErrors, 2000, "red");
-                                }
-                            }
-                        });
-
-                }
+                        }
+                    });
             },
-            deleteSelectedUnits(groupClicked) {
-                var deleteAll = window.confirm("Do you really want to delete all selected units from the group?");
-                if (deleteAll) {
-                    var checked = me.selectedGroupUnits.filter(unit => unit.checked == true).map(id => id.unit_id);
-                    return $http.post(config.sensorApiEndpoint + '/groups/delete/units', { params: checked, group: groupClicked })
-                        .then(function success(res) {
-                            me.newAlert(res.data, 2000, "green");
-                        })
-                        .then(_ => {
-                            me.selectedGroupUnits = me.selectedGroupUnits.filter(unit => unit.checked != true);
-                            if (me.selectedGroupUnits.filter(u => u.group_id != groupClicked)) {
-                                return true;
+            deleteSelectedUnits() {
+                var checked = me.selectedGroupUnits.filter(unit => unit.checked == true).map(id => id.unit_id);
+                var unitsGroupArray = me.selectedGroupUnits.filter(unit => unit.checked == true).map(group_id => group_id.group_id);
+                return $http.post(config.sensorApiEndpoint + '/groups/delete/units', { params: checked, groups: unitsGroupArray })
+                    .then(_ => {
+                        me.selectedGroupUnits = me.selectedGroupUnits.filter(unit => unit.checked != true);
+                        checked = [];
+                        unitsGroupArray = [];
+                        return false;
+                    })
+                    .catch(function failed(error) {
+                        if (angular.isDefined(error)) {
+                            if (error.hasOwnProperty('errors')) {
+                                var gottenErrors = error.errors.map(msg => msg.msg)
+                                me.newAlert(gottenErrors, 2000, "red");
                             }
-                            else {
-                                return false;
-                            }
-                        })
-                        .catch(function failed(error) {
-                            if (angular.isDefined(error)) {
-                                if (error.hasOwnProperty('errors')) {
-                                    var gottenErrors = error.errors.map(msg => msg.msg)
-                                    me.newAlert(gottenErrors, 2000, "red");
-                                }
-                            }
-                        });
-
-                }
+                        }
+                    });
             },
             //custom alert box
             newAlert(msg, timer, background) {

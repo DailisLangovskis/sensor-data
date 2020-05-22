@@ -3,8 +3,8 @@
         <div class="col-7 mt-1">
             <div class="input-group">
                 <div class="form-check">
-                    <input type="checkbox" class="form-check-input" ng-model="$ctrl.unit.checked" />
-                    <label class="form-check-label" ng-click="showUnitSensors($ctrl.unit.unit_id)"
+                    <input type="checkbox" class="form-check-input" ng-checked="$ctrl.group.checked" ng-module="$ctrl.unit.checked" ng-click="checkUnit($ctrl.unit)"/>
+                    <label class="form-check-label" ng-click="getUnitSensors($ctrl.unit.unit_id)"
                         style="color: rgb(136, 109, 85); cursor: pointer;">Unit: {{$ctrl.unit.name}}</label>
                 </div>
             </div>
@@ -105,17 +105,5 @@
         <sens.sensor-row ng-repeat="sensor in unitService.unitsSensors | filter: $ctrl.unit.unit_id" unit="$ctrl.unit"
             sensor="sensor">
         </sens.sensor-row>
-        <div class="row">
-            <div class="col m-1 pl-3 text-left">
-                <div class="btn-group">
-                    <button type="button" class=" btn btn-outline-secondary btn-sm"
-                        ng-click="selectDeselectAllSensors($ctrl.unit.unit_id)" translate>SELECT/DESELECT
-                        SENSORS</button>
-                    <button class="btn btn-outline-danger btn-sm"
-                        ng-click="deleteSelectedSensors($ctrl.unit.unit_id)"><i class="icon-trash"></i></button>
-                </div>
-            </div>
-        </div>
-        <hr style="margin:1px; height:1px;border:none;color:rgb(0, 0, 0);background-color: rgb(0, 0, 0);">
     </div>
 </div>

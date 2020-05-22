@@ -106,41 +106,44 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map', 'chart.js
                         authService.returnToLogin();
                         return;
                     } else {
-                    switch (response.status) {
-                        case 401:
-                            authService.clearToken();
-                            var deffered = $q.defer();
-                            if (!inFlightAuthRequest) {
-                                inFlightAuthRequest = $injector.get('$http').post(config.sensorApiEndpoint + '/auth/token', { refreshToken: authService.getRefreshToken() });
+                        switch (response.status) {
+                            case 401:
+                                authService.clearToken();
+                                var deffered = $q.defer();
+                                if (!inFlightAuthRequest) {
+                                    inFlightAuthRequest = $injector.get('$http').post(config.sensorApiEndpoint + '/auth/token', { refreshToken: authService.getRefreshToken() });
 
-                            }
-                            inFlightAuthRequest.then(function (res) {
-                                inFlightAuthRequest = null
-                                if(res === undefined) return;
-                                authService.setToken(res.data.accessToken);
-                                $injector.get('$http')(response.config).then(function (resp) {
-                                    deffered.resolve(resp);
-                                }, function (resp) {
-                                    deffered.reject(resp);
+                                }
+                                inFlightAuthRequest.then(function (res) {
+                                    inFlightAuthRequest = null
+                                    if (res === undefined) return;
+                                    authService.setToken(res.data.accessToken);
+                                    $injector.get('$http')(response.config).then(function (resp) {
+                                        deffered.resolve(resp);
+                                    }, function (resp) {
+                                        deffered.reject(resp);
+                                    });
+
+                                }, function (error) {
+                                    inFlightAuthRequest = null;
+                                    $window.alert("Please relog into the site!");
+                                    deffered.reject();
+                                    authService.clearAllToken();
+                                    authService.returnToLogin();
+
+                                    return;
                                 });
-
-                            }, function (error) {
-                                inFlightAuthRequest = null;
                                 $window.alert("Please relog into the site!");
                                 deffered.reject();
                                 authService.clearAllToken();
                                 authService.returnToLogin();
-                                
-                                return;
-                            });
-                            $window.alert("Please relog into the site!");
-                            return deffered.promise;
-                            break;
-                        default:
-                            return $q.reject(response.data);
-                            break;
-                    }
-                    return response || $q.when(response);
+                                return deffered.promise;
+                                break;
+                            default:
+                                return $q.reject(response.data);
+                                break;
+                        }
+                        return response || $q.when(response);
                     };
                 }
             }

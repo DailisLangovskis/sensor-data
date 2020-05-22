@@ -2,17 +2,11 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service',
     function ($http, config, groupService) {
         var me = this;
         angular.extend(me, {
-            btnSelectDeseletClicked: true,
             sensors: [],
             phenomenas: [],
             phenomena: '',
             sensorCollectedData: [],
-            featureCollection: '',
             newAlert: groupService.newAlert,
-            selectDeselectAllSensors() {
-                me.btnSelectDeseletClicked = !me.btnSelectDeseletClicked;
-                me.sensors.forEach(sensor => sensor.checked = me.btnSelectDeseletClicked);
-            },
             getAllUsableSensors: function (unitClicked) {
                 return $http.get(config.sensorApiEndpoint + '/sensors/data/' + unitClicked)
                     .then(function success(response) {
@@ -30,8 +24,8 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service',
                         console.error("Error!", error);
                     });
             },
-            addNewPhenomena(newPhenomenaName, newPhenomenaUnit){
-                var data = { name: newPhenomenaName, unit: newPhenomenaUnit};
+            addNewPhenomena(newPhenomenaName, newPhenomenaUnit) {
+                var data = { name: newPhenomenaName, unit: newPhenomenaUnit };
                 return $http.post(config.sensorApiEndpoint + '/phenomena/new', data)
                     .then(function success(response) {
                         me.getPhenomenas();
@@ -68,17 +62,6 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service',
                         return response.data;
                     }).then(function (response) {
                         me.phenomena = response;
-                    })
-                    .catch(function failed(error) {
-                        console.error("Error!", error);
-                    })
-            },
-            getSelectedFeatureCollection: function (sensorSelected) {
-                return $http.get(config.sensorApiEndpoint + '/features/load/' + sensorSelected.sensor_id)
-                    .then(function success(response) {
-                        return response.data;
-                    }).then(function (response) {
-                        me.featureCollection = response;
                     })
                     .catch(function failed(error) {
                         console.error("Error!", error);

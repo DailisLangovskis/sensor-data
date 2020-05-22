@@ -10,7 +10,7 @@ module.exports = router
 //Get all units
 router.get('/data/:id', getAllUsableUnitsHandler)
 //Get all units sensors
-router.get('/sensors/:id', showUnitSensorsHandler)
+router.get('/sensors/:id', getUnitSensorsHandler)
 //Delete all selected units sensors
 router.post('/delete/sensors', [
     check('params').isLength({ min: 1 }).withMessage("There was no sensor selected!")
@@ -63,7 +63,7 @@ async function getAllUsableUnitsHandler(req, res) {
     }
 }
 
-async function showUnitSensorsHandler(req, res) {
+async function getUnitSensorsHandler(req, res) {
     try {
         var queryString = 'SELECT s.sensor_name,s.sensor_id,s.sensor_type, u.unit_id FROM sensors_units as su\
         INNER JOIN sensors as s\
@@ -83,16 +83,17 @@ async function deleteSensorsHandler(req, res) {
         return res.status(422).json({ errors: errors.array() })
     }
     var id = req.body.params.join(',')
+    var units = req.body.units
     var deleteSensors = 'DELETE FROM sensors_units WHERE sensor_id IN (' + id + ') and unit_id = ($1)';
-    try {
-        await db.query(deleteSensors, [req.body.unit])
-            .then(_ => {
-                res.status(201).send('Sensors deleted')
-            })
-            .catch(e => console.log(e.stack))
-    } catch (e) {
-        console.log(e.stack)
-    }
+    units.forEach(async unit => {
+        try {
+            await db.query(deleteSensors, [unit])
+                .catch(e => console.log(e.stack))
+        } catch (e) {
+            console.log(e.stack)
+        }
+        res.status(201).send();
+    })
 }
 
 function saveAddedUnitsHandler(req, res) {

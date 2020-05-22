@@ -7,35 +7,38 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', 'HsMapService',
     function ($http, config, groupService, OlMap, authService) {
         var me = this;
         angular.extend(me, {
-            btnSelectDeseletClicked: false,
             unitsSensors: [],
-            featureCollection: '',
             newAlert: groupService.newAlert,
             unitClicked: '',
+            checkedUnits: [],
             allUnits: [],
-            selectDeselectAllSensors(unitClicked) {
-                me.btnSelectDeseletClicked = !me.btnSelectDeseletClicked;
-                me.unitsSensors.forEach(sensor => {
-                    if (sensor.unit_id == unitClicked) {
-                        sensor.checked = me.btnSelectDeseletClicked
-                    }
-                });
+            selectAllUnitsSensors(checkedUnit) {
+                if (me.unitsSensors == 0) return;
+                else {
+                    me.unitsSensors.forEach(sensor => {
+                        if (sensor.unit_id == checkedUnit.unit_id) {
+                            sensor.checked = checkedUnit.checked;
+                        }
+                    });
+                }
             },
-            showUnitSensors(unitClicked) {
+            getUnitSensors(unitClicked) {
                 me.unitClicked = unitClicked;
                 return $http.get(config.sensorApiEndpoint + '/units/sensors/' + unitClicked)
                     .then(function success(response) {
                         return response.data;
                     }).then(function (response) {
                         if (response == '') {
-                            return false
+                            return true;
                         } else {
                             me.unitsSensors = me.unitsSensors.concat(response.filter(data => me.unitsSensors.filter(u => u.unit_id == data.unit_id && u.sensor_id == data.sensor_id).length == 0));
-                            return true
+                            me.unitsSensors.forEach(s => s.checked = false);
+                            return false;
                         }
                     })
                     .catch(function failed(error) {
                         console.error("Error!", error);
+                        return true;
                     })
             },
             getAllUnitLocations() {
@@ -122,33 +125,22 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', 'HsMapService',
                         return true;
                     });
             },
-            deleteSelectedSensors(unitClicked) {
-                var deleteAll = window.confirm("Do you really want to delete all selected sensors from the sensor unit?");
-                if (deleteAll) {
-                    var checked = me.unitsSensors.filter(sensor => sensor.checked == true).map(id => id.sensor_id);
-                    return $http.post(config.sensorApiEndpoint + '/units/delete/sensors', { params: checked, unit: unitClicked })
-                        .then(function success(res) {
-                            me.newAlert(res.data, 2000, "green");
-                        })
-                        .then(_ => {
-                            me.unitsSensors = me.unitsSensors.filter(unit => unit.checked != true);
-                            if (me.unitsSensors.filter(s => s.unit_id != unitClicked)) {
-                                return false;
+            deleteSelectedSensors() {
+                var checked = me.unitsSensors.filter(sensor => sensor.checked == true).map(id => id.sensor_id);
+                var sensorUnitArray = me.unitsSensors.filter(sensor => sensor.checked == true).map(unit_id => unit_id.unit_id);
+                return $http.post(config.sensorApiEndpoint + '/units/delete/sensors', { params: checked, units: sensorUnitArray })
+                    .then(_ => {
+                        me.unitsSensors = me.unitsSensors.filter(unit => unit.checked != true);
+                        return false;
+                    })
+                    .catch(function failed(error) {
+                        if (angular.isDefined(error)) {
+                            if (error.hasOwnProperty('errors')) {
+                                var gottenErrors = error.errors.map(msg => msg.msg)
+                                me.newAlert(gottenErrors, 2000, "red");
                             }
-                            else {
-                                return true;
-                            }
-                        })
-                        .catch(function failed(error) {
-                            if (angular.isDefined(error)) {
-                                if (error.hasOwnProperty('errors')) {
-                                    var gottenErrors = error.errors.map(msg => msg.msg)
-                                    me.newAlert(gottenErrors, 2000, "red");
-                                }
-                            }
-                        });
-
-                }
+                        }
+                    });
             }
         })
     }

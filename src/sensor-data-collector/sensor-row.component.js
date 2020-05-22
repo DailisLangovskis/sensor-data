@@ -3,7 +3,7 @@ export default {
     template: require('./partials/sensor-row.html'),
     bindings: {
         sensor: '=',
-        unit: '=',
+        unit: '='
 
     },
     controller: ['$scope', 'sens.sensor.service', 'HsLayoutService', '$compile', function ($scope, sensorService, layoutService, $compile) {
@@ -59,6 +59,9 @@ export default {
                     }
                 })
             },
+            checkSensor(checkedSensor) {
+                checkedSensor.checked =! checkedSensor.checked;
+            },
             buildChart(sensorClicked, unitSelected, response) {
                 var collectedData = response.filter(data => data.sensor_id == sensorClicked && data.unit_id == unitSelected);
                 var labels = collectedData.map(data => data.time_stamp);
@@ -97,9 +100,9 @@ export default {
                             xAxes: [{
                                 scaleLabel: {
                                     display: true,
-                                    labelString:"Date"
+                                    labelString: "Date"
                                 },
-                                ticks:{
+                                ticks: {
                                     maxRotation: 0
                                 },
                                 distribution: 'linear',
@@ -116,7 +119,7 @@ export default {
                                         year: 'YYYY'
                                     },
                                 },
-                                
+
                             }],
                             yAxes: [{
                                 scaleLabel: {
@@ -128,25 +131,25 @@ export default {
                                 }
                             }]
                         },
-                            plugins: {
+                        plugins: {
+                            zoom: {
+                                pan: {
+                                    enabled: true,
+                                    mode: "x",
+                                    speed: 100,
+                                    threshold: 100
+                                },
+                                // Container for zoom options
                                 zoom: {
-                                    pan: {
-                                        enabled: true,
-                                        mode: "x",
-                                        speed: 100,
-                                        threshold: 100
-                                    },
-                                    // Container for zoom options
-                                    zoom: {
-                                        enabled: true,
-                                        drag: false,
-                                        mode: "x",
-                                        limits: {
-                                            max: 10,
-                                            min: 0.5
-                                        }
+                                    enabled: true,
+                                    drag: false,
+                                    mode: "x",
+                                    limits: {
+                                        max: 10,
+                                        min: 0.5
                                     }
                                 }
+                            }
                         }
                     },
                 });
@@ -159,7 +162,6 @@ export default {
             $scope.measuredValue = '';
             $scope.measurementTime = moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ");
             $scope.addSensorTabVisible = false;
-            sensorService.btnSelectDeseletClicked = true;
             sensorService.sensors = [];
             sensorService.phenomena = [];
             sensorService.phenomena = '';

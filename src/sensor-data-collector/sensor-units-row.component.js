@@ -2,6 +2,7 @@ export default {
     template: require('./partials/units-row.html'),
     bindings: {
         unit: '=',
+        group: '=',
 
     },
     controller: ['$scope', 'sens.sensorUnit.service', 'sens.sensor.service',
@@ -9,7 +10,6 @@ export default {
             angular.extend($scope, {
                 sensorService,
                 unitService,
-                selectDeselectAllSensors: unitService.selectDeselectAllSensors,
                 addSensorTabVisible: false,
                 sensorsTabVisible: false,
                 existingSensorListVisible: false,
@@ -42,13 +42,14 @@ export default {
                         }
                     })
                 },
-                showUnitSensors(unitClicked) {
+                getUnitSensors(unitClicked) {
                     $scope.addSensorTabVisible = false;
+                    $scope.existingSensorListVisible = false;
                     if ($scope.sensorsTabVisible) {
                         $scope.sensorsTabVisible = !$scope.sensorsTabVisible;
                     } else {
-                        unitService.showUnitSensors(unitClicked).then(function (response) {
-                            if (!response) {
+                        unitService.getUnitSensors(unitClicked).then(function (response) {
+                            if (response) {
                                 window.alert("There where no sensors found in this unit!")
                             }
                             else {
@@ -59,10 +60,10 @@ export default {
                 },
                 getAllUsableSensors(unitClicked) {
                     sensorService.getAllUsableSensors(unitClicked).then(function (response) {
-                        if(response) return;
+                        if (response) return;
                         else {
-                            $scope.existingSensorListVisible = true;   
-                        }                                          
+                            $scope.existingSensorListVisible = true;
+                        }
                     })
                 },
                 saveSensor(sensorName, sensorType, phenomenaId, unitClicked) {
@@ -77,20 +78,13 @@ export default {
                 saveAddedSensors(unitClicked) {
                     sensorService.saveAddedSensors(unitClicked).then(_ => {
                         $scope.sensorsTabVisible = false;
-                        $scope.showUnitSensors(unitClicked);
-                        $scope.existingSensorListVisible = false;
+                        $scope.getUnitSensors(unitClicked);
                     })
                 },
-                deleteSelectedSensors(unitClicked) {
-                    unitService.deleteSelectedSensors(unitClicked).then(function (response) {
-                        if (!response) {
-                            $scope.sensorsTabVisible = false;
-                            $scope.showUnitSensors(unitClicked);
-                        } else{
-                            $scope.sensorsTabVisible = false;
-                        }
-                    })
-                }
+                checkUnit(checkedUnit) {
+                    checkedUnit.checked =! checkedUnit.checked;
+                    unitService.selectAllUnitsSensors(checkedUnit);
+                },
             });
             $scope.$on('logout', function () {
                 $scope.addSensorTabVisible = false;
@@ -102,11 +96,10 @@ export default {
                 $scope.phenomenaId = '';
                 $scope.newPhenomenaName = '';
                 $scope.newPhenomenaUnit = '';
-                unitService.btnSelectDeseletClicked = true;
                 unitService.unitsSensors = [];
-                unitService.featureCollection = '';
                 unitService.unitSelected = '';
                 unitService.allUnits = [];
+                unitService.checkedUnits = [];
             })
         }
     ]

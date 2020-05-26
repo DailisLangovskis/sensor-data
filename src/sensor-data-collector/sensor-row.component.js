@@ -6,7 +6,7 @@ export default {
         unit: '='
 
     },
-    controller: ['$scope', 'sens.sensor.service', 'HsLayoutService', '$compile', function ($scope, sensorService, layoutService, $compile) {
+    controller: ['$scope', 'sens.sensor.service', 'HsLayoutService', '$compile', function ($scope, sensorService, HsLayoutService, $compile) {
         angular.extend($scope, {
             sensorService,
             phenomena: '',
@@ -53,7 +53,7 @@ export default {
                             parent.parentElement.removeChild(parent);
                         }
                         var el = angular.element('<div sens.chart-directive></div>');
-                        layoutService.dialogAreaElement.appendChild(el[0]);
+                        HsLayoutService.dialogAreaElement.appendChild(el[0]);
                         $compile(el)($scope);
                         $scope.buildChart(sensorClicked, unitSelected, response);
                     }
@@ -108,7 +108,7 @@ export default {
                                 distribution: 'linear',
                                 type: "time",
                                 time: {
-                                    unit: 'second',
+                                    unit: 'minute',
                                     displayFormats: {
                                         second: 'hh:mm:ss',
                                         minute: 'hh:mm',
@@ -145,7 +145,7 @@ export default {
                                     drag: false,
                                     mode: "x",
                                     limits: {
-                                        max: 10,
+                                        max: 2,
                                         min: 0.5
                                     }
                                 }
@@ -166,6 +166,7 @@ export default {
             sensorService.phenomena = [];
             sensorService.phenomena = '';
             sensorService.sensorCollectedData = [];
+            sensorService.sensorsWithObs = [];
             $scope.showChart = false;
             $scope.labels = [];
             $scope.data = [];

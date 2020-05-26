@@ -3,7 +3,8 @@
         <div class="col-7 mt-1">
             <div class="input-group">
                 <div class="form-check">
-                    <input type="checkbox" class="form-check-input" ng-checked="$ctrl.group.checked" ng-module="$ctrl.unit.checked" ng-click="checkUnit($ctrl.unit)"/>
+                    <input type="checkbox" class="form-check-input" ng-checked="$ctrl.group.checked"
+                        ng-module="$ctrl.unit.checked" ng-click="checkUnit($ctrl.unit)" />
                     <label class="form-check-label" ng-click="getUnitSensors($ctrl.unit.unit_id)"
                         style="color: rgb(136, 109, 85); cursor: pointer;">Unit: {{$ctrl.unit.name}}</label>
                 </div>
@@ -77,18 +78,19 @@
                     style="text-align: center; background-color: rgba(115, 219, 160, 0.4); width: 100%;">
                     Add
                     existing sensor from available sensor list</div>
-
-                <li class="row" ng-repeat="sensor in sensorService.sensors">
-                    <div class="col-7 m-1">
-                        <div class="input-group mt-2 mb-2">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" ng-model="sensor.checked" />
-                                <label class="form-check-label" style="color: rgb(136, 109, 85);">Sensor:
-                                    {{sensor.sensor_name}}</label>
+                <div style="height: 250px; overflow: scroll;">
+                    <li class="row" ng-repeat="sensor in sensorService.sensors">
+                        <div class="col-7 m-1">
+                            <div class="input-group mt-2 mb-2">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" ng-model="sensor.checked" />
+                                    <label class="form-check-label" style="cursor: pointer; color: rgb(136, 109, 85);" ng-click="sensor.checked =! sensor.checked">Sensor:
+                                        {{sensor.sensor_name}}</label>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </li>
+                    </li>
+                </div>
                 <div class="row">
                     <div class="col-6 m-1 text-left">
                         <div class="btn-group">

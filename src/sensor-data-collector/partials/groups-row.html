@@ -2,7 +2,8 @@
     <div class="col-7 m-1">
         <div class="input-group mt-2">
             <div class="form-check">
-                <input type="checkbox" class="form-check-input" ng-model="$ctrl.group.checked" ng-click="checkGroup($ctrl.group)"/>
+                <input type="checkbox" class="form-check-input" ng-model="$ctrl.group.checked"
+                    ng-click="checkGroup($ctrl.group)" />
                 <label class="form-check-label" style="cursor: pointer;"
                     ng-click="showUnits($ctrl.group.group_id)">Group: {{$ctrl.group.group_name}}</label>
             </div>
@@ -48,20 +49,23 @@
             </div>
         </form>
     </div>
-    <div style="overflow: auto;" ng-show="existingUnitListVisible">
+    <div ng-show="existingUnitListVisible">
         <div class="m-1 p-1" style="text-align: center; background-color: rgba(115, 219, 160, 0.4); width: 100%;">
             Add
             existing sensor unit from available unit list</div>
-        <li class="row" ng-repeat="unit in unitService.allUnits">
-            <div class="col-7 m-1">
-                <div class="input-group mt-2 mb-2">
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" ng-model="unit.checked" />
-                        <label class="form-check-label" style="color: rgb(136, 109, 85);">Unit: {{unit.name}}</label>
+        <div style="height: 250px; overflow: scroll;">
+            <li class="row" ng-repeat="unit in unitService.allUnits">
+                <div class="col-7 m-1">
+                    <div class="input-group mt-2 mb-2">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" ng-model="unit.checked" />
+                            <label class="form-check-label" style="cursor: pointer;" ng-click="unit.checked =! unit.checked" style="color: rgb(136, 109, 85);">Unit:
+                                {{unit.name}}</label>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </li>
+            </li>
+        </div>
         <div class="row">
             <div class="col-6 mb-2 text-left">
                 <div class="btn-group">
@@ -73,6 +77,7 @@
     </div>
 </div>
 <div ng-show="unitsTabVisible">
-    <sens.units-row ng-repeat="unit in groupService.selectedGroupUnits | filter: $ctrl.group.group_id" unit="unit" group="$ctrl.group">
+    <sens.units-row ng-repeat="unit in groupService.selectedGroupUnits | filter: $ctrl.group.group_id" unit="unit"
+        group="$ctrl.group">
     </sens.units-row>
 </div>

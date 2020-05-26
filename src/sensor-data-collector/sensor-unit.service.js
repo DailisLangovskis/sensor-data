@@ -13,27 +13,26 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', 'HsMapService',
             checkedUnits: [],
             allUnits: [],
             selectAllUnitsSensors(checkedUnit) {
-                if (me.unitsSensors == 0) return;
-                else {
+                if (me.unitsSensors.length != 0) {
                     me.unitsSensors.forEach(sensor => {
                         if (sensor.unit_id == checkedUnit.unit_id) {
                             sensor.checked = checkedUnit.checked;
                         }
                     });
+                } else {
+                    return;
                 }
             },
             getUnitSensors(unitClicked) {
                 me.unitClicked = unitClicked;
                 return $http.get(config.sensorApiEndpoint + '/units/sensors/' + unitClicked)
-                    .then(function success(response) {
-                        return response.data;
-                    }).then(function (response) {
-                        if (response == '') {
-                            return true;
-                        } else {
-                            me.unitsSensors = me.unitsSensors.concat(response.filter(data => me.unitsSensors.filter(u => u.unit_id == data.unit_id && u.sensor_id == data.sensor_id).length == 0));
+                    .then(function (response) {
+                        if (response.data.length != 0) {
+                            me.unitsSensors = me.unitsSensors.concat(response.data.filter(data => me.unitsSensors.filter(u => u.unit_id == data.unit_id && u.sensor_id == data.sensor_id).length == 0));
                             me.unitsSensors.forEach(s => s.checked = false);
                             return false;
+                        } else {
+                            return true;
                         }
                     })
                     .catch(function failed(error) {
@@ -46,7 +45,6 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', 'HsMapService',
                     format: new GeoJSON(),
                     url: function () {
                         const username = authService.getUsername()
-                        console.log(DOMAIN);
                         return PROXY + DOMAIN + `/geoserver/sensor-data-collector/ows?service=WFS&` +
                             `version=1.0.0&request=GetFeature&typeName=sensor-data-collector%3Aunits_positions&` +
                             `maxFeatures=50000&outputFormat=json&CQL_FILTER=${encodeURIComponent("user_name='" + username + "'")}`
@@ -78,15 +76,13 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', 'HsMapService',
             },
             getAllUsableUnits(groupClicked) {
                 return $http.get(config.sensorApiEndpoint + '/units/data/' + groupClicked)
-                    .then(function success(response) {
-                        return response.data;
-                    }).then(function (response) {
-                        if (response == '') {
+                    .then(function (response) {
+                        if (response.data != 0) {
+                            me.allUnits = response.data;
+                            return false
+                        } else {
                             me.allUnits = [];
                             return true
-                        } else {
-                            me.allUnits = response;
-                            return false
                         }
                     })
                     .catch(function failed(error) {

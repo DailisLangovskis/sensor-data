@@ -34,7 +34,7 @@ var module = angular.module('hs', [
     'sens.sensorDataCollectorModule'
 ]);
 
-module.directive('hs', function (HsCore, HsLayoutService) {
+module.directive('hs', function (HsCore, HsLayoutService, $compile) {
     'ngInject';
     return {
         template: HsCore.hslayersNgTemplate,
@@ -112,6 +112,13 @@ module.controller('Main', function ($scope, HsCore, $compile, HsLayoutService, H
         }
     });
     HsSidebarService.buttons.push({ panel: 'sensor-data-collector', module: 'sens.sensorDataCollectorModule', order: -1, title: gettext('Sensor data collector'), description: gettext('Collect sensor data'), icon: 'icon-analytics-piechart' });
+   
+    HsSidebarService.setButtonImportancy('legend', false);
+    HsSidebarService.setButtonImportancy('composition_browser', false);
+    HsSidebarService.setButtonImportancy('datasource_selector', false);
+    HsSidebarService.setButtonImportancy('permalink', false);
+    HsSidebarService.setButtonImportancy('print', false);
+    HsSidebarService.setButtonImportancy('saveMap', false);
 }
 );
 

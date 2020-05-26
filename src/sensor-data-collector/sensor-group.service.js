@@ -24,15 +24,13 @@ export default ['$http', 'HsConfig',
             },
             getGroupUnits(groupClicked) {
                 return $http.get(config.sensorApiEndpoint + '/groups/units/' + groupClicked)
-                    .then(function success(response) {
-                        return response.data;
-                    }).then(function (response) {
-                        if (response == '') {
-                            return true;
-                        } else {
-                            me.selectedGroupUnits = me.selectedGroupUnits.concat(response.filter(data => me.selectedGroupUnits.filter(gu => gu.group_id == data.group_id && gu.unit_id == data.unit_id).length == 0));
+                        .then(function success(response) {
+                        if (response.data.length != 0) {
+                            me.selectedGroupUnits = me.selectedGroupUnits.concat(response.data.filter(data => me.selectedGroupUnits.filter(gu => gu.group_id == data.group_id && gu.unit_id == data.unit_id).length == 0));
                             me.selectedGroupUnits.forEach(u => u.checked = false);
                             return false;
+                        } else {
+                            return true;
                         }
                     })
                     .catch(function failed(error) {
@@ -43,15 +41,15 @@ export default ['$http', 'HsConfig',
             getGroups() {
                 return $http.get(config.sensorApiEndpoint + '/groups/data')
                     .then(function success(response) {
-                        if (response.data == '') {
-                            me.groups = [];
-                            return true;
-                        }
-                        else {
+                        if (response.data.length != 0) {
                             me.groups = response.data;
                             me.groups.forEach(g => g.checked = false);
                             return false;
+                        } else {
+                            me.groups = [];
+                            return true;
                         }
+
 
                     })
                     .catch(function failed(error) {
@@ -83,11 +81,11 @@ export default ['$http', 'HsConfig',
                     .then(_ => {
                         me.groups = me.groups.filter(group => group.checked != true);
                         checked = [];
-                        if (me.groups == '') {
-                            return true;
+                        if (me.groups.length != 0) {
+                            return false;
                         }
                         else {
-                            return false;
+                            return true;
                         }
                     })
                     .catch(function failed(error) {

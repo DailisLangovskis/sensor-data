@@ -27,8 +27,11 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map', 'chart.js
         };
     })
     //chart popup controller
-    .controller('chartController', ['$scope', function ($scope) {
+    .controller('chartController', ['$scope', 'sens.sensor.service', function ($scope, sensorService) {
         angular.extend($scope, {
+            close() {
+                sensorService.sensorCollectedData = [];
+            },
             saveAsImage() {
                 /*Get image of canvas element*/
                 const canvas = document.getElementById('sensor-data-chart');
@@ -38,6 +41,25 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map', 'chart.js
                 var a = document.getElementById("save-as-image");
                 /*insert chart image url to download button (tag: <a></a>) */
                 a.href = url_base64jp;
+            },
+            exportAsCSV() {
+                //creating CSV data from JSON data
+                var items = sensorService.sensorCollectedData;
+                const replacer = (key, value) => value === null ? '' : value; //handling null values
+                const header = Object.keys(items[0]);
+                let csv = items.map(row => header.map(fielName => JSON.stringify(row[fielName], replacer)).join(','));
+                csv.unshift(header.join(','));
+                csv = csv.join('\r\n');
+
+                //Download the file as CSV
+                var downloadLink = document.createElement("a");
+                var blob = new Blob(["\ufeff", csv]);
+                var url = URL.createObjectURL(blob);
+                downloadLink.href = url;
+                downloadLink.download = new Date() + "-chartData.csv";  //Name the file here
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
             },
             fillCanvasBackgroundWithColor(canvas, color) {
                 // Get the 2D drawing context from the provided canvas.
@@ -126,17 +148,16 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map', 'chart.js
 
                                 }, function (error) {
                                     inFlightAuthRequest = null;
-                                    $window.alert("Please relog into the site!");
-                                    deffered.reject();
+                                    deffered.reject(error);
                                     authService.clearAllToken();
                                     authService.returnToLogin();
-
-                                    return;
+                                    $window.alert("Please relog into the site!");
+                                    return deffered.promise;
                                 });
-                                $window.alert("Please relog into the site!");
                                 deffered.reject();
                                 authService.clearAllToken();
                                 authService.returnToLogin();
+                                $window.alert("Please relog into the site!");
                                 return deffered.promise;
                                 break;
                             default:

@@ -7,7 +7,7 @@
                     <h4>
                         <translate>Chart</translate>
                     </h4>
-                    <button type="button" class="close" ng-click="chartModalVisible = false" data-dismiss="modal">
+                    <button type="button" class="close" ng-click="chartModalVisible = false; close()" data-dismiss="modal">
                         <span aria-hidden="true">&times;</span>
                         <span class="sr-only" translate="">Close</span>
                     </button>
@@ -16,6 +16,8 @@
                     <div class="container text-right">
                         <a id="save-as-image" download="chartImage.png" href="#" ng-click="saveAsImage()"
                             class="btn btn-primary btn-sm" title="Save as Image">SAVE AS IMAGE</a>
+                            <a id="export-as-csv" href="#" ng-click="exportAsCSV()"
+                            class="btn btn-primary btn-sm" title="Export as CSV">EXPORT AS CSV</a>
                         <div class="chart">
                             <canvas id="sensor-data-chart"></canvas>
                         </div>

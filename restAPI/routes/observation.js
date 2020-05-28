@@ -16,6 +16,8 @@ router.post('/save', [
 ], addObservationDataHandler)
 //Get sensor measurement from database
 router.get('/collectedData', dataRequestHandler)
+//Get sensor last measurement from database
+router.get('/collectedData/lastObs', getEachSensorLastvalueHandler)
 
 async function addObservationDataHandler(req, res) {
     const errors = validationResult(req);
@@ -50,6 +52,22 @@ async function dataRequestHandler(req, res) {
     WHERE data.sensor_id = ($1) and data.unit_id = ($2) ORDER BY time_stamp DESC LIMIT 500';
     try {
         const { rows } = await db.query(getCollectedData, [req.query.sensor, req.query.unit])
+        res.status(201).send(rows)
+    } catch (e) {
+        console.log(e.stack)
+    }
+}
+async function getEachSensorLastvalueHandler(req, res) {
+    var getLastValue = 'SELECT data.observed_value, data.time_stamp, data.sensor_id, data.unit_id, s.sensor_name, p.unit, u.name FROM observations as data\
+    INNER JOIN sensors as s\
+    ON data.sensor_id = s.sensor_id\
+    INNER JOIN phenomenons as p\
+    ON s.phenomena_id = p.id\
+    INNER JOIN units as u\
+    ON data.unit_id = u.unit_id\
+    WHERE data.sensor_id = ($1) AND data.unit_id = ($2) ORDER BY time_stamp DESC LIMIT 1';
+    try {
+        const { rows } = await db.query(getLastValue, [req.query.sensor, req.query.unit])
         res.status(201).send(rows)
     } catch (e) {
         console.log(e.stack)

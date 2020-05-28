@@ -54,7 +54,7 @@
             Add
             existing sensor unit from available unit list</div>
         <div style="height: 250px; overflow: scroll;">
-            <li class="row" ng-repeat="unit in unitService.allUnits">
+            <li class="row" ng-repeat="unit in unitService.allUnits | orderBy: '+name'">
                 <div class="col-7 m-1">
                     <div class="input-group mt-2 mb-2">
                         <div class="form-check">
@@ -77,7 +77,7 @@
     </div>
 </div>
 <div ng-show="unitsTabVisible">
-    <sens.units-row ng-repeat="unit in groupService.selectedGroupUnits | filter: $ctrl.group.group_id" unit="unit"
+    <sens.units-row ng-repeat="unit in groupService.selectedGroupUnits | orderBy: '+name' | filter: $ctrl.group.group_id " unit="unit"
         group="$ctrl.group">
     </sens.units-row>
 </div>

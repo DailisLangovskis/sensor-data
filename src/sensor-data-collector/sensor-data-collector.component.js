@@ -1,14 +1,17 @@
 export default {
     template: require('./partials/sensor-data-collector.html'),
-    controller: ['$scope', 'sens.auth.service', 'sens.sensorGroup.service', 'sens.sensorUnit.service',
-        function ($scope, authService, groupService, unitService) {
+    controller: ['$scope', 'sens.auth.service', 'sens.sensorGroup.service', 'sens.sensorUnit.service', 'sens.sensor.service',
+        function ($scope, authService, groupService, unitService, sensorService) {
             angular.extend($scope, {
+                sensorService,
                 authService,
                 groupService,
                 selectDeselectAllGroups: groupService.selectDeselectAllGroups,
                 deleteSelectedGroups: groupService.deleteSelectedGroups,
+                dataRequest: sensorService.dataRequest,
                 addGroupTabVisible: false,
                 groupsTabVisible: false,
+                activeSensorListVisible: false,
                 groupName: '',
                 //show users available groups
                 addGroup() {
@@ -19,6 +22,13 @@ export default {
                         $scope.addGroupTabVisible = true;
                     }
 
+                },
+                showActiveSensorList() {
+                    if ($scope.activeSensorListVisible) {
+                        $scope.activeSensorListVisible = !$scope.activeSensorListVisible;
+                    } else {
+                        $scope.activeSensorListVisible = true;
+                    }
                 },
                 showGroups() {
                     $scope.addGroupTabVisible = false;
@@ -51,6 +61,13 @@ export default {
                 deleteSelected() {
                     var deleteAll = window.confirm("Do you really want to delete all selected items?");
                     if (deleteAll) {
+                        var unitsChecked = groupService.selectedGroupUnits.filter(u => u.checked == true);
+                        if (unitsChecked.length != 0) {
+                            unitsChecked.forEach(unit => {
+                                unitService.selectAllUnitsSensors(unit)
+
+                            });
+                        }
                         if (unitService.unitsSensors.filter(s => s.checked == true).length != 0) {
                             unitService.deleteSelectedSensors();
                         }
@@ -64,6 +81,19 @@ export default {
                         })
                     }
                 },
+                deleteActiveSensors() {
+                    var deleteAll = window.confirm("Do you really want to delete all selected active sensors?");
+                    if (deleteAll) {
+                        if (sensorService.sensorsWithObs.filter(s => s.checked == true).length != 0) {
+                            sensorService.deleteActiveSensors().then(_ => {
+                                $scope.activeSensorListVisible = false;
+                                $scope.groupsTabVisible = false;
+                                $scope.showGroups();
+                                $scope.showActiveSensorList();
+                            });
+                        }
+                    }
+                },
                 logout() {
                     $scope.$broadcast('logout');
                     $scope.$emit('logout');
@@ -73,6 +103,7 @@ export default {
                         groupService.groupSelected = '',
                         $scope.groupsTabVisible = false;
                     $scope.addGroupTabVisible = false;
+                    $scope.activeSensorListVisible = false;
                     authService.logout();
                 }
             })

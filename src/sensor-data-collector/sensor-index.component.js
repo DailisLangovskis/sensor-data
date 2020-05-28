@@ -1,7 +1,7 @@
 export default {
     template: require('./partials/index.html'),
-    controller: ['$scope', "sens.loginRegister.service", "sens.auth.service",
-        function ($scope, loginRegister, authService) {
+    controller: ['$scope', "sens.loginRegister.service", "sens.auth.service",'sens.sensor.service',
+        function ($scope, loginRegister, authService, sensorService) {
             angular.extend($scope, {
                 loginRegister,
                 authService,
@@ -17,11 +17,11 @@ export default {
 
                 login() {
                     loginRegister.login($scope.logUsername, $scope.logPassword).then(function (response) {
-                        if (!response) {
+                        if (!response) {  
                             authService.loggedIn = true;
                             $scope.logUsername = '';
                             $scope.logPassword = '';
-
+                        sensorService.getEachSensorLastvalue();
                         }
                     })
                 },

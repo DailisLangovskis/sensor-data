@@ -21,7 +21,7 @@
                 </div>
             </div>
         </div>
-        <sens.groups-row ng-repeat="group in groupService.groups" group="group"></sens.groups-row>
+        <sens.groups-row ng-repeat="group in groupService.groups | orderBy: '+group_name'" group="group"></sens.groups-row>
         <div class="row">
             <div class="col m-1 text-left">
                 <div class="btn-group">
@@ -40,20 +40,48 @@
             </div>
         </div>
     </div>
-    <!-- <div class="row">
-        <div class="col m-1 p-1 text-center">
-            <div class="btn-group">
-                <button class="btn btn-outline-primary btn-sm" ng-click="getAllUserUnits()">SHOW UNITS LIST</button>
-            </div>
-        </div>
-    </div>
     <div class="row">
         <div class="col m-1 p-1 text-center">
             <div class="btn-group">
-                <button class="btn btn-outline-primary btn-sm" ng-click="showAllSensors()">SHOW SENSORS LIST</button>
+                <button class="btn btn-outline-primary btn-sm" ng-disabled="sensorService.sensorsWithObs == ''"
+                    ng-click="showActiveSensorList()">SHOW ACTIVE SENSOR LIST</button>
             </div>
         </div>
-    </div> -->
+    </div>
+    <div ng-show="activeSensorListVisible">
+          <div ng-repeat="sensor in sensorService.sensorsWithObs | orderBy: '+sensor_name'">
+            <li class="row">
+                <div class="col-8 m-1">
+                    <div class="input-group">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" ng-model="sensor.checked" />
+                            <label class="form-check-label " ng-click="sensor.checked =! sensor.checked"
+                                style=" cursor: pointer;"><span style="color: rgb(136, 109, 85);">Unit: {{sensor.name}},
+                                </span><span style="color: red;">Sensor: {{sensor.sensor_name}}: </span><i>last value
+                                </i>{{sensor.observed_value}} ({{sensor.unit}})
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3 pr-0 text-right">
+                    <div class="btn-group">
+                        <button class="btn btn-outline-primary btn-sm" title="Show measurement data chart"
+                            ng-click="dataRequest(sensor.sensor_id, sensor.unit_id)"><i
+                                class="icon-analytics-piechart"></i></button>
+                    </div>
+                </div>
+            </li>
+        </div>
+        <div class="row">
+            <div class="col m-1 text-left">
+                <div class="btn-group">
+                    <button class="btn btn-outline-danger btn-sm" title="delete selected items"
+                        ng-click="deleteActiveSensors()"><i class="icon-trash"></i></button>
+                </div>
+            </div>
+        </div>
+
+    </div>
     <form name="newGroupForm" ng-submit="saveGroup(groupName)" role="form">
         <div ng-show="addGroupTabVisible">
             <div class="row">

@@ -9,6 +9,7 @@
     "bootstrap": "node node_modules/hslayers-ng/scripts/bootstrap-isolate.js ",
     "web": "http-server ./static -p 8082",
     "build": "node node_modules/webpack/bin/webpack --config ./src/webpack.dev.js --watch",
+    "build-prod": "node node_modules/webpack/bin/webpack --config ./src/webpack.prod.js",
     "dev-server": "node node_modules/.bin/webpack-dev-server --config ./src/webpack.dev.js",
     "proxy": "node ./src/proxy.js"
   },

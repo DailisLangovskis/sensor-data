@@ -127,7 +127,6 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', 'HsMapService',
                 return $http.post(config.sensorApiEndpoint + '/units/delete/sensors', { params: checked, units: sensorUnitArray })
                     .then(_ => {
                         me.unitsSensors = me.unitsSensors.filter(unit => unit.checked != true);
-                        return false;
                     })
                     .catch(function failed(error) {
                         if (angular.isDefined(error)) {

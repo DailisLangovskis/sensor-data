@@ -35,7 +35,6 @@ export default ['$http', 'HsConfig',
                     })
                     .catch(function failed(error) {
                         console.error("Error!", error);
-                        return true;
                     })
             },
             getGroups() {
@@ -53,8 +52,7 @@ export default ['$http', 'HsConfig',
 
                     })
                     .catch(function failed(error) {
-                        console.error("Error!", error);
-                        return true;
+                        console.error("Error!", error);                  
                     });
             },
             saveGroup: function (groupName) {
@@ -81,12 +79,6 @@ export default ['$http', 'HsConfig',
                     .then(_ => {
                         me.groups = me.groups.filter(group => group.checked != true);
                         checked = [];
-                        if (me.groups.length != 0) {
-                            return false;
-                        }
-                        else {
-                            return true;
-                        }
                     })
                     .catch(function failed(error) {
                         if (angular.isDefined(error)) {
@@ -105,7 +97,6 @@ export default ['$http', 'HsConfig',
                         me.selectedGroupUnits = me.selectedGroupUnits.filter(unit => unit.checked != true);
                         checked = [];
                         unitsGroupArray = [];
-                        return false;
                     })
                     .catch(function failed(error) {
                         if (angular.isDefined(error)) {

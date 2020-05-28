@@ -24,6 +24,8 @@ router.post('/data', [
     check('phenomenaId').isNumeric().withMessage("Given phenomena id is not a numeric value!"),
 ], addSensorDataHandler)
 router.get('/data/:id', getAllUsableSensorsHandler)
+//get All user sensors
+router.get('/activeSensors', getAllActiveSensorsHandler)
 //Get sensors phenomena
 router.get('/phenomena/:id', getPhenomenaDataHandler)
 //Save sensors inside selected unit
@@ -45,10 +47,10 @@ router.post('/sensors_units', [
     check('params').isLength({ min: 1 }).withMessage("There was no sensor selected!")
 ], saveAddedSensorsHandler)
 
-//Delete sensors
-// router.post('/delete', [
-//     check('params').isLength({ min: 1 }).withMessage("There was no sensor selected!")
-// ], deleteSensorsHandler)
+//Delete active sensors
+router.post('/delete', [
+    check('params').isLength({ min: 1 }).withMessage("There was no sensor selected!")
+], deleteActiveSensorsHandler)
 
 async function addSensorDataHandler(req, res) {
     const errors = validationResult(req);
@@ -72,6 +74,18 @@ async function addSensorDataHandler(req, res) {
     }
     res.status(201).send("Insert completed!")
 }
+async function getAllActiveSensorsHandler(req, res) {
+    try {
+        const { rows } = await db.query('SELECT s.sensor_name,s.sensor_id, u.unit_id, u.name FROM sensors_units as su\
+        INNER JOIN sensors as s\
+        ON su.sensor_id = s.sensor_id \
+        INNER JOIN units as u\
+        ON su.unit_id = u.unit_id WHERE u.user_id = ($1)', [req.user.id])
+        res.status(201).send(rows)
+    } catch (e) {
+        console.log(e.stack)
+    }
+}
 async function getAllUsableSensorsHandler(req, res) {
     var id = req.params.id;
     try {
@@ -87,23 +101,24 @@ async function getAllUsableSensorsHandler(req, res) {
         console.log(e.stack)
     }
 }
-// async function deleteSensorsHandler(req, res) {
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//         return res.status(422).json({ errors: errors.array() });
-//     }
-//     var id = req.body.params.join(',');
-//     var deleteSensor = 'DELETE FROM sensors WHERE sensor_id IN (' + id + ')';
-//     try {
-//         await db.query(deleteSensor)
-//             .then(_ => {
-//                 res.status(201).send('Sensors deleted');
-//             })
-//             .catch(e => console.log(e.stack))
-//     } catch (e) {
-//         console.log(e.stack)
-//     }
-// }
+async function deleteActiveSensorsHandler(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
+    var id = req.body.params.join(',')
+    var units = req.body.units
+    var deleteActiveSensors = 'DELETE FROM sensors_units WHERE sensor_id IN (' + id + ') and unit_id = ($1)';
+    units.forEach(async unit => {
+        try {
+            await db.query(deleteActiveSensors, [unit])
+                .catch(e => console.log(e.stack))
+        } catch (e) {
+            console.log(e.stack)
+        }
+        res.status(201).send();
+    })
+}
 async function getPhenomenaDataHandler(req, res) {
     var id = req.params.id;
     var selectPhenomena = 'Select phenomenons.phenomenon_name,\

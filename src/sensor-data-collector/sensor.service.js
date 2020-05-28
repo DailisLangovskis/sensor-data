@@ -1,28 +1,59 @@
-export default ['$http', 'HsConfig', 'sens.sensorGroup.service',
-    function ($http, config, groupService) {
+export default ['$http', 'HsConfig', 'sens.sensorGroup.service', '$compile', '$rootScope', 'HsLayoutService',
+    function ($http, config, groupService, $compile, $rootScope, HsLayoutService) {
         var me = this;
+        var get = setInterval(function () { if (me.sensorsWithObs.length != 0) me.getEachSensorLastvalue(); }, 30000);
         angular.extend(me, {
+            sensorsWithObs: [],
             sensors: [],
             phenomenas: [],
             phenomena: '',
             sensorCollectedData: [],
             newAlert: groupService.newAlert,
-            getAllUsableSensors: function (unitClicked) {
+            getAllUsableSensors(unitClicked) {
                 return $http.get(config.sensorApiEndpoint + '/sensors/data/' + unitClicked)
                     .then(function success(response) {
-                        if (response.data == '') {
-                            me.sensors = [];
-                            return true;
-                        }
-                        else {
+                        if (response.data.length != 0) {
                             me.sensors = response.data;
                             return false;
+                        } else {
+                            me.sensors = [];
+                            return true;
                         }
 
                     })
                     .catch(function failed(error) {
                         console.error("Error!", error);
                     });
+            },
+            getEachSensorLastvalue() {
+                return $http.get(config.sensorApiEndpoint + '/sensors/activeSensors')
+                    .then(function success(response) {
+                        if (response.data.length != 0) {
+                            response.data.forEach(data => {
+                                $http.get(config.sensorApiEndpoint + '/observation/collectedData/lastObs', { params: { sensor: data.sensor_id, unit: data.unit_id } })
+                                    .then(function success(response) {
+                                        if (response.data.length != 0) {
+                                            if (me.sensorsWithObs.length == 0) {
+                                                me.sensorsWithObs = me.sensorsWithObs.concat(response.data);
+                                            } else {
+                                                me.sensorsWithObs =  me.sensorsWithObs.filter(data => response.data.filter(sensor => sensor.sensor_id == data.sensor_id && sensor.unit_id == data.unit_id).length == 0);
+                                                me.sensorsWithObs = me.sensorsWithObs.concat(response.data);
+                                            }
+                                            
+
+                                        }
+                                    })
+                                    .catch(function failed(error) {
+                                        console.error("Error!", error);
+                                    });
+                            });
+                            if (me.sensorsWithObs.length != 0) return false;
+                            else return true;
+                        } else {
+                            me.sensorsWithObs = [];
+                            return true;
+                        }
+                    })
             },
             addNewPhenomena(newPhenomenaName, newPhenomenaUnit) {
                 var data = { name: newPhenomenaName, unit: newPhenomenaUnit };
@@ -58,10 +89,8 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service',
             },
             getSensorPhenomena: function (sensorSelected) {
                 return $http.get(config.sensorApiEndpoint + '/sensors/phenomena/' + sensorSelected.sensor_id)
-                    .then(function success(response) {
-                        return response.data;
-                    }).then(function (response) {
-                        me.phenomena = response;
+                    .then(function (response) {
+                        me.phenomena = response.data;
                     })
                     .catch(function failed(error) {
                         console.error("Error!", error);
@@ -72,6 +101,7 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service',
                 return $http.post(config.sensorApiEndpoint + '/sensors/sensors_units', { params: checked, unit: unitClicked })
                     .then(function success(res) {
                         me.newAlert(res.data, 2000, "green");
+                        me.getEachSensorLastvalue();
                     })
                     .catch(function failed(error) {
                         if (angular.isDefined(error)) {
@@ -104,6 +134,7 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service',
                 return $http.post(config.sensorApiEndpoint + '/observation/save', data)
                     .then(function success(res) {
                         me.newAlert(res.data, 2000, "green");
+                        me.getEachSensorLastvalue();
                         return false;
                     })
                     .catch(function failed(error) {
@@ -119,7 +150,20 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service',
             dataRequest(sensorClicked, unitSelected) {
                 return $http.get(config.sensorApiEndpoint + '/observation/collectedData', { params: { sensor: sensorClicked, unit: unitSelected } })
                     .then(function success(response) {
-                        return response.data;
+                        if (response.data.length != 0) {
+                            me.sensorCollectedData = response.data;
+                            const scope = $rootScope.$new();
+                            if (document.querySelector('#chart-dialog')) {
+                                var parent = document.querySelector('#chart-dialog').parentElement;
+                                parent.parentElement.removeChild(parent);
+                            }
+                            var el = angular.element('<div sens.chart-directive></div>');
+                            HsLayoutService.dialogAreaElement.appendChild(el[0]);
+                            $compile(el)(scope);
+                            me.buildChart(sensorClicked, unitSelected, me.sensorCollectedData);
+                        } else {
+                            window.alert("There was no data found for this sensor in this unit!")
+                        }
                     })
                     .catch(function failed(error) {
                         if (angular.isDefined(error)) {
@@ -131,28 +175,119 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service',
                         return true;
                     });
             },
-            // deleteSelectedSensors() {
-            //     var deleteAll = window.confirm("Do you really want to delete all selected sensors from the database?");
-            //     if (deleteAll) {
-            //         var checked = me.sensors.filter(sensor => sensor.checked == true).map(id => id.sensor_id);
-            //         $http.post(config.sensorApiEndpoint + '/sensors/delete', { params: checked })
-            //             .then(function success(res) {
-            //                 me.newAlert(res.data, 2000, "green");
-            //             })
-            //             .then(_ => {
-            //                 me.getAllUserSensors();
-            //             })
-            //             .catch(function failed(error) {
-            //                 if (angular.isDefined(error)) {
-            //                     if (error.hasOwnProperty('errors')) {
-            //                         var gottenErrors = error.errors.map(msg => msg.msg)
-            //                         me.newAlert(gottenErrors, 2000, "red");
-            //                     }
-            //                 }
-            //             });
+            buildChart(sensorClicked, unitSelected, data) {
+                var collectedData = data.filter(data => data.sensor_id == sensorClicked && data.unit_id == unitSelected);
+                var labels = collectedData.map(data => data.time_stamp);
+                var values = collectedData.map(data => data.observed_value);
+                var chartTitle = collectedData[0].phenomenon_name + " " + collectedData[0].unit;
+                var ctx = document.querySelector("#sensor-data-chart").getContext('2d');
+                let myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels, // Our labels
+                        datasets: [{
+                            label: chartTitle, // Name the series
+                            lineTension: 0.1,
+                            pointRadius: 2,
+                            pointHowerRadius: 5,
+                            borderCapStyle: 'butt',
+                            borderDashOffset: 0.0,
+                            fillColor: 'rgba(0,0,0,0)',
+                            data: values, // Our values
+                            backgroundColor: [ // Specify custom colors
+                                'rgba(220, 99, 99, 0.2)'
+                            ],
+                            borderColor: [ // Add custom color borders
+                                'rgba(220,99,99,0.7)'
+                            ],
+                            pointBackgroundColor: 'green'
+                        }]
+                    },
+                    options: {
+                        legend: {
+                            display: true
+                        },
+                        responsive: true, // Instruct chart js to respond nicely.
+                        maintainAspectRatio: true, // Add to prevent default behavior of full-width/height 
+                        scales: {
+                            xAxes: [{
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: "Date"
+                                },
+                                ticks: {
+                                    maxRotation: 0
+                                },
+                                distribution: 'linear',
+                                type: "time",
+                                time: {
+                                    unit: 'minute',
+                                    displayFormats: {
+                                        second: 'hh:mm:ss',
+                                        minute: 'hh:mm',
+                                        hour: 'hhA',
+                                        day: 'MM-DD-YYYY',
+                                        month: 'MM-YYYY',
+                                        quarter: 'YYYY-[Q]Q',
+                                        year: 'YYYY'
+                                    },
+                                },
 
-            //     }
-            // },
+                            }],
+                            yAxes: [{
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: chartTitle,
+                                },
+                                ticks: {
+                                    beginAtZero: true,
+                                }
+                            }]
+                        },
+                        plugins: {
+                            zoom: {
+                                pan: {
+                                    enabled: true,
+                                    mode: "x",
+                                    speed: 100,
+                                    threshold: 100
+                                },
+                                // Container for zoom options
+                                zoom: {
+                                    enabled: true,
+                                    drag: false,
+                                    mode: "x",
+                                    limits: {
+                                        max: 2,
+                                        min: 0.5
+                                    }
+                                }
+                            }
+                        }
+                    },
+                });
+                return myChart;
+            },
+            deleteActiveSensors() {
+                var checkedSensor = me.sensorsWithObs.filter(sensor => sensor.checked == true).map(id => id.sensor_id);
+                var sensorUnitsArray = me.sensorsWithObs.filter(sensor => sensor.checked == true).map(unit => unit.unit_id);
+                return $http.post(config.sensorApiEndpoint + '/sensors/delete', { params: checkedSensor, units: sensorUnitsArray })
+                    .then(function success(res) {
+                        me.newAlert(res.data, 2000, "green");
+                        me.sensorsWithObs = me.sensorsWithObs.filter(s => s.checked != true);
+                        checkedSensor = [];
+                        sensorUnitsArray = [];
+                    })
+                    .catch(function failed(error) {
+                        if (angular.isDefined(error)) {
+                            if (error.hasOwnProperty('errors')) {
+                                var gottenErrors = error.errors.map(msg => msg.msg)
+                                me.newAlert(gottenErrors, 2000, "red");
+                            }
+                        }
+                    });
+            },
         })
+        me.getEachSensorLastvalue();
     }
 ]

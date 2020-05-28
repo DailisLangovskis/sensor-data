@@ -79,7 +79,7 @@
                     Add
                     existing sensor from available sensor list</div>
                 <div style="height: 250px; overflow: scroll;">
-                    <li class="row" ng-repeat="sensor in sensorService.sensors">
+                    <li class="row" ng-repeat="sensor in sensorService.sensors | orderBy: '+sensor_name'">
                         <div class="col-7 m-1">
                             <div class="input-group mt-2 mb-2">
                                 <div class="form-check">
@@ -104,7 +104,7 @@
         </div>
     </div>
     <div ng-show="sensorsTabVisible">
-        <sens.sensor-row ng-repeat="sensor in unitService.unitsSensors | filter: $ctrl.unit.unit_id" unit="$ctrl.unit"
+        <sens.sensor-row ng-repeat="sensor in unitService.unitsSensors | filter: $ctrl.unit.unit_id | orderBy: '+sensor_name'" unit="$ctrl.unit"
             sensor="sensor">
         </sens.sensor-row>
     </div>

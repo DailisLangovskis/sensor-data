@@ -29,6 +29,7 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', '$compile', '$r
                 return $http.get(config.sensorApiEndpoint + '/sensors/activeSensors')
                     .then(function success(response) {
                         if (response.data.length != 0) {
+                            me.sensorsWithObs = [];
                             response.data.forEach(data => {
                                 $http.get(config.sensorApiEndpoint + '/observation/collectedData/lastObs', { params: { sensor: data.sensor_id, unit: data.unit_id } })
                                     .then(function success(response) {
@@ -36,10 +37,10 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', '$compile', '$r
                                             if (me.sensorsWithObs.length == 0) {
                                                 me.sensorsWithObs = me.sensorsWithObs.concat(response.data);
                                             } else {
-                                                me.sensorsWithObs =  me.sensorsWithObs.filter(data => response.data.filter(sensor => sensor.sensor_id == data.sensor_id && sensor.unit_id == data.unit_id).length == 0);
+                                                me.sensorsWithObs = me.sensorsWithObs.filter(data => response.data.filter(sensor => sensor.sensor_id == data.sensor_id && sensor.unit_id == data.unit_id).length == 0);
                                                 me.sensorsWithObs = me.sensorsWithObs.concat(response.data);
                                             }
-                                            
+
 
                                         }
                                     })
@@ -269,13 +270,15 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', '$compile', '$r
                 return myChart;
             },
             deleteActiveSensors() {
-                var checkedSensor = me.sensorsWithObs.filter(sensor => sensor.checked == true).map(id => id.sensor_id);
-                var sensorUnitsArray = me.sensorsWithObs.filter(sensor => sensor.checked == true).map(unit => unit.unit_id);
-                return $http.post(config.sensorApiEndpoint + '/sensors/delete', { params: checkedSensor, units: sensorUnitsArray })
+                var checkedSensors = new Set(me.sensorsWithObs.filter(sensor => sensor.checked == true).map(id => id.sensor_id));
+                checkedSensors = [...checkedSensors];
+                var sensorUnitsArray = new Set(me.sensorsWithObs.filter(sensor => sensor.checked == true).map(unit => unit.unit_id));
+                sensorUnitsArray = [...sensorUnitsArray];
+                return $http.post(config.sensorApiEndpoint + '/sensors/delete', { params: checkedSensors, units: sensorUnitsArray })
                     .then(function success(res) {
                         me.newAlert(res.data, 2000, "green");
                         me.sensorsWithObs = me.sensorsWithObs.filter(s => s.checked != true);
-                        checkedSensor = [];
+                        checkedSensors = [];
                         sensorUnitsArray = [];
                     })
                     .catch(function failed(error) {

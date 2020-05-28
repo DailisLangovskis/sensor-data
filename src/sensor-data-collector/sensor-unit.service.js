@@ -94,6 +94,7 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', 'HsMapService',
                 return $http.post(config.sensorApiEndpoint + '/units/units_groups', { params: checked, group: groupClicked })
                     .then(function success(res) {
                         me.newAlert(res.data, 2000, "green");
+                        checked = [];
                     })
                     .catch(function failed(error) {
                         if (angular.isDefined(error)) {
@@ -109,6 +110,7 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', 'HsMapService',
                 return $http.post(config.sensorApiEndpoint + '/units/new', data)
                     .then(function success(res) {
                         me.newAlert(res.data, 2000, "green");
+                        data = [];
                         return false;
                     })
                     .catch(function failed(error) {
@@ -122,11 +124,19 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', 'HsMapService',
                     });
             },
             deleteSelectedSensors() {
-                var checked = me.unitsSensors.filter(sensor => sensor.checked == true).map(id => id.sensor_id);
-                var sensorUnitArray = me.unitsSensors.filter(sensor => sensor.checked == true).map(unit_id => unit_id.unit_id);
+                var checked = new Set(me.unitsSensors.filter(sensor => sensor.checked == true).map(id => id.sensor_id));
+                checked = [...checked];
+                var sensorUnitArray = new Set(me.unitsSensors.filter(sensor => sensor.checked == true).map(unit_id => unit_id.unit_id));
+                sensorUnitArray = [...sensorUnitArray];
                 return $http.post(config.sensorApiEndpoint + '/units/delete/sensors', { params: checked, units: sensorUnitArray })
                     .then(_ => {
-                        me.unitsSensors = me.unitsSensors.filter(unit => unit.checked != true);
+                        $http.post(config.sensorApiEndpoint + '/observation/delete', { params: checked, units: sensorUnitArray })
+                            .then(_ => {
+                                checked = [];
+                                sensorUnitArray = [];
+                                me.unitsSensors = me.unitsSensors.filter(unit => unit.checked != true);
+                            })
+
                     })
                     .catch(function failed(error) {
                         if (angular.isDefined(error)) {

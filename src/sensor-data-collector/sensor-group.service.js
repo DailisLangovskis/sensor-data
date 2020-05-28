@@ -24,7 +24,7 @@ export default ['$http', 'HsConfig',
             },
             getGroupUnits(groupClicked) {
                 return $http.get(config.sensorApiEndpoint + '/groups/units/' + groupClicked)
-                        .then(function success(response) {
+                    .then(function success(response) {
                         if (response.data.length != 0) {
                             me.selectedGroupUnits = me.selectedGroupUnits.concat(response.data.filter(data => me.selectedGroupUnits.filter(gu => gu.group_id == data.group_id && gu.unit_id == data.unit_id).length == 0));
                             me.selectedGroupUnits.forEach(u => u.checked = false);
@@ -52,7 +52,7 @@ export default ['$http', 'HsConfig',
 
                     })
                     .catch(function failed(error) {
-                        console.error("Error!", error);                  
+                        console.error("Error!", error);
                     });
             },
             saveGroup: function (groupName) {
@@ -90,8 +90,10 @@ export default ['$http', 'HsConfig',
                     });
             },
             deleteSelectedUnits() {
-                var checked = me.selectedGroupUnits.filter(unit => unit.checked == true).map(id => id.unit_id);
-                var unitsGroupArray = me.selectedGroupUnits.filter(unit => unit.checked == true).map(group_id => group_id.group_id);
+                var checked = new Set(me.selectedGroupUnits.filter(unit => unit.checked == true).map(id => id.unit_id));
+                checked = [...checked];
+                var unitsGroupArray = new Set(me.selectedGroupUnits.filter(unit => unit.checked == true).map(group_id => group_id.group_id));
+                unitsGroupArray = [...unitsGroupArray];
                 return $http.post(config.sensorApiEndpoint + '/groups/delete/units', { params: checked, groups: unitsGroupArray })
                     .then(_ => {
                         me.selectedGroupUnits = me.selectedGroupUnits.filter(unit => unit.checked != true);

@@ -76,7 +76,6 @@ async function deleteGroupsHandler(req, res) {
         return res.status(422).json({ errors: errors.array() });
     }
     var id = req.body.params.join(',');
-    console.log(id);
     var deleteGroups = 'DELETE FROM groups WHERE group_id IN (' + id + ')';
     try {
         await db.query(deleteGroups)

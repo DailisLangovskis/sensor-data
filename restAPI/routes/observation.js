@@ -18,6 +18,8 @@ router.post('/save', [
 router.get('/collectedData', dataRequestHandler)
 //Get sensor last measurement from database
 router.get('/collectedData/lastObs', getEachSensorLastvalueHandler)
+//Delete observations
+router.post('/delete', deleteObservationsHandler)
 
 async function addObservationDataHandler(req, res) {
     const errors = validationResult(req);
@@ -72,4 +74,19 @@ async function getEachSensorLastvalueHandler(req, res) {
     } catch (e) {
         console.log(e.stack)
     }
+}
+async function deleteObservationsHandler(req, res) {
+
+    var sensor_idArray = req.body.params.join(',')
+    var units = req.body.units
+    var deleteSensors = 'DELETE FROM observations WHERE sensor_id IN (' + sensor_idArray + ') and unit_id = ($1)';
+    units.forEach(async unit => {
+        try {
+            await db.query(deleteSensors, [unit])
+                .catch(e => console.log(e.stack))
+        } catch (e) {
+            console.log(e.stack)
+        }
+        res.status(201).send();
+    })
 }

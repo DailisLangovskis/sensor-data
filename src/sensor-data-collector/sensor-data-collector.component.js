@@ -77,7 +77,9 @@ export default {
                         groupService.deleteSelectedGroups().then(_ => {
                             groupService.newAlert("All selected items deleted!", 2000, "green")
                             $scope.groupsTabVisible = false;
+                            $scope.activeSensorListVisible = false;
                             $scope.showGroups();
+                            sensorService.getEachSensorLastvalue();
                         })
                     }
                 },

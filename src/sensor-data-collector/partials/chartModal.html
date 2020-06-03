@@ -24,20 +24,20 @@
 
                         <div class="col mb-2 text-center">
                             <div class="btn-group">
-                                <button class="btn btn-primary btn-sm" title="Show data in seconds"
-                                    ng-click="setXAxis('second')">SECOND</button>
-                                <button class="btn btn-primary btn-sm" title="Show data in minutes"
-                                    ng-click="setXAxis('minute')">MINUTE</button>
-                                <button class="btn btn-primary btn-sm" title="Show data in hours"
-                                    ng-click="setXAxis('hour')">HOUR</button>
-                                <button class="btn btn-primary btn-sm" title="Show data in days"
-                                    ng-click="setXAxis('day')">DAY</button>
-                                <button class="btn btn-primary btn-sm" title="Show data in months"
-                                    ng-click="setXAxis('month')">MONTH</button>
-                                    <button class="btn btn-primary btn-sm" title="Show data in quarters"
-                                    ng-click="setXAxis('quarter')">QUARTER</button>
-                                <button class="btn btn-primary btn-sm" title="Show data in years"
-                                    ng-click="setXAxis('year')">YEAR</button>
+                                <button class="btn btn-primary btn-sm" title="Show data in the last 30 seconds"
+                                    ng-click="showDataInInterval('10 seconds')">10 SECONDS</button>
+                                <button class="btn btn-primary btn-sm" title="Show data in the last 30 minutes"
+                                    ng-click="showDataInInterval('30 minutes')">30 MINUTES</button>
+                                <button class="btn btn-primary btn-sm" title="Show data in the last hour"
+                                ng-click="showDataInInterval('1 hour')">1 HOUR</button>
+                                <button class="btn btn-primary btn-sm" title="Show data in the last day"
+                                ng-click="showDataInInterval('1 day')">1 DAY</button>
+                                <button class="btn btn-primary btn-sm" title="Show data in the last month"
+                                ng-click="showDataInInterval('1 month')">1 MONTH</button>
+                                    <button class="btn btn-primary btn-sm" title="Show data in the last quarter"
+                                    ng-click="showDataInInterval('3 months')">3 MONTHS</button>
+                                <button class="btn btn-primary btn-sm" title="Show data in the last year"
+                                ng-click="showDataInInterval('1 year')">1 YEAR</button>
                             </div>
                         </div>
                     </div>

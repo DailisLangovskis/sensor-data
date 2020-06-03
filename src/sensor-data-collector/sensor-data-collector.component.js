@@ -8,7 +8,6 @@ export default {
                 groupService,
                 selectDeselectAllGroups: groupService.selectDeselectAllGroups,
                 deleteSelectedGroups: groupService.deleteSelectedGroups,
-                dataRequest: sensorService.dataRequest,
                 addGroupTabVisible: false,
                 groupsTabVisible: false,
                 activeSensorListVisible: false,
@@ -56,6 +55,12 @@ export default {
                             $scope.groupName = '';
                             $scope.groupsTabVisible = true;
                         }
+                    })
+                },
+                dataRequest(defaultInterval, sensorClicked, unitSelected){
+                    sensorService.dataRequest(defaultInterval, sensorClicked, unitSelected).then(_ => {
+                        sensorService.chartSensorId = sensorClicked;
+                        sensorService.chartUnitId = unitSelected;
                     })
                 },
                 deleteSelected() {

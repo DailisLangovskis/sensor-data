@@ -8,6 +8,8 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', '$compile', '$r
             phenomenas: [],
             phenomena: '',
             sensorCollectedData: [],
+            chartSensorId: '',
+            chartUnitId: '',
             newAlert: groupService.newAlert,
             getAllUsableSensors(unitClicked) {
                 return $http.get(config.sensorApiEndpoint + '/sensors/data/' + unitClicked)
@@ -148,8 +150,12 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', '$compile', '$r
                         return true;
                     });
             },
-            dataRequest(sensorClicked, unitSelected) {
-                return $http.get(config.sensorApiEndpoint + '/observation/collectedData', { params: { sensor: sensorClicked, unit: unitSelected } })
+            dataRequest(interval, sensorClicked, unitSelected) {
+                if (angular.isUndefined(sensorClicked) && angular.isUndefined(unitSelected)) {
+                    sensorClicked = me.chartSensorId;
+                    unitSelected = me.chartUnitId;
+                }
+                return $http.get(config.sensorApiEndpoint + '/observation/collectedData', { params: { sensor: sensorClicked, unit: unitSelected, interval } })
                     .then(function success(response) {
                         if (response.data.length != 0) {
                             me.sensorCollectedData = response.data;
@@ -221,18 +227,6 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', '$compile', '$r
                                 },
                                 distribution: 'linear',
                                 type: "time",
-                                time: {
-                                    unit: 'minute',
-                                    displayFormats: {
-                                        second: 'hh:mm:ss',
-                                        minute: 'hh:mm',
-                                        hour: 'hhA',
-                                        day: 'MM-DD-YYYY',
-                                        month: 'MM-YYYY',
-                                        quarter: 'YYYY-[Q]Q',
-                                        year: 'YYYY'
-                                    },
-                                },
 
                             }],
                             yAxes: [{

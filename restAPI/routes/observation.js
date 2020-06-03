@@ -46,12 +46,13 @@ async function addObservationDataHandler(req, res) {
 }
 
 async function dataRequestHandler(req, res) {
-    var getCollectedData = 'SELECT data.*, p.unit,p.phenomenon_name FROM observations as data\
+
+    var getCollectedData = "SELECT data.*, p.unit,p.phenomenon_name FROM observations as data\
     INNER JOIN sensors as s\
     ON data.sensor_id = s.sensor_id\
     INNER JOIN phenomenons as p\
     ON s.phenomena_id = p.id\
-    WHERE data.sensor_id = ($1) and data.unit_id = ($2) ORDER BY time_stamp DESC LIMIT 500';
+    WHERE data.sensor_id = ($1) and data.unit_id = ($2) and data.time_stamp > NOW() - INTERVAL '"+ req.query.interval + "'";
     try {
         const { rows } = await db.query(getCollectedData, [req.query.sensor, req.query.unit])
         res.status(201).send(rows)

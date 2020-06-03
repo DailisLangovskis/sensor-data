@@ -9,18 +9,12 @@ export default {
     controller: ['$scope', 'sens.sensor.service', function ($scope, sensorService) {
         angular.extend($scope, {
             sensorService,
-            dataRequest: sensorService.dataRequest,
             phenomena: '',
             sensorType: '',
             measuredValue: '',
             measurementTime: moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ"),
             addSensorTabVisible: false,
             showChart: false,
-            labels: [],
-            data: [],
-            series: [],
-            options: {},
-            datasetOverride: [],
             addData(sensorClicked) {
                 sensorService.getSensorPhenomena(sensorClicked)
                     .then(_ => {
@@ -32,6 +26,12 @@ export default {
                 $scope.sensorType = sensorClicked.sensor_type;
                 $scope.measurementTime = moment.moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ");
                 $scope.addSensorTabVisible = !$scope.addSensorTabVisible;
+            },
+            dataRequest(defaultInterval, sensorClicked, unitSelected){
+                sensorService.dataRequest(defaultInterval, sensorClicked, unitSelected).then(_ => {
+                    sensorService.chartSensorId = sensorClicked;
+                    sensorService.chartUnitId = unitSelected;
+                })
             },
             saveData(sensorClicked, measuredValue, measurementTime, whichUnit) {
                 sensorService.saveData(sensorClicked, measuredValue, measurementTime, whichUnit).then(function (response) {
@@ -54,12 +54,9 @@ export default {
             sensorService.phenomena = '';
             sensorService.sensorCollectedData = [];
             sensorService.sensorsWithObs = [];
+            sensorService.chartSensorId = '';
+            sensorService.chartUnitId = '';
             $scope.showChart = false;
-            $scope.labels = [];
-            $scope.data = [];
-            $scope.series = [];
-            $scope.options = {};
-            $scope.datasetOverride = [];
         })
     }]
 };

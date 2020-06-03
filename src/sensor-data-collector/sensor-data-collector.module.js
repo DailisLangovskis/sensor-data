@@ -29,8 +29,17 @@ angular.module('sens.sensorDataCollectorModule', ['hs.core', 'hs.map', 'chart.js
     //chart popup controller
     .controller('chartController', ['$scope', 'sens.sensor.service', function ($scope, sensorService) {
         angular.extend($scope, {
+            showDataInInterval(interval){
+                sensorService.dataRequest(interval).then(_ => {
+                    Chart.helpers.each(Chart.instances, function (instance) {
+                        instance.chart.update();
+                    });
+                });
+            },
             close() {
                 sensorService.sensorCollectedData = [];
+                sensorService.chartSensorId = '';
+                sensorService.chartSensorId = '';
             },
             saveAsImage() {
                 /*Get image of canvas element*/

@@ -4,7 +4,7 @@ import GeoJSON from 'ol/format/GeoJSON';
 import { Style, Icon, Stroke, Fill, Circle, Text } from 'ol/style';
 import { PROXY, DOMAIN } from '../../config';
 export default ['$http', 'HsConfig', 'sens.sensorGroup.service', 'HsMapService', 'sens.auth.service',
-    function ($http, config, groupService, OlMap, authService) {
+    function ($http, config, groupService, HsMap, authService) {
         var me = this;
         angular.extend(me, {
             unitsSensors: [],
@@ -41,14 +41,12 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', 'HsMapService',
                     })
             },
             getAllUnitLocations() {
+                const username = authService.getUsername()
                 const source = new VectorSource({
                     format: new GeoJSON(),
-                    url: function () {
-                        const username = authService.getUsername()
-                        return PROXY + DOMAIN + `/geoserver/sensor-data-collector/ows?service=WFS&` +
+                    url: PROXY + DOMAIN + `/geoserver/sensor-data-collector/ows?service=WFS&` +
                             `version=1.0.0&request=GetFeature&typeName=sensor-data-collector%3Aunits_positions&` +
                             `maxFeatures=50000&outputFormat=json&CQL_FILTER=${encodeURIComponent("user_name='" + username + "'")}`
-                    },
                 })
                 me.unitLayer = new VectorLayer({
                     title: 'Unit positions layer',
@@ -65,14 +63,7 @@ export default ['$http', 'HsConfig', 'sens.sensorGroup.service', 'HsMapService',
                     visible: true
                 });
                 me.unitLayer.set('hoveredKeys', ['unit_name', 'user_name', 'unit_id', 'longitude', 'latitude']);
-                OlMap.loaded().then(map => {
-                    map.getLayers().forEach((lyr) => {
-                        if (lyr.get('title') == me.unitLayer.get('title')) {
-                            map.removeLayer(lyr);
-                        }
-                    });
-                    map.addLayer(me.unitLayer)
-                });
+                HsMap.addLayer(me.unitLayer,true);
             },
             getAllUsableUnits(groupClicked) {
                 return $http.get(config.sensorApiEndpoint + '/units/data/' + groupClicked)

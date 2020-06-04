@@ -52,7 +52,7 @@ async function dataRequestHandler(req, res) {
     ON data.sensor_id = s.sensor_id\
     INNER JOIN phenomenons as p\
     ON s.phenomena_id = p.id\
-    WHERE data.sensor_id = ($1) and data.unit_id = ($2) and data.time_stamp AT TIME ZONE 'EEST' > NOW() - INTERVAL '"+ req.query.interval + "'";
+    WHERE data.sensor_id = ($1) and data.unit_id = ($2) and data.time_stamp AT TIME ZONE 'EEST' > NOW() - INTERVAL '"+ req.query.interval + "' ORDER BY data.time_stamp DESC";
     try {
         const { rows } = await db.query(getCollectedData, [req.query.sensor, req.query.unit])
         res.status(201).send(rows)

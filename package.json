@@ -18,7 +18,7 @@
   "dependencies": {
     "angular-chart.js": "^1.1.1",
     "async": "^3.1.1",
-    "chart.js": "^2.9.3",
+    "chart.js": "^2.9.4",
     "chartjs-plugin-zoom": "^0.7.5",
     "compression": "^1.7.4",
     "cors": "^2.8.5",

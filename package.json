@@ -29,9 +29,9 @@
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
     "momentum": "^4.0.0",
-    "vega": "^5.9.1",
+    "vega": "^5.22.1",
     "vega-embed": "^6.2.2",
-    "vega-lite": "^4.1.1",
+    "vega-lite": "^4.17.0",
     "window": "^4.2.7"
   },
   "devDependencies": {
